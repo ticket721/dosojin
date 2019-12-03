@@ -80,5 +80,8 @@
             "pre-commit": "editorconfig-cli",
             "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
         }
+    },
+    "dependencies": {
+        "bn.js": "^5.0.0"
     }
 }

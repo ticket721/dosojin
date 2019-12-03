@@ -1,1 +1,1 @@
-export { Test } from './core';
+export { Dosojin } from './core';
