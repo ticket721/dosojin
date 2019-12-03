@@ -38,3 +38,7 @@ Thumbs.db
 
 # Ignore built ts files
 dist/**/*
+
+# Ignore floobits configs
+.floo
+.flooignore
