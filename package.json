@@ -58,7 +58,7 @@
     "homepage": "https://github.com/ticket721/dosojin#readme",
     "devDependencies": {
         "@commitlint/cli": "^8.2.0",
-        "@commitlint/config-conventional": "^8.2.0",
+        "@commitlint/config-conventional": "^8.3.3",
         "@htmlacademy/editorconfig-cli": "^1.0.0",
         "@istanbuljs/nyc-config-typescript": "^0.1.3",
         "@types/bn.js": "^4.11.5",
