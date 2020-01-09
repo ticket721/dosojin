@@ -6,8 +6,13 @@ export interface ScopedValues {
     [key: string]: BN;
 }
 
+export interface MinMax {
+    min: BN;
+    max: BN;
+}
+
 export interface ScopedCost {
-    value: BN;
+    value: BN | MinMax;
     scope: Scope;
     dosojin: string;
     entityName: string;
@@ -15,4 +20,3 @@ export interface ScopedCost {
     layer: number;
     reason: string;
 }
-

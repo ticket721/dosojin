@@ -80,6 +80,71 @@ export class Dosojin {
 
     }
 
+    public async dryRunTransfer(gem: Gem): Promise<Gem> {
+
+        if (gem.transferStatus) {
+
+            if (gem.transferStatus.connector && gem.transferStatus.connector.dosojin === this.name) {
+
+                const connectorIndex = this.connectors.findIndex((co: Connector) => co.name === gem.transferStatus.connector.name);
+
+                if (connectorIndex === -1) {
+                    throw new DosojinError(this.name, `unkown Connector ${gem.transferStatus.connector.name} in Dosojin ${this.name}`);
+                }
+
+                const connector: Connector = this.connectors[connectorIndex];
+
+                return connector.dryRun(gem);
+
+            } else if (gem.transferStatus.receptacle && gem.transferStatus.receptacle.dosojin === this.name) {
+                const receptacleIndex = this.receptacles.findIndex((re: Receptacle) => re.name === gem.transferStatus.receptacle.name);
+
+                if (receptacleIndex === -1) {
+                    throw new DosojinError(this.name, `unkown Receptacle ${gem.transferStatus.receptacle.name} in Dosojin ${this.name}`);
+                }
+
+                const receptacle: Receptacle = this.receptacles[receptacleIndex];
+
+                return receptacle.dryRun(gem);
+
+            } else {
+                throw new DosojinError(this.name, `received Gem with 'transfer' action type, but no Connector or Receptacle for ${this.name} dosojin`);
+            }
+
+        } else {
+            throw new DosojinError(this.name, `received Gem with null transferStatus while on 'transfer' actionType`);
+        }
+
+    }
+
+    public async dryRunOperation(gem: Gem): Promise<Gem> {
+
+        if (gem.operationStatus) {
+
+            if (gem.operationStatus.dosojin !== this.name) {
+                throw new DosojinError(this.name, `received invalid Gem with invalid Dosojin name: expected ${this.name}, got ${gem.operationStatus.dosojin}`)
+            }
+
+            if (gem.operationStatus.operation_list.length === 0) {
+                throw new DosojinError(this.name, `received invalid Gem with no Operations left.`)
+            }
+
+            const operationIndex: number = this.operations.findIndex((op: Operation) => op.name === gem.operationStatus.operation_list[0]);
+
+            if (operationIndex === -1) {
+                throw new DosojinError(this.name, `unknown Operation ${gem.operationStatus.operation_list[0]} in Dosojin ${this.name}`);
+            }
+
+            const operation: Operation = this.operations[operationIndex];
+
+            return operation.dryRun(gem);
+
+        } else {
+            throw new DosojinError(this.name, `received Gem with null operationStatus while on 'operation' actionType`);
+        }
+
+    }
+
     public async run(gem: Gem): Promise<Gem> {
         switch (gem.actionType) {
             case 'operation': {
@@ -92,6 +157,28 @@ export class Dosojin {
             case 'transfer': {
                 try {
                     return await this.runTransfer(gem);
+                } catch (e) {
+                    throw new DosojinError(this.name, e);
+                }
+            }
+            default: {
+                throw new DosojinError(this.name, `received Gem with invalid actionType ${gem.actionType}`);
+            }
+        }
+    }
+
+    public async dryRun(gem: Gem): Promise<Gem> {
+        switch (gem.actionType) {
+            case 'operation': {
+                try {
+                    return await this.dryRunOperation(gem);
+                } catch (e) {
+                    throw new DosojinError(this.name, e);
+                }
+            }
+            case 'transfer': {
+                try {
+                    return await this.dryRunTransfer(gem);
                 } catch (e) {
                     throw new DosojinError(this.name, e);
                 }

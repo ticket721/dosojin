@@ -5,7 +5,7 @@ import { GemPayload }                            from './GemPayload';
 import { Operation }                             from './Operation';
 import { OperationStatus, OperationStatusNames } from './OperationStatus';
 import { Receptacle }                            from './Receptacle';
-import { ScopedCost, ScopedValues }              from './Scope';
+import { MinMax, ScopedCost, ScopedValues }              from './Scope';
 import { TransferConnectorStatusNames, TransferReceptacleStatusNames, TransferStatus } from './TransferStatus';
 
 type GemStatus = 'Running' | 'Complete' | 'Error' | 'Fatal' | 'MissingReceptacle';
@@ -18,6 +18,14 @@ interface GemErrorInfo {
     message: string;
 }
 
+interface HistoryEntity {
+    layer: number;
+    dosojin: string;
+    entityName: string;
+    entityType: string;
+    count: number;
+}
+
 export class Gem<CustomOperationStatusSet extends OperationStatusNames = OperationStatusNames,
     CustomTransferConnectorStatusSet extends TransferConnectorStatusNames = TransferConnectorStatusNames,
     CustomTransferReceptacleStatusSet extends TransferReceptacleStatusNames = TransferReceptacleStatusNames> {
@@ -27,6 +35,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
     public gemStatus: GemStatus;
     public gemPayload: GemPayload = null;
     public errorInfo: GemErrorInfo = null;
+    public routeHistory: HistoryEntity[] = [];
     private gemData: {[key: string]: any} = {};
 
     constructor(initialValues: ScopedValues) {
@@ -96,17 +105,17 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
 
     }
 
-    public addCost(dosojin: Dosojin, value: BN, scope: string, reason: string): Gem {
+    public addCost(dosojin: Dosojin, value: BN | MinMax, scope: string, reason: string): Gem {
         let layer: number;
         let entityName: string;
         let entityType: string;
         switch (this.actionType) {
             case 'transfer': {
-                if (this.transferStatus.connector && this.transferStatus.connector.name === dosojin.name) {
+                if (this.transferStatus.connector && this.transferStatus.connector.dosojin === dosojin.name) {
                     layer = this.transferStatus.connector.layer;
                     entityName = this.transferStatus.connector.name;
                     entityType = 'connector';
-                } else if (this.transferStatus.receptacle && this.transferStatus.receptacle.name === dosojin.name) {
+                } else if (this.transferStatus.receptacle && this.transferStatus.receptacle.dosojin === dosojin.name) {
                     layer = this.transferStatus.receptacle.layer;
                     entityName = this.transferStatus.receptacle.name;
                     entityType = 'receptacle';
@@ -127,6 +136,51 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
         }
 
         this.pushCost({value, scope, dosojin: dosojin.name, entityName, entityType, layer, reason});
+
+        return this;
+    }
+
+    public addHistoryEntity(dosojin: Dosojin): Gem {
+        let layer: number;
+        let entityName: string;
+        let entityType: string;
+        switch (this.actionType) {
+            case 'transfer': {
+                if (this.transferStatus.connector && this.transferStatus.connector.dosojin === dosojin.name) {
+                    layer = this.transferStatus.connector.layer;
+                    entityName = this.transferStatus.connector.name;
+                    entityType = 'connector';
+                } else if (this.transferStatus.receptacle && this.transferStatus.receptacle.dosojin === dosojin.name) {
+                    layer = this.transferStatus.receptacle.layer;
+                    entityName = this.transferStatus.receptacle.name;
+                    entityType = 'receptacle';
+                } else {
+                    throw new Error(`Cannot find specified dosojin inside transferStatus`);
+                }
+                break;
+            }
+            case 'operation': {
+                layer = this.operationStatus.layer;
+                entityName = this.operationStatus.operation_list[0];
+                entityType = 'operation';
+                break;
+            }
+            default: {
+                throw new Error(`Cannot add cost on gem with no actionType`);
+            }
+        }
+
+        const entityIdx = this.routeHistory.findIndex((entity: HistoryEntity) => {
+            const countlessEntity: HistoryEntity = { ...entity, count: null };
+
+            return countlessEntity === {layer, dosojin: Dosojin.name, entityName, entityType, count: null};
+        });
+
+        if (!this.routeHistory.length || entityIdx === -1) {
+            this.pushHistoryEntity({layer, dosojin: Dosojin.name, entityName, entityType, count: 1});
+        } else {
+            this.routeHistory[entityIdx].count++;
+        }
 
         return this;
     }
@@ -390,6 +444,10 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
 
     private pushCost(scopedCost: ScopedCost): void {
         this.gemPayload.costs.push(scopedCost);
+    }
+
+    private pushHistoryEntity(historyEntity: HistoryEntity): void {
+        this.routeHistory.push(historyEntity);
     }
 
     private setOperationList(list: string[]): void {

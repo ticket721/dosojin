@@ -46,6 +46,35 @@ export class SingleDosojinLayer extends Layer {
         }
     }
 
+    public async dryRunOperation(gem: Gem): Promise<Gem> {
+        if (gem.operationStatus) {
+
+            if (gem.operationStatus.layer !== this.index) {
+                throw new LayerError(this.index, `received Gem with invalid index: got ${gem.operationStatus.layer}, expected ${this.index}`);
+            }
+
+            return this.dosojin.dryRun(gem);
+
+        } else {
+            throw new LayerError(this.index, `received Gem with null operationStatus`);
+        }
+
+    }
+
+    public async dryRunTransfer(gem: Gem): Promise<Gem> {
+        if (gem.transferStatus) {
+            if (gem.transferStatus.connector && gem.transferStatus.connector.layer === this.index) {
+                return this.dosojin.dryRun(gem);
+            } else if (gem.transferStatus.receptacle && gem.transferStatus.receptacle.layer === this.index) {
+                return this.dosojin.dryRun(gem);
+            } else {
+                throw new LayerError(this.index, `received Gem with 'transfer' action type, but no Connector or Receptacle for ${this.name} layer`);
+            }
+        } else {
+            throw new LayerError(this.index, `received Gem with null transferStatus`);
+        }
+    }
+
     public async setReceptacleInfo<ReceptacleInfo = any>(gem: Gem, receptacleInfo: ReceptacleInfo): Promise<void> {
         if (this.dosojin === null) {
             throw new LayerError(this.index, `no Dosojin in Layer ${this.name}`);
@@ -154,6 +183,34 @@ export class SingleDosojinLayer extends Layer {
         }
     }
 
+    public async dryRun(gem: Gem): Promise<Gem> {
+        if (this.dosojin === null) {
+            throw new LayerError(this.index, `no Dosojin in Layer ${this.name}`);
+        }
+
+        switch (gem.actionType) {
+            case 'operation': {
+                try {
+                    return await this.dryRunOperation(gem);
+                } catch (e) {
+                    throw new LayerError(this.index, e);
+                }
+            }
+
+            case 'transfer': {
+                try {
+                    return await this.dryRunTransfer(gem);
+                } catch (e) {
+                    throw new LayerError(this.index, e);
+                }
+            }
+
+            default: {
+                throw new LayerError(this.index, `received Gem with invalid actionType ${gem.actionType}`);
+            }
+        }
+    }
+
     public async selectReceptacle(gem: Gem): Promise<Gem> {
         if (this.dosojin === null) {
             throw new LayerError(this.index, `no Dosojin in Layer ${this.name}`);
@@ -163,7 +220,6 @@ export class SingleDosojinLayer extends Layer {
     }
 
     public async selectConnector(gem: Gem): Promise<Gem> {
-
         if (this.dosojin === null) {
             throw new LayerError(this.index, `no Dosojin in Layer ${this.name}`);
         }

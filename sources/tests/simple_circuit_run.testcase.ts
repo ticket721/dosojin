@@ -1,7 +1,5 @@
 import BN                     from 'bn.js';
 import { Circuit }            from '../core/Circuit';
-import { ActionError }        from '../core/errors/ActionError';
-import { CircuitError }       from '../core/errors/CircuitError';
 import { Gem }                from '../core/Gem';
 import { SingleDosojinLayer } from '../core/SingleDosojinLayer';
 import { BasicDosojinMock }   from '../mocks/dosojin/BasicDosojinMock';
@@ -20,11 +18,15 @@ export async function simple_circuit_run(): Promise<void> {
     sdl2.setDosojin(basicDosojin2);
 
     let gem: Gem = await circuit.createGem({fiat_euro: new BN(10), fiat_usd: new BN(5)});
+    
     while (['Complete', 'Error', 'Fatal'].indexOf(gem.gemStatus) === -1) {
         gem = await circuit.run(gem);
-        // console.log(gem);
+        console.log(gem.routeHistory);
     }
-    console.log(gem);
 
+    gem = await circuit.createGem({fiat_euro: new BN(10), fiat_usd: new BN(5)});
 
+    gem = await circuit.dryRun(gem);
+
+    console.log('Dry Run:', gem);
 }

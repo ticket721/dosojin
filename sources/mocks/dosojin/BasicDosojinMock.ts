@@ -6,7 +6,6 @@ import { Gem }                  from '../../core/Gem';
 import { Operation }            from '../../core/Operation';
 import { OperationStatusNames } from '../../core/OperationStatus';
 import { Receptacle }           from '../../core/Receptacle';
-import { ScopedValues }         from '../../core/Scope';
 import {
     TransferConnectorStatusNames,
     TransferReceptacleStatusNames,
@@ -23,13 +22,33 @@ class BasicDosojinReceptacle extends Receptacle {
 
     public async run(gem: Gem): Promise<Gem> {
         gem.setState(this.dosojin, {hello: 'lol'});
+        gem = gem.addHistoryEntity(this.dosojin);
         return gem.setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete);
     }
 
-    public async cost(gem: Gem): Promise<ScopedValues> {
-        return {
-            fiat_euro: new BN(1)
-        };
+    public async dryRun(gem: Gem): Promise<Gem> {
+        gem = await this.cost(gem);
+        return gem.setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete);
+    }
+
+    public async cost(gem: Gem): Promise<Gem> {
+        return gem.addCost(
+            this.dosojin,
+            {
+                max: new BN(4),
+                min: new BN(2)
+            },
+            'fiat_euro',
+            'Money money euro'
+        ).addCost(
+            this.dosojin,
+            {
+                max: new BN(2),
+                min: new BN(1)
+            },
+            'fiat_usd',
+            'Money money usd'
+        );
     }
 
     public async scopes(gem: Gem): Promise<string[]> {
@@ -58,13 +77,34 @@ class BasicDosojinConnector extends Connector {
 
     public async run(gem: Gem): Promise<Gem> {
         console.log('running connector');
+        gem = gem.addHistoryEntity(this.dosojin);
         return gem.setConnectorStatus(TransferConnectorStatusNames.TransferComplete);
     }
 
-    public async cost(gem: Gem): Promise<ScopedValues> {
-        return {
-            fiat_euro: new BN(1)
-        };
+    public async dryRun(gem: Gem): Promise<Gem> {
+        gem = await this.cost(gem);
+        return gem.setConnectorStatus(TransferConnectorStatusNames.TransferComplete);
+    }
+
+    public async cost(gem: Gem): Promise<Gem> {
+        return gem.addCost(
+            this.dosojin,
+            {
+
+                max: new BN(4),
+                min: new BN(2)
+            },
+            'fiat_euro',
+            'Money money euro'
+        ).addCost(
+            this.dosojin,
+            {
+                max: new BN(2),
+                min: new BN(1)
+            },
+            'fiat_usd',
+            'Money money usd'
+        );
     }
 
     public async scopes(gem: Gem): Promise<string[]> {
@@ -94,6 +134,7 @@ class BasicDosojinOperation extends Operation {
     public async run(gem: Gem): Promise<Gem> {
 
         console.log(gem.getState(this.dosojin));
+        gem = gem.addHistoryEntity(this.dosojin);
         gem
             .addCost(this.dosojin, new BN(1), 'fiat_euro', 'Because it needed money')
             .setPayloadValues({
@@ -104,10 +145,29 @@ class BasicDosojinOperation extends Operation {
         return gem.setOperationStatus(OperationStatusNames.OperationComplete);
     }
 
-    public async cost(gem: Gem): Promise<ScopedValues> {
-        return {
-            fiat_euro: new BN(1)
-        };
+    public async dryRun(gem: Gem): Promise<Gem> {
+        gem = await this.cost(gem);
+        return gem.setOperationStatus(OperationStatusNames.OperationComplete);
+    }
+
+    public async cost(gem: Gem): Promise<Gem> {
+        return gem.addCost(
+            this.dosojin,
+            {
+                max: new BN(4),
+                min: new BN(2)
+            },
+            'fiat_euro',
+            'Money money euro'
+        ).addCost(
+            this.dosojin,
+            {
+                max: new BN(2),
+                min: new BN(1)
+            },
+            'fiat_usd',
+            'Money money usd'
+        );
     }
 
     public async scopes(gem: Gem): Promise<string[]> {
