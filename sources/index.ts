@@ -1,1 +1,1 @@
-export { Dosojin } from './core';
+export * from './core';

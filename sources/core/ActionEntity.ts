@@ -1,5 +1,4 @@
 import { Gem }          from './Gem';
-import { ScopedCost } from './Scope';
 
 export abstract class ActionEntity {
     public name: string;
