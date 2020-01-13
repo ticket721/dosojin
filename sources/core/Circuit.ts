@@ -1,8 +1,8 @@
-import { CircuitError }                                                from './errors/CircuitError';
+import { CircuitError }                                                from './errors';
 import { Gem }                                                         from './Gem';
 import { Layer }                                                       from './Layer';
 import { OperationStatusNames }                                        from './OperationStatus';
-import { ScopedValues }                                                 from './Scope';
+// import { ScopedValues }                                                 from './Scope';
 import { TransferConnectorStatusNames, TransferReceptacleStatusNames } from './TransferStatus';
 
 export class Circuit {
@@ -20,24 +20,21 @@ export class Circuit {
         }
     }
 
-    public async createGem<DosojinState = any>(initialValue: ScopedValues = {}, initialArguments: DosojinState = null): Promise<Gem> {
-
+    public async createGem<DosojinState = any>(initialGem: Gem = new Gem({}), initialArguments: DosojinState = null): Promise<Gem> {
         if (!this.layers.length) {
             throw new CircuitError(this.name, `cannot create Gem in empty Circuit`);
         }
 
-        let gem = new Gem(initialValue);
+        initialGem.setReceptacleStatus(TransferReceptacleStatusNames.ReadyForTransfer);
+        initialGem = await this.layers[0].selectReceptacle(initialGem);
 
-        gem.setReceptacleStatus(TransferReceptacleStatusNames.ReadyForTransfer);
-        gem = await this.layers[0].selectReceptacle(gem);
-
-        if (!gem.transferStatus.receptacle.dosojin) {
+        if (!initialGem.transferStatus.receptacle.dosojin) {
             throw new CircuitError(this.name, `no Receptacle found after initial Gem setup`);
         }
 
-        gem.setState<DosojinState>(gem.transferStatus.receptacle.dosojin, initialArguments);
+        initialGem.setState<DosojinState>(initialGem.transferStatus.receptacle.dosojin, initialArguments);
 
-        return gem;
+        return initialGem;
     }
 
     public async runOperation(gem: Gem): Promise<Gem> {
