@@ -1,7 +1,7 @@
-import { instance, mock, reset, when } from "ts-mockito";
+import { instance, mock, reset, when } from 'ts-mockito';
 import {
     Dosojin,
-    Gem
+    Gem,
 } from '../../core';
 
 export function set_state_tests(): void {
@@ -32,7 +32,7 @@ export function set_state_tests(): void {
             expect(gem.setState(dosojin, {'datum': 'value'})).toThrow();
         } catch (e) {
             expect(e).toMatchObject({
-                message: 'invalid state key type: expect string | Dosojin, got object'
+                message: 'invalid state key type: expect string | Dosojin, got object',
             });
         }
     });

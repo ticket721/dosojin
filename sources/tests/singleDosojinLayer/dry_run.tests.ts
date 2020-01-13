@@ -3,7 +3,7 @@ import {
     Dosojin,
     Gem,
     LayerError,
-    SingleDosojinLayer
+    SingleDosojinLayer,
 } from '../../core';
 
 export function dry_run_tests(): void {
@@ -32,7 +32,7 @@ export function dry_run_tests(): void {
         await expect(sdl.dryRun(gem)).rejects.toMatchObject({
             layer: sdl.index,
             message: `no Dosojin in Layer ${sdlName}`,
-            name: 'LayerError'
+            name: 'LayerError',
         });
     });
 
@@ -46,7 +46,7 @@ export function dry_run_tests(): void {
         await expect(sdl.dryRun(gem)).rejects.toMatchObject({
             layer: sdl.index,
             message: `received Gem with invalid actionType ${gem.actionType}`,
-            name: 'LayerError'
+            name: 'LayerError',
         });
     });
 
@@ -64,7 +64,7 @@ export function dry_run_tests(): void {
         await expect(sdl.dryRun(gem)).rejects.toMatchObject({
             layer: sdl.index,
             message: 'operation failed',
-            name: 'LayerError'
+            name: 'LayerError',
         });
     });
 
@@ -82,7 +82,7 @@ export function dry_run_tests(): void {
         await expect(sdl.dryRun(gem)).rejects.toMatchObject({
             layer: sdl.index,
             message: 'transfer failed',
-            name: 'LayerError'
+            name: 'LayerError',
         });
     });
 

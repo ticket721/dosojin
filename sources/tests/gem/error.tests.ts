@@ -1,10 +1,10 @@
-import { instance, mock, reset, when } from "ts-mockito";
+import { instance, mock, reset, when } from 'ts-mockito';
 import {
     Dosojin,
     Gem,
     OperationStatusNames,
     TransferConnectorStatusNames,
-    TransferReceptacleStatusNames
+    TransferReceptacleStatusNames,
 } from '../../core';
 
 export function error_tests(): void {
@@ -26,7 +26,7 @@ export function error_tests(): void {
             expect(gem.error(dosojin, 'testing error message')).toThrow();
         } catch (e) {
             expect(e).toMatchObject({
-                message: 'Cannot set error on gem with no actionType'
+                message: 'Cannot set error on gem with no actionType',
             });
         }
     });
@@ -37,14 +37,14 @@ export function error_tests(): void {
                 dosojin: 'dosojin',
                 layer: 0,
                 name: 'connector',
-                status: TransferConnectorStatusNames.ReadyForTransfer
+                status: TransferConnectorStatusNames.ReadyForTransfer,
             },
             receptacle: {
                 dosojin: 'dosojin',
                 layer: 0,
                 name: 'receptacle',
-                status: TransferReceptacleStatusNames.ReadyForTransfer
-            }
+                status: TransferReceptacleStatusNames.ReadyForTransfer,
+            },
         };
 
         when(mockDosojin.name).thenReturn('invalidDosojin');
@@ -53,7 +53,7 @@ export function error_tests(): void {
             expect(gem.error(dosojin, 'testing error message')).toThrow();
         } catch (e) {
             expect(e).toMatchObject({
-                message: 'Cannot find specified dosojin inside transferStatus'
+                message: 'Cannot find specified dosojin inside transferStatus',
             });
         }
     });
@@ -69,7 +69,7 @@ export function error_tests(): void {
                 dosojin: expectedDosojinName,
                 layer: expectedLayer,
                 name: expectedConnectorName,
-                status: TransferConnectorStatusNames.ReadyForTransfer
+                status: TransferConnectorStatusNames.ReadyForTransfer,
             },
         };
 
@@ -82,7 +82,7 @@ export function error_tests(): void {
             entityName: expectedConnectorName,
             entityType: 'connector',
             layer: expectedLayer,
-            message: expectedMessage
+            message: expectedMessage,
         });
 
         expect(gem.gemStatus).toEqual('Error');
@@ -99,7 +99,7 @@ export function error_tests(): void {
                 dosojin: expectedDosojinName,
                 layer: expectedLayer,
                 name: expectedReceptacleName,
-                status: TransferReceptacleStatusNames.ReadyForTransfer
+                status: TransferReceptacleStatusNames.ReadyForTransfer,
             },
         };
 
@@ -112,7 +112,7 @@ export function error_tests(): void {
             entityName: expectedReceptacleName,
             entityType: 'receptacle',
             layer: expectedLayer,
-            message: expectedMessage
+            message: expectedMessage,
         });
 
         expect(gem.gemStatus).toEqual('Error');
@@ -130,7 +130,7 @@ export function error_tests(): void {
             dosojin: expectedDosojinName,
             layer: expectedLayer,
             operation_list: [expectedOperationName],
-            status: OperationStatusNames.ReadyForOperation
+            status: OperationStatusNames.ReadyForOperation,
         };
 
         when(mockDosojin.name).thenReturn(expectedDosojinName);
@@ -142,7 +142,7 @@ export function error_tests(): void {
             entityName: expectedOperationName,
             entityType: 'operation',
             layer: expectedLayer,
-            message: expectedMessage
+            message: expectedMessage,
         });
 
         expect(gem.gemStatus).toEqual('Error');

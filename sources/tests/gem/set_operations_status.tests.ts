@@ -12,7 +12,7 @@ export function set_operations_status_tests(): void {
             expect(gem.setOperationStatus(OperationStatusNames.ReadyForOperation)).toThrow();
         } catch (e) {
             expect(e).toMatchObject({
-                message: 'Invalid actionType for setOperationStatus call (transfer instead of operation)'
+                message: 'Invalid actionType for setOperationStatus call (transfer instead of operation)',
             });
         }
     });
@@ -25,7 +25,7 @@ export function set_operations_status_tests(): void {
         gem.setOperationStatus(expectedStatus);
 
         expect(gem.operationStatus).toMatchObject({
-            status: expectedStatus
+            status: expectedStatus,
         });
     });
 }

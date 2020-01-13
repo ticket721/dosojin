@@ -1,7 +1,7 @@
 import { instance, mock, reset, verify, when } from 'ts-mockito';
 import {
     Dosojin, DosojinError,
-    Gem, SingleDosojinLayer
+    Gem, SingleDosojinLayer,
 } from '../../core';
 
 export function get_connector_info_tests(): void {
@@ -30,7 +30,7 @@ export function get_connector_info_tests(): void {
         await expect(sdl.getConnectorInfo(gem)).rejects.toMatchObject({
             layer: sdl.index,
             message: `no Dosojin in Layer ${sdlName}`,
-            name: 'LayerError'
+            name: 'LayerError',
         });
     });
 
@@ -44,7 +44,7 @@ export function get_connector_info_tests(): void {
         await expect(sdl.getConnectorInfo(gem)).rejects.toMatchObject({
             layer: 0,
             message: `received Gem with invalid actionType ${gem.actionType} while getting Connector info`,
-            name: 'LayerError'
+            name: 'LayerError',
         });
     });
 
@@ -60,7 +60,7 @@ export function get_connector_info_tests(): void {
         await expect(sdl.getConnectorInfo(gem)).rejects.toMatchObject({
             layer: 0,
             message: 'get connector info failed',
-            name: 'LayerError'
+            name: 'LayerError',
         });
     });
 

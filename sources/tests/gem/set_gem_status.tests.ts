@@ -1,5 +1,5 @@
 import {
-    Gem
+    Gem,
 } from '../../core';
 
 export function set_gem_status_tests(): void {

@@ -19,4 +19,3 @@ export class ActionError extends Error {
         this.action = actionName;
     }
 }
-

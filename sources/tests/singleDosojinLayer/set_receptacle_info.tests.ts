@@ -1,7 +1,7 @@
 import {deepEqual, instance, mock, reset, verify, when} from 'ts-mockito';
 import {
     Dosojin, DosojinError,
-    Gem, SingleDosojinLayer
+    Gem, SingleDosojinLayer,
 } from '../../core';
 
 export function set_receptacle_info_tests(): void {
@@ -30,7 +30,7 @@ export function set_receptacle_info_tests(): void {
         await expect(sdl.setReceptacleInfo(gem, {})).rejects.toMatchObject({
             layer: sdl.index,
             message: `no Dosojin in Layer ${sdlName}`,
-            name: 'LayerError'
+            name: 'LayerError',
         });
     });
 
@@ -44,13 +44,13 @@ export function set_receptacle_info_tests(): void {
         await expect(sdl.setReceptacleInfo(gem, {})).rejects.toMatchObject({
             layer: 0,
             message: `received Gem with invalid actionType ${gem.actionType} while setting Receptacle info`,
-            name: 'LayerError'
+            name: 'LayerError',
         });
     });
 
     test('throw layer error when set receptacle info fail', async () => {
         const expectedInfo = {
-            'info': 'value'
+            'info': 'value',
         };
 
         sdl.setDosojin(dosojin);
@@ -64,13 +64,13 @@ export function set_receptacle_info_tests(): void {
         await expect(sdl.setReceptacleInfo(gem, expectedInfo)).rejects.toMatchObject({
             layer: 0,
             message: 'set receptacle info failed',
-            name: 'LayerError'
+            name: 'LayerError',
         });
     });
 
     test('get receptacle info from dosojin', async () => {
         const expectedInfo = {
-            'info': 'value'
+            'info': 'value',
         };
 
         sdl.setDosojin(dosojin);

@@ -2,8 +2,7 @@ import { instance, mock, reset, verify, when } from 'ts-mockito';
 import {
     Dosojin,
     Gem,
-    LayerError,
-    SingleDosojinLayer
+    SingleDosojinLayer,
 } from '../../core';
 
 export function dry_run_transfer_tests(): void {
@@ -34,7 +33,7 @@ export function dry_run_transfer_tests(): void {
         await expect(sdl.dryRunTransfer(gem)).rejects.toMatchObject({
             layer: sdl.index,
             message: 'received Gem with null transferStatus',
-            name: 'LayerError'
+            name: 'LayerError',
         });
     });
 
@@ -42,12 +41,12 @@ export function dry_run_transfer_tests(): void {
         when(mockGem.transferStatus).thenReturn({
             connector: {
                 ...mockGem.transferStatus.connector,
-                layer: 1
+                layer: 1,
             },
             receptacle: {
                 ...mockGem.transferStatus.receptacle,
-                layer: 1
-            }
+                layer: 1,
+            },
         });
 
         const gem: Gem = instance(mockGem);
@@ -56,7 +55,7 @@ export function dry_run_transfer_tests(): void {
         await expect(sdl.dryRunTransfer(gem)).rejects.toMatchObject({
             layer: sdl.index,
             message: `received Gem with \'transfer\' action type, but no Connector or Receptacle for ${sdlName} layer`,
-            name: 'LayerError'
+            name: 'LayerError',
         });
     });
 
@@ -64,8 +63,8 @@ export function dry_run_transfer_tests(): void {
         when(mockGem.transferStatus).thenReturn({
             connector: {
                 ...mockGem.transferStatus.connector,
-                layer: 0
-            }
+                layer: 0,
+            },
         });
 
         const gem: Gem = instance(mockGem);
@@ -79,8 +78,8 @@ export function dry_run_transfer_tests(): void {
         when(mockGem.transferStatus).thenReturn({
             receptacle: {
                 ...mockGem.transferStatus.receptacle,
-                layer: 0
-            }
+                layer: 0,
+            },
         });
 
         const gem: Gem = instance(mockGem);

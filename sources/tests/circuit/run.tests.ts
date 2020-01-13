@@ -2,7 +2,7 @@ import {instance, mock, reset, spy, verify, when} from 'ts-mockito';
 import {
     Circuit,
     CircuitError,
-    Gem
+    Gem,
 } from '../../core';
 
 export function run_tests(): void {
@@ -24,7 +24,7 @@ export function run_tests(): void {
         await expect(circuit.run(gem)).rejects.toMatchObject({
             circuit: circuitName,
             message: `received Gem with invalid actionType ${gem.actionType}`,
-            name: 'CircuitError'
+            name: 'CircuitError',
         });
     });
 
@@ -40,7 +40,7 @@ export function run_tests(): void {
         await expect(circuit.run(gem)).rejects.toMatchObject({
             circuit: circuitName,
             message: 'operation failed',
-            name: 'CircuitError'
+            name: 'CircuitError',
         });
     });
 
@@ -55,7 +55,7 @@ export function run_tests(): void {
         await expect(circuit.run(gem)).rejects.toMatchObject({
             circuit: circuitName,
             message: 'transfer failed',
-            name: 'CircuitError'
+            name: 'CircuitError',
         });
     });
 
@@ -81,7 +81,7 @@ export function run_tests(): void {
         when (mockGem.actionType).thenReturn('transfer');
 
         when(spiedCircuit.runTransfer(gem)).thenResolve(instance(mockGem));
-        
+
         await circuit.run(gem);
 
         verify(spiedCircuit.runTransfer(gem)).once();

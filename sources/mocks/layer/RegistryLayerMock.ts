@@ -1,7 +1,7 @@
 import {
     Dosojin,
     Gem,
-    Layer
+    Layer,
 } from '../../core';
 
 export class RegistryLayerMock extends Layer {
@@ -57,6 +57,5 @@ export class RegistryLayerMock extends Layer {
         this.add = add;
         this.rm = rm;
     }
-
 
 }

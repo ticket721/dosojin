@@ -1,4 +1,4 @@
-import {instance, mock, reset, verify, when} from "ts-mockito";
+import {instance, mock, reset, verify, when} from 'ts-mockito';
 import {
     Circuit, Gem,
     SingleDosojinLayer,
@@ -26,7 +26,7 @@ export function create_gem_tests(): void {
         await expect(circuit.createGem(gem)).rejects.toMatchObject({
             circuit: circuitName,
             message: 'cannot create Gem in empty Circuit',
-            name: 'CircuitError'
+            name: 'CircuitError',
         });
     });
 
@@ -39,8 +39,8 @@ export function create_gem_tests(): void {
             connector: null,
             receptacle: {
                 ...mockGem.transferStatus.receptacle,
-                dosojin: null
-            }
+                dosojin: null,
+            },
         });
 
         circuit.pushLayer(sdl);
@@ -49,7 +49,7 @@ export function create_gem_tests(): void {
         await expect(circuit.createGem(instance(mockGem))).rejects.toMatchObject({
             circuit: circuitName,
             message: 'no Receptacle found after initial Gem setup',
-            name: 'CircuitError'
+            name: 'CircuitError',
         });
     });
 
@@ -63,12 +63,12 @@ export function create_gem_tests(): void {
             connector: null,
             receptacle: {
                 ...mockGem.transferStatus.receptacle,
-                dosojin: expectedDosojinString
-            }
+                dosojin: expectedDosojinString,
+            },
         });
 
         circuit.pushLayer(sdl);
-        
+
         await circuit.createGem(instance(mockGem));
 
         verify(mockGem.setReceptacleStatus(TransferReceptacleStatusNames.ReadyForTransfer)).once();

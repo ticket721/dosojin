@@ -1,6 +1,6 @@
 import {
     Circuit,
-    Dosojin
+    Dosojin,
 } from '../../core';
 import { RegistryLayerMock } from '../../mocks/layer/RegistryLayerMock';
 
@@ -22,7 +22,7 @@ export function clear_dosojin_tests(): void {
         await expect(sdl.removeDosojin(dosojin)).rejects.toMatchObject({
             circuit: circuitName,
             message: `Dosojin with name dosojin not registered by Circuit ${circuitName}`,
-            name: 'CircuitError'
+            name: 'CircuitError',
         });
     });
 

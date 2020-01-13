@@ -1,6 +1,6 @@
 export enum OperationStatusNames {
     ReadyForOperation = 'ReadyForOperation',
-    OperationComplete = 'OperationComplete'
+    OperationComplete = 'OperationComplete',
 }
 
 export interface OperationStatus<
@@ -11,4 +11,3 @@ export interface OperationStatus<
     dosojin: string;
     operation_list: string[];
 }
-

@@ -2,7 +2,7 @@ import { instance, mock, reset, verify } from 'ts-mockito';
 import {
     Dosojin,
     Gem,
-    Operation
+    Operation,
 } from '../../core';
 
 export function select_operations_tests(): void {

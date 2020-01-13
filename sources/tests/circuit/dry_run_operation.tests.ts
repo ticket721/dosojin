@@ -5,7 +5,7 @@ import {
     OperationStatusNames,
     SingleDosojinLayer,
     TransferConnectorStatusNames,
-    TransferReceptacleStatusNames
+    TransferReceptacleStatusNames,
 } from '../../core';
 
 export function dry_run_operation_tests(): void {
@@ -31,13 +31,13 @@ export function dry_run_operation_tests(): void {
         await expect(circuit.dryRunOperation(gem)).rejects.toMatchObject({
             circuit: circuitName,
             message: 'received Gem with null operationStatus',
-            name: 'CircuitError'
+            name: 'CircuitError',
         });
     });
 
     test('throw error when operation layer is out of layers range', async () => {
         when(mockGem.operationStatus).thenReturn({
-            layer: 2
+            layer: 2,
         });
         const gem: Gem = instance(mockGem);
 
@@ -45,14 +45,14 @@ export function dry_run_operation_tests(): void {
         await expect(circuit.dryRunOperation(gem)).rejects.toMatchObject({
             circuit: circuitName,
             message: `received Gem with invalid Operation Layer index ${gem.operationStatus.layer} (max 1)`,
-            name: 'CircuitError'
+            name: 'CircuitError',
         });
     });
 
     test('dry run layer if operation is not complete', async () => {
         when(mockGem.operationStatus).thenReturn({
             layer: 0,
-            status: OperationStatusNames.ReadyForOperation
+            status: OperationStatusNames.ReadyForOperation,
         });
 
         const gem: Gem = instance(mockGem);
@@ -66,7 +66,7 @@ export function dry_run_operation_tests(): void {
         when(mockGem.nextOperation()).thenCall(() => {
             when(mockGem.operationStatus).thenReturn({
                 operation_list: ['anotherOperation'],
-                status: OperationStatusNames.ReadyForOperation
+                status: OperationStatusNames.ReadyForOperation,
             });
 
             return instance(mockGem);
@@ -74,7 +74,7 @@ export function dry_run_operation_tests(): void {
 
         when(mockGem.operationStatus).thenReturn({
             layer: 0,
-            status: OperationStatusNames.OperationComplete
+            status: OperationStatusNames.OperationComplete,
         });
 
         const gem: Gem = instance(mockGem);
@@ -99,7 +99,7 @@ export function dry_run_operation_tests(): void {
 
         when(mockGem.operationStatus).thenReturn({
             layer: 1,
-            status: OperationStatusNames.OperationComplete
+            status: OperationStatusNames.OperationComplete,
         });
 
         const gem: Gem = instance(mockGem);
@@ -129,7 +129,7 @@ export function dry_run_operation_tests(): void {
 
         when(mockGem.operationStatus).thenReturn({
             layer: 0,
-            status: OperationStatusNames.OperationComplete
+            status: OperationStatusNames.OperationComplete,
         });
 
         const gem: Gem = instance(mockGem);

@@ -1,4 +1,4 @@
-import { Dosojin, Gem, Receptacle } from "../../core";
+import { Dosojin, Gem, Receptacle } from '../../core';
 
 export class SimpleReceptacleMock extends Receptacle {
 

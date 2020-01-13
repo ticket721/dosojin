@@ -1,10 +1,10 @@
 import {instance, mock, reset, spy, verify, when} from 'ts-mockito';
 import {
     Dosojin,
-    Gem
+    Gem,
 } from '../../core';
-import {SimpleConnectorMock} from "../../mocks/connector/SimpleConnectorMock";
-import {SimpleReceptacleMock} from "../../mocks/receptacle/SimpleReceptacleMock";
+import {SimpleConnectorMock} from '../../mocks/connector/SimpleConnectorMock';
+import {SimpleReceptacleMock} from '../../mocks/receptacle/SimpleReceptacleMock';
 
 export function dry_run_transfer_tests(): void {
     let dosojin: Dosojin;
@@ -25,14 +25,14 @@ export function dry_run_transfer_tests(): void {
         await expect(dosojin.dryRunTransfer(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: 'received Gem with null transferStatus while on \'transfer\' actionType',
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 
     test('throw dosojin error when connector and receptacle status are null', async () => {
         when(mockGem.transferStatus).thenReturn({
             connector: null,
-            receptacle: null
+            receptacle: null,
         });
 
         const gem: Gem = instance(mockGem);
@@ -41,7 +41,7 @@ export function dry_run_transfer_tests(): void {
         await expect(dosojin.dryRunTransfer(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: `received Gem with 'transfer' action type, but no Connector or Receptacle for ${dosojinName} dosojin`,
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 
@@ -52,8 +52,8 @@ export function dry_run_transfer_tests(): void {
             connector: {
                 ...mockGem.transferStatus.connector,
                 dosojin: dosojinName,
-                name: expectedConnectorName
-            }
+                name: expectedConnectorName,
+            },
         });
 
         const gem: Gem = instance(mockGem);
@@ -62,7 +62,7 @@ export function dry_run_transfer_tests(): void {
         await expect(dosojin.dryRunTransfer(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: `unknown Connector ${expectedConnectorName} in Dosojin ${dosojinName}`,
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 
@@ -79,8 +79,8 @@ export function dry_run_transfer_tests(): void {
             connector: {
                 ...mockGem.transferStatus.connector,
                 dosojin: dosojinName,
-                name: expectedConnectorName
-            }
+                name: expectedConnectorName,
+            },
         });
 
         const gem: Gem = instance(mockGem);
@@ -97,8 +97,8 @@ export function dry_run_transfer_tests(): void {
             receptacle: {
                 ...mockGem.transferStatus.receptacle,
                 dosojin: dosojinName,
-                name: expectedReceptacleName
-            }
+                name: expectedReceptacleName,
+            },
         });
 
         const gem: Gem = instance(mockGem);
@@ -107,7 +107,7 @@ export function dry_run_transfer_tests(): void {
         await expect(dosojin.dryRunTransfer(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: `unknown Receptacle ${expectedReceptacleName} in Dosojin ${dosojinName}`,
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 
@@ -124,8 +124,8 @@ export function dry_run_transfer_tests(): void {
             receptacle: {
                 ...mockGem.transferStatus.receptacle,
                 dosojin: dosojinName,
-                name: expectedReceptacleName
-            }
+                name: expectedReceptacleName,
+            },
         });
 
         const gem: Gem = instance(mockGem);

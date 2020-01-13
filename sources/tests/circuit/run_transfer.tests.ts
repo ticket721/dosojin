@@ -5,7 +5,7 @@ import {
     OperationStatusNames,
     SingleDosojinLayer,
     TransferConnectorStatusNames,
-    TransferReceptacleStatusNames
+    TransferReceptacleStatusNames,
 } from '../../core';
 
 export function run_transfer_tests(): void {
@@ -33,14 +33,14 @@ export function run_transfer_tests(): void {
         await expect(circuit.runTransfer(gem)).rejects.toMatchObject({
             circuit: circuitName,
             message: 'received Gem with null transferStatus',
-            name: 'CircuitError'
+            name: 'CircuitError',
         });
     });
 
     test('throw error when connector and receptacle status are null', async () => {
         when(mockGem.transferStatus).thenReturn({
             connector: null,
-            receptacle: null
+            receptacle: null,
         });
 
         const gem: Gem = instance(mockGem);
@@ -49,7 +49,7 @@ export function run_transfer_tests(): void {
         await expect(circuit.runTransfer(gem)).rejects.toMatchObject({
             circuit: circuitName,
             message: `received Gem with 'transfer' action type, but no Connector or Receptacle found`,
-            name: 'CircuitError'
+            name: 'CircuitError',
         });
     });
 
@@ -57,13 +57,13 @@ export function run_transfer_tests(): void {
         when(mockGem.transferStatus).thenReturn({
             connector: {
                 ...mockGem.transferStatus.connector,
-                status: TransferConnectorStatusNames.TransferComplete
+                status: TransferConnectorStatusNames.TransferComplete,
             },
             receptacle: {
                 ...mockGem.transferStatus.receptacle,
                 layer: 0,
-                status: TransferReceptacleStatusNames.TransferComplete
-            }
+                status: TransferReceptacleStatusNames.TransferComplete,
+            },
         });
 
         const gem: Gem = instance(mockGem);
@@ -83,8 +83,8 @@ export function run_transfer_tests(): void {
             receptacle: {
                 ...mockGem.transferStatus.receptacle,
                 layer: 0,
-                status: TransferReceptacleStatusNames.TransferComplete
-            }
+                status: TransferReceptacleStatusNames.TransferComplete,
+            },
         });
 
         const gem: Gem = instance(mockGem);
@@ -103,9 +103,9 @@ export function run_transfer_tests(): void {
             connector: {
                 ...mockGem.transferStatus.connector,
                 layer: 1,
-                status: TransferConnectorStatusNames.TransferComplete
+                status: TransferConnectorStatusNames.TransferComplete,
             },
-            receptacle: null
+            receptacle: null,
         });
 
         const gem: Gem = instance(mockGem);
@@ -120,9 +120,9 @@ export function run_transfer_tests(): void {
             connector: {
                 ...mockGem.transferStatus.connector,
                 layer: 0,
-                status: TransferConnectorStatusNames.TransferComplete
+                status: TransferConnectorStatusNames.TransferComplete,
             },
-            receptacle: null
+            receptacle: null,
         });
 
         const gem: Gem = instance(mockGem);
@@ -138,8 +138,8 @@ export function run_transfer_tests(): void {
             receptacle: {
                 ...mockGem.transferStatus.connector,
                 layer: 1,
-                status: TransferReceptacleStatusNames.ReadyForTransfer
-            }
+                status: TransferReceptacleStatusNames.ReadyForTransfer,
+            },
         });
 
         const gem: Gem = instance(mockGem);
@@ -156,8 +156,8 @@ export function run_transfer_tests(): void {
             receptacle: {
                 ...mockGem.transferStatus.connector,
                 layer: 2,
-                status: TransferReceptacleStatusNames.ReadyForTransfer
-            }
+                status: TransferReceptacleStatusNames.ReadyForTransfer,
+            },
         });
 
         const gem: Gem = instance(mockGem);
@@ -166,7 +166,7 @@ export function run_transfer_tests(): void {
         await expect(circuit.runTransfer(gem)).rejects.toMatchObject({
             circuit: circuitName,
             message: 'received Gem with invalid Receptacle Layer index 2 (max 1)',
-            name: 'CircuitError'
+            name: 'CircuitError',
         });
     });
 
@@ -175,7 +175,7 @@ export function run_transfer_tests(): void {
             connector: {
                 ...mockGem.transferStatus.connector,
                 layer: 2,
-                status: TransferConnectorStatusNames.ReadyForTransfer
+                status: TransferConnectorStatusNames.ReadyForTransfer,
             },
         });
 
@@ -185,7 +185,7 @@ export function run_transfer_tests(): void {
         await expect(circuit.runTransfer(gem)).rejects.toMatchObject({
             circuit: circuitName,
             message: 'received Gem with invalid Connector Layer index 2 (max 1)',
-            name: 'CircuitError'
+            name: 'CircuitError',
         });
     });
 
@@ -194,8 +194,8 @@ export function run_transfer_tests(): void {
             connector: {
                 ...mockGem.transferStatus.connector,
                 layer: 0,
-                status: TransferConnectorStatusNames.ReadyForTransfer
-            }
+                status: TransferConnectorStatusNames.ReadyForTransfer,
+            },
         });
 
         const gem: Gem = instance(mockGem);
@@ -213,13 +213,13 @@ export function run_transfer_tests(): void {
             connector: {
                 ...mockGem.transferStatus.connector,
                 layer: 0,
-                status: TransferConnectorStatusNames.ReadyForTransfer
+                status: TransferConnectorStatusNames.ReadyForTransfer,
             },
             receptacle: {
                 ...mockGem.transferStatus.connector,
                 layer: 0,
-                status: TransferReceptacleStatusNames.ReadyForTransfer
-            }
+                status: TransferReceptacleStatusNames.ReadyForTransfer,
+            },
         });
 
         const gem: Gem = instance(mockGem);

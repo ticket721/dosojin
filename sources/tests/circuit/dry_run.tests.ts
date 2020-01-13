@@ -2,8 +2,9 @@ import { instance, mock, reset, spy, verify, when } from 'ts-mockito';
 import {
     Circuit,
     CircuitError,
-    Gem
+    Gem,
 } from '../../core';
+import {CompleteGemMock} from '../../mocks/gem/CompleteGemMock';
 
 export function dry_run_tests(): void {
     let circuit: Circuit;
@@ -31,20 +32,16 @@ export function dry_run_tests(): void {
         await expect(circuit.dryRun(gem)).resolves.toMatchObject(gem);
     });
 
-    xtest('call dryRunEntitySelection while gem status is not \'Complete\', \'Error\' or \'Fatal\'', async () => {
+    test('call dryRunEntitySelection while gem status is not \'Complete\', \'Error\' or \'Fatal\'', async () => {
         const spiedCircuit = spy(circuit);
-
-        setTimeout(() => {
-            when(mockGem.gemStatus).thenReturn('Complete');
-        }, 500);
 
         const gem: Gem = instance(mockGem);
 
-        when(spiedCircuit.dryRunEntitySelection(gem)).thenResolve(instance(mockGem));
+        when(spiedCircuit.dryRunEntitySelection(gem)).thenResolve(new CompleteGemMock());
 
         await circuit.dryRun(gem);
 
-        verify(spiedCircuit.dryRunEntitySelection(gem)).called();
+        verify(spiedCircuit.dryRunEntitySelection(gem)).once();
     });
 
     test('throw Circuit error when gem actionType is null', async () => {
@@ -55,7 +52,7 @@ export function dry_run_tests(): void {
         await expect(circuit.dryRunEntitySelection(gem)).rejects.toMatchObject({
             circuit: circuitName,
             message: `received Gem with invalid actionType ${gem.actionType}`,
-            name: 'CircuitError'
+            name: 'CircuitError',
         });
     });
 
@@ -71,7 +68,7 @@ export function dry_run_tests(): void {
         await expect(circuit.dryRunEntitySelection(gem)).rejects.toMatchObject({
             circuit: circuitName,
             message: 'operation failed',
-            name: 'CircuitError'
+            name: 'CircuitError',
         });
     });
 
@@ -86,7 +83,7 @@ export function dry_run_tests(): void {
         await expect(circuit.dryRunEntitySelection(gem)).rejects.toMatchObject({
             circuit: circuitName,
             message: 'transfer failed',
-            name: 'CircuitError'
+            name: 'CircuitError',
         });
     });
 

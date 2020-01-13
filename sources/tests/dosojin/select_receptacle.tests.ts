@@ -2,7 +2,7 @@ import { instance, mock, reset, verify } from 'ts-mockito';
 import {
     Dosojin,
     Gem,
-    Receptacle
+    Receptacle,
 } from '../../core';
 
 export function select_receptacle_tests(): void {
@@ -25,7 +25,7 @@ export function select_receptacle_tests(): void {
         await expect(dosojin.selectReceptacle(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: `trying to select Receptacle, but Dosojin does not contain any`,
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 
@@ -41,7 +41,7 @@ export function select_receptacle_tests(): void {
         await expect(dosojin.selectReceptacle(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: `trying to select Receptacle, but Dosojin contains more than one. Override selectReceptacle method to provide custom selection.`,
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 

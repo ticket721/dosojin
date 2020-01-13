@@ -1,11 +1,11 @@
-import BN from "bn.js";
-import { instance, mock, reset, when } from "ts-mockito";
+import BN from 'bn.js';
+import { instance, mock, reset, when } from 'ts-mockito';
 import {
     Dosojin,
     Gem,
     OperationStatusNames,
     TransferConnectorStatusNames,
-    TransferReceptacleStatusNames
+    TransferReceptacleStatusNames,
 } from '../../core';
 
 export function add_cost_tests(): void {
@@ -28,7 +28,7 @@ export function add_cost_tests(): void {
             expect(gem.addCost(dosojin, new BN(2), 'fiat_euro', 'for testing purposes')).toThrow();
         } catch (e) {
             expect(e).toMatchObject({
-                message: 'Cannot add cost on gem with no actionType'
+                message: 'Cannot add cost on gem with no actionType',
             });
         }
 
@@ -40,14 +40,14 @@ export function add_cost_tests(): void {
                 dosojin: 'dosojin',
                 layer: 0,
                 name: 'connector',
-                status: TransferConnectorStatusNames.ReadyForTransfer
+                status: TransferConnectorStatusNames.ReadyForTransfer,
             },
             receptacle: {
                 dosojin: 'dosojin',
                 layer: 0,
                 name: 'receptacle',
-                status: TransferReceptacleStatusNames.ReadyForTransfer
-            }
+                status: TransferReceptacleStatusNames.ReadyForTransfer,
+            },
         };
 
         when(mockDosojin.name).thenReturn('invalidDosojin');
@@ -56,7 +56,7 @@ export function add_cost_tests(): void {
             expect(gem.addCost(dosojin, new BN(2), 'fiat_euro', 'for testing purposes')).toThrow();
         } catch (e) {
             expect(e).toMatchObject({
-                message: 'Cannot find specified dosojin inside transferStatus'
+                message: 'Cannot find specified dosojin inside transferStatus',
             });
         }
     });
@@ -74,8 +74,8 @@ export function add_cost_tests(): void {
                 dosojin: expectedDosojinName,
                 layer: expectedLayer,
                 name: expectedConnectorName,
-                status: TransferConnectorStatusNames.ReadyForTransfer
-            }
+                status: TransferConnectorStatusNames.ReadyForTransfer,
+            },
         };
 
         when(mockDosojin.name).thenReturn(expectedDosojinName);
@@ -89,7 +89,7 @@ export function add_cost_tests(): void {
             layer: expectedLayer,
             reason: expectedReason,
             scope: expectedScope,
-            value: expectedValue
+            value: expectedValue,
         }]);
     });
 
@@ -106,8 +106,8 @@ export function add_cost_tests(): void {
                 dosojin: expectedDosojinName,
                 layer: expectedLayer,
                 name: expectedReceptacleName,
-                status: TransferReceptacleStatusNames.ReadyForTransfer
-            }
+                status: TransferReceptacleStatusNames.ReadyForTransfer,
+            },
         };
 
         when(mockDosojin.name).thenReturn(expectedDosojinName);
@@ -121,7 +121,7 @@ export function add_cost_tests(): void {
             layer: expectedLayer,
             reason: expectedReason,
             scope: expectedScope,
-            value: expectedValue
+            value: expectedValue,
         }]);
     });
 
@@ -140,9 +140,9 @@ export function add_cost_tests(): void {
             layer: 0,
             operation_list: [
                 expectedOperationName,
-                'op_2'
+                'op_2',
             ],
-            status: OperationStatusNames.ReadyForOperation
+            status: OperationStatusNames.ReadyForOperation,
         };
 
         when(mockDosojin.name).thenReturn(expectedDosojinName);
@@ -156,7 +156,7 @@ export function add_cost_tests(): void {
             layer: expectedLayer,
             reason: expectedReason,
             scope: expectedScope,
-            value: expectedValue
+            value: expectedValue,
         }]);
     });
 }

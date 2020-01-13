@@ -1,6 +1,6 @@
-import BN from "bn.js";
+import BN from 'bn.js';
 import {
-    Gem
+    Gem,
 } from '../../core';
 
 export function check_scopes_compatibility_tests(): void {

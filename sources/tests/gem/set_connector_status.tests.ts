@@ -14,7 +14,7 @@ export function set_connector_status_tests(): void {
             expect(gem.setConnectorStatus(TransferConnectorStatusNames.ReadyForTransfer)).toThrow();
         } catch (e) {
             expect(e).toMatchObject({
-                message: 'Invalid actionType for setConnectorStatus call (operation instead of transfer)'
+                message: 'Invalid actionType for setConnectorStatus call (operation instead of transfer)',
             });
         }
     });
@@ -25,7 +25,7 @@ export function set_connector_status_tests(): void {
         gem.setConnectorStatus(expectedStatus);
 
         expect(gem.transferStatus.connector).toMatchObject({
-            status: expectedStatus
+            status: expectedStatus,
         });
     });
 }

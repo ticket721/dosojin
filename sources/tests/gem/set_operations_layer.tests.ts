@@ -1,5 +1,5 @@
 import {
-    Gem
+    Gem,
 } from '../../core';
 
 export function set_operations_layer_tests(): void {
@@ -14,7 +14,7 @@ export function set_operations_layer_tests(): void {
             expect(gem.setOperationsLayer(0)).toThrow();
         } catch (e) {
             expect(e).toMatchObject({
-                message: 'Invalid actionType for setOperationsLayer call (transfer instead of operation)'
+                message: 'Invalid actionType for setOperationsLayer call (transfer instead of operation)',
             });
         }
     });
@@ -27,7 +27,7 @@ export function set_operations_layer_tests(): void {
         gem.setOperationsLayer(expectedLayer);
 
         expect(gem.operationStatus).toMatchObject({
-            layer: expectedLayer
+            layer: expectedLayer,
         });
     });
 }

@@ -1,10 +1,10 @@
-import { instance, mock, reset, when } from "ts-mockito";
+import { instance, mock, reset, when } from 'ts-mockito';
 import {
     Dosojin,
     Gem,
     OperationStatusNames,
     TransferConnectorStatusNames,
-    TransferReceptacleStatusNames
+    TransferReceptacleStatusNames,
 } from '../../core';
 
 export function add_history_entity_tests(): void {
@@ -27,7 +27,7 @@ export function add_history_entity_tests(): void {
             expect(gem.addHistoryEntity(dosojin)).toThrow();
         } catch (e) {
             expect(e).toMatchObject({
-                message: 'Cannot add history entity on gem with no actionType'
+                message: 'Cannot add history entity on gem with no actionType',
             });
         }
 
@@ -39,14 +39,14 @@ export function add_history_entity_tests(): void {
                 dosojin: 'dosojin',
                 layer: 0,
                 name: 'connector',
-                status: TransferConnectorStatusNames.ReadyForTransfer
+                status: TransferConnectorStatusNames.ReadyForTransfer,
             },
             receptacle: {
                 dosojin: 'dosojin',
                 layer: 0,
                 name: 'receptacle',
-                status: TransferReceptacleStatusNames.ReadyForTransfer
-            }
+                status: TransferReceptacleStatusNames.ReadyForTransfer,
+            },
         };
 
         when(mockDosojin.name).thenReturn('invalidDosojin');
@@ -55,7 +55,7 @@ export function add_history_entity_tests(): void {
             expect(gem.addHistoryEntity(dosojin)).toThrow();
         } catch (e) {
             expect(e).toMatchObject({
-                message: 'Cannot find specified dosojin inside transferStatus'
+                message: 'Cannot find specified dosojin inside transferStatus',
             });
         }
     });
@@ -70,8 +70,8 @@ export function add_history_entity_tests(): void {
                 dosojin: expectedDosojinName,
                 layer: expectedLayer,
                 name: expectedConnectorName,
-                status: TransferConnectorStatusNames.ReadyForTransfer
-            }
+                status: TransferConnectorStatusNames.ReadyForTransfer,
+            },
         };
 
         when(mockDosojin.name).thenReturn(expectedDosojinName);
@@ -83,7 +83,7 @@ export function add_history_entity_tests(): void {
             dosojin: expectedDosojinName,
             entityName: expectedConnectorName,
             entityType: 'connector',
-            layer: expectedLayer
+            layer: expectedLayer,
         }]);
     });
 
@@ -97,8 +97,8 @@ export function add_history_entity_tests(): void {
                 dosojin: expectedDosojinName,
                 layer: expectedLayer,
                 name: expectedReceptacleName,
-                status: TransferReceptacleStatusNames.ReadyForTransfer
-            }
+                status: TransferReceptacleStatusNames.ReadyForTransfer,
+            },
         };
 
         when(mockDosojin.name).thenReturn(expectedDosojinName);
@@ -110,7 +110,7 @@ export function add_history_entity_tests(): void {
             dosojin: expectedDosojinName,
             entityName: expectedReceptacleName,
             entityType: 'receptacle',
-            layer: expectedLayer
+            layer: expectedLayer,
         }]);
     });
 
@@ -126,9 +126,9 @@ export function add_history_entity_tests(): void {
             layer: 0,
             operation_list: [
                 expectedOperationName,
-                'op_2'
+                'op_2',
             ],
-            status: OperationStatusNames.ReadyForOperation
+            status: OperationStatusNames.ReadyForOperation,
         };
 
         when(mockDosojin.name).thenReturn(expectedDosojinName);
@@ -140,7 +140,7 @@ export function add_history_entity_tests(): void {
             dosojin: expectedDosojinName,
             entityName: expectedOperationName,
             entityType: 'operation',
-            layer: expectedLayer
+            layer: expectedLayer,
         }]);
     });
 
@@ -155,9 +155,9 @@ export function add_history_entity_tests(): void {
             dosojin: 'dosojin',
             layer: 0,
             operation_list: [
-                expectedOperationName
+                expectedOperationName,
             ],
-            status: OperationStatusNames.ReadyForOperation
+            status: OperationStatusNames.ReadyForOperation,
         };
 
         when(mockDosojin.name).thenReturn(expectedDosojinName);
@@ -169,7 +169,7 @@ export function add_history_entity_tests(): void {
             dosojin: expectedDosojinName,
             entityName: expectedOperationName,
             entityType: 'operation',
-            layer: expectedLayer
+            layer: expectedLayer,
         }]);
 
         gem.addHistoryEntity(dosojin);
@@ -179,7 +179,7 @@ export function add_history_entity_tests(): void {
             dosojin: expectedDosojinName,
             entityName: expectedOperationName,
             entityType: 'operation',
-            layer: expectedLayer
+            layer: expectedLayer,
         }]);
     });
 }

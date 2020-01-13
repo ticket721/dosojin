@@ -1,9 +1,9 @@
 import { instance, mock, reset, spy, verify, when } from 'ts-mockito';
 import {
     Dosojin,
-    Gem
+    Gem,
 } from '../../core';
-import {SimpleReceptacleMock} from "../../mocks/receptacle/SimpleReceptacleMock";
+import {SimpleReceptacleMock} from '../../mocks/receptacle/SimpleReceptacleMock';
 
 export function get_receptacle_info_tests(): void {
     let dosojin: Dosojin;
@@ -24,7 +24,7 @@ export function get_receptacle_info_tests(): void {
         await expect(dosojin.getReceptacleInfo(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: `received Gem with invalid actionType ${gem.actionType} while getting Receptacle info`,
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 
@@ -34,8 +34,8 @@ export function get_receptacle_info_tests(): void {
         when(mockGem.transferStatus).thenReturn({
             receptacle: {
                 ...mockGem.transferStatus.receptacle,
-                dosojin: 'invalidDosojin'
-            }
+                dosojin: 'invalidDosojin',
+            },
         });
 
         const gem: Gem = instance(mockGem);
@@ -44,7 +44,7 @@ export function get_receptacle_info_tests(): void {
         await expect(dosojin.getReceptacleInfo(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: `received Gem with 'transfer' action type, but no Connector or Receptacle for ${dosojinName} Dosojin`,
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 
@@ -55,8 +55,8 @@ export function get_receptacle_info_tests(): void {
             receptacle: {
                 ...mockGem.transferStatus.receptacle,
                 dosojin: dosojinName,
-                name: 'receptacle'
-            }
+                name: 'receptacle',
+            },
         });
 
         const gem: Gem = instance(mockGem);
@@ -65,7 +65,7 @@ export function get_receptacle_info_tests(): void {
         await expect(dosojin.getReceptacleInfo(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: `unknown Receptacle receptacle in Dosojin ${dosojinName}`,
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 
@@ -84,8 +84,8 @@ export function get_receptacle_info_tests(): void {
             receptacle: {
                 ...mockGem.transferStatus.receptacle,
                 dosojin: dosojinName,
-                name: expectedReceptacleName
-            }
+                name: expectedReceptacleName,
+            },
         });
 
         const gem: Gem = instance(mockGem);

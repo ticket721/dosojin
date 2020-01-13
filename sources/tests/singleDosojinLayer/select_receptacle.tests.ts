@@ -1,7 +1,7 @@
 import {instance, mock, reset, verify, when} from 'ts-mockito';
 import {
     Dosojin,
-    Gem, SingleDosojinLayer
+    Gem, SingleDosojinLayer,
 } from '../../core';
 
 export function select_receptacle_tests(): void {
@@ -30,7 +30,7 @@ export function select_receptacle_tests(): void {
         await expect(sdl.selectReceptacle(gem)).rejects.toMatchObject({
             layer: sdl.index,
             message: `no Dosojin in Layer ${sdlName}`,
-            name: 'LayerError'
+            name: 'LayerError',
         });
     });
 

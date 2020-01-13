@@ -1,9 +1,9 @@
 import { instance, mock, reset, spy, verify, when } from 'ts-mockito';
 import {
     Dosojin,
-    Gem
+    Gem,
 } from '../../core';
-import {SimpleConnectorMock} from "../../mocks/connector/SimpleConnectorMock";
+import {SimpleConnectorMock} from '../../mocks/connector/SimpleConnectorMock';
 
 export function get_connector_info_tests(): void {
     let dosojin: Dosojin;
@@ -24,7 +24,7 @@ export function get_connector_info_tests(): void {
         await expect(dosojin.getConnectorInfo(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: `received Gem with invalid actionType ${gem.actionType} while getting Connector info`,
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 
@@ -34,8 +34,8 @@ export function get_connector_info_tests(): void {
         when(mockGem.transferStatus).thenReturn({
             connector: {
                 ...mockGem.transferStatus.connector,
-                dosojin: 'invalidDosojin'
-            }
+                dosojin: 'invalidDosojin',
+            },
         });
 
         const gem: Gem = instance(mockGem);
@@ -44,7 +44,7 @@ export function get_connector_info_tests(): void {
         await expect(dosojin.getConnectorInfo(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: `received Gem with 'transfer' action type, but no Connector or Receptacle for ${dosojinName} Dosojin`,
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 
@@ -55,8 +55,8 @@ export function get_connector_info_tests(): void {
             connector: {
                 ...mockGem.transferStatus.connector,
                 dosojin: dosojinName,
-                name: 'connector'
-            }
+                name: 'connector',
+            },
         });
 
         const gem: Gem = instance(mockGem);
@@ -65,7 +65,7 @@ export function get_connector_info_tests(): void {
         await expect(dosojin.getConnectorInfo(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: `unknown Connector connector in Dosojin ${dosojinName}`,
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 
@@ -84,8 +84,8 @@ export function get_connector_info_tests(): void {
             connector: {
                 ...mockGem.transferStatus.connector,
                 dosojin: dosojinName,
-                name: expectedConnectorName
-            }
+                name: expectedConnectorName,
+            },
         });
 
         const gem: Gem = instance(mockGem);

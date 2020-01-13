@@ -2,8 +2,7 @@ import { instance, mock, reset, verify, when } from 'ts-mockito';
 import {
     Dosojin,
     Gem,
-    LayerError,
-    SingleDosojinLayer
+    SingleDosojinLayer,
 } from '../../core';
 
 export function dry_run_operation_tests(): void {
@@ -34,14 +33,14 @@ export function dry_run_operation_tests(): void {
         await expect(sdl.dryRunOperation(gem)).rejects.toMatchObject({
             layer: sdl.index,
             message: 'received Gem with null operationStatus',
-            name: 'LayerError'
+            name: 'LayerError',
         });
     });
 
     test('throw Layer error when gem operation status layer does not match current layer', async () => {
         when(mockGem.operationStatus).thenReturn({
             ...mockGem.operationStatus,
-            layer: 1
+            layer: 1,
         });
 
         const gem: Gem = instance(mockGem);
@@ -50,14 +49,14 @@ export function dry_run_operation_tests(): void {
         await expect(sdl.dryRunOperation(gem)).rejects.toMatchObject({
             layer: sdl.index,
             message: `received Gem with invalid index: got 1, expected ${sdl.index}`,
-            name: 'LayerError'
+            name: 'LayerError',
         });
     });
 
     test('dry run gem on dosojin when gem operations layer match current layer', async () => {
         when(mockGem.operationStatus).thenReturn({
             ...mockGem.operationStatus,
-            layer: 0
+            layer: 0,
         });
 
         const gem: Gem = instance(mockGem);

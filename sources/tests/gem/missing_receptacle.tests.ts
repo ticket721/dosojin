@@ -1,7 +1,7 @@
 import {
     Gem,
-    TransferConnectorStatusNames
-} from '../../core';;
+    TransferConnectorStatusNames,
+} from '../../core';
 
 export function missing_receptacle_tests(): void {
     let gem: Gem;
@@ -20,8 +20,8 @@ export function missing_receptacle_tests(): void {
                 dosojin: expectedDosojinName,
                 layer: expectedLayer,
                 name: expectedConnectorName,
-                status: TransferConnectorStatusNames.ReadyForTransfer
-            }
+                status: TransferConnectorStatusNames.ReadyForTransfer,
+            },
         };
 
         gem.missingReceptacle();
@@ -31,7 +31,7 @@ export function missing_receptacle_tests(): void {
             entityName: expectedConnectorName,
             entityType: 'connector',
             layer: expectedLayer,
-            message: null
+            message: null,
         });
 
         expect(gem.gemStatus).toEqual('MissingReceptacle');

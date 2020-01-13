@@ -2,7 +2,7 @@ import {instance, mock, reset, spy, verify, when} from 'ts-mockito';
 import {
     Dosojin,
     DosojinError,
-    Gem
+    Gem,
 } from '../../core';
 
 export function dry_run_tests(): void {
@@ -24,7 +24,7 @@ export function dry_run_tests(): void {
         await expect(dosojin.dryRun(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: `received Gem with invalid actionType ${gem.actionType}`,
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 
@@ -40,7 +40,7 @@ export function dry_run_tests(): void {
         await expect(dosojin.dryRun(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: 'operation failed',
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 
@@ -55,7 +55,7 @@ export function dry_run_tests(): void {
         await expect(dosojin.dryRun(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: 'transfer failed',
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 

@@ -1,9 +1,9 @@
 import { instance, mock, reset, spy, verify, when } from 'ts-mockito';
 import {
     Dosojin,
-    Gem
+    Gem,
 } from '../../core';
-import {SimpleOperationMock} from "../../mocks/operation/SimpleOperationMock";
+import { SimpleOperationMock } from '../../mocks/operation/SimpleOperationMock';
 
 export function run_operation_tests(): void {
     let dosojin: Dosojin;
@@ -24,13 +24,13 @@ export function run_operation_tests(): void {
         await expect(dosojin.runOperation(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: 'received Gem with null operationStatus while on \'operation\' actionType',
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 
     test('throw dosojin error when dosojin of gem operation status is invalid', async () => {
         when(mockGem.operationStatus).thenReturn({
-            dosojin: 'invalidDosojin'
+            dosojin: 'invalidDosojin',
         });
 
         const gem: Gem = instance(mockGem);
@@ -39,14 +39,14 @@ export function run_operation_tests(): void {
         await expect(dosojin.runOperation(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: `received invalid Gem with invalid Dosojin name: expected ${dosojinName}, got invalidDosojin`,
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 
     test('throw dosojin error when operation list is empty', async () => {
         when(mockGem.operationStatus).thenReturn({
-            dosojin:dosojinName,
-            operation_list: []
+            dosojin: dosojinName,
+            operation_list: [],
         });
 
         const gem: Gem = instance(mockGem);
@@ -55,7 +55,7 @@ export function run_operation_tests(): void {
         await expect(dosojin.runOperation(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: `received invalid Gem with no Operations left.`,
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 
@@ -66,11 +66,11 @@ export function run_operation_tests(): void {
         dosojin.addOperation(mockOperation2);
 
         when(mockGem.operationStatus).thenReturn({
-            dosojin:dosojinName,
+            dosojin: dosojinName,
             operation_list: [
                 mockOperation1.name,
-                mockOperation2.name
-            ]
+                mockOperation2.name,
+            ],
         });
 
         const gem: Gem = instance(mockGem);
@@ -79,7 +79,7 @@ export function run_operation_tests(): void {
         await expect(dosojin.runOperation(gem)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: `unknown Operation ${mockOperation1.name} in Dosojin ${dosojinName}`,
-            name: 'DosojinError'
+            name: 'DosojinError',
         });
     });
 
@@ -91,10 +91,10 @@ export function run_operation_tests(): void {
         const spiedOperation: SimpleOperationMock = spy(mockOperation1);
 
         when(mockGem.operationStatus).thenReturn({
-            dosojin:dosojinName,
+            dosojin: dosojinName,
             operation_list: [
                 mockOperation1.name,
-            ]
+            ],
         });
 
         const gem: Gem = instance(mockGem);

@@ -14,7 +14,7 @@ export function set_receptacle_status_tests(): void {
             expect(gem.setReceptacleStatus(TransferReceptacleStatusNames.ReadyForTransfer)).toThrow();
         } catch (e) {
             expect(e).toMatchObject({
-                message: 'Invalid actionType for setReceptacleStatus call (operation instead of transfer)'
+                message: 'Invalid actionType for setReceptacleStatus call (operation instead of transfer)',
             });
         }
     });
@@ -25,7 +25,7 @@ export function set_receptacle_status_tests(): void {
         gem.setReceptacleStatus(expectedStatus);
 
         expect(gem.transferStatus.receptacle).toMatchObject({
-            status: expectedStatus
+            status: expectedStatus,
         });
     });
 }

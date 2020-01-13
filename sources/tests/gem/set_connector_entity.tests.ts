@@ -1,10 +1,10 @@
-import BN from "bn.js";
-import {anything, instance, mock, reset, spy, when} from "ts-mockito";
+import BN from 'bn.js';
+import {anything, instance, mock, reset, spy, when} from 'ts-mockito';
 import {
     Dosojin,
-    Gem
+    Gem,
 } from '../../core';
-import {SimpleConnectorMock} from "../../mocks/connector/SimpleConnectorMock";
+import {SimpleConnectorMock} from '../../mocks/connector/SimpleConnectorMock';
 
 export function set_connector_entity_tests(): void {
     let gem: Gem;
@@ -27,7 +27,7 @@ export function set_connector_entity_tests(): void {
 
         await expect(gem.setConnectorEntity('dosojin', connector)).rejects.toThrow();
         await expect(gem.setConnectorEntity('dosojin', connector)).rejects.toMatchObject({
-            message: 'Invalid actionType for setConnectorEntity call (operation instead of transfer)'
+            message: 'Invalid actionType for setConnectorEntity call (operation instead of transfer)',
         });
     });
 
@@ -45,7 +45,7 @@ export function set_connector_entity_tests(): void {
 
         await expect(gem.setConnectorEntity('dosojin', connector)).rejects.toThrow();
         await expect(gem.setConnectorEntity('dosojin', connector)).rejects.toMatchObject({
-            message: `Incompatible scopes with entity ${expectedName}: got ${expectedScopes} expected to match ${['scope']}`
+            message: `Incompatible scopes with entity ${expectedName}: got ${expectedScopes} expected to match ${['scope']}`,
         });
     });
 
@@ -60,7 +60,7 @@ export function set_connector_entity_tests(): void {
 
         expect(gem.transferStatus.connector).toMatchObject({
             dosojin: expectedDosojin,
-            name: expectedName
+            name: expectedName,
         });
     });
 }

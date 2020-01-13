@@ -1,5 +1,5 @@
 import {
-    Gem
+    Gem,
 } from '../../core';
 
 export function set_connector_layer_tests(): void {
@@ -16,7 +16,7 @@ export function set_connector_layer_tests(): void {
             expect(gem.setConnectorLayer(0)).toThrow();
         } catch (e) {
             expect(e).toMatchObject({
-                message: 'Invalid actionType for setConnectorLayer call (operation instead of transfer)'
+                message: 'Invalid actionType for setConnectorLayer call (operation instead of transfer)',
             });
         }
     });
@@ -27,7 +27,7 @@ export function set_connector_layer_tests(): void {
         gem.setConnectorLayer(expectedLayer);
 
         expect(gem.transferStatus.connector).toMatchObject({
-            layer: expectedLayer
+            layer: expectedLayer,
         });
     });
 }

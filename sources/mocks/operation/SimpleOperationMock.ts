@@ -1,4 +1,4 @@
-import { Dosojin, Gem, Operation } from "../../core";
+import { Dosojin, Gem, Operation } from '../../core';
 
 export class SimpleOperationMock extends Operation {
 

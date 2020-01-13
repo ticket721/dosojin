@@ -1,5 +1,5 @@
 import {
-    Gem
+    Gem,
 } from '../../core';
 
 export function set_action_type_tests(): void {

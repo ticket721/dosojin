@@ -1,4 +1,4 @@
-import {Connector, Dosojin, Gem } from "../../core";
+import {Connector, Dosojin, Gem } from '../../core';
 
 export class SimpleConnectorMock extends Connector {
 
@@ -29,5 +29,4 @@ export class SimpleConnectorMock extends Connector {
     public async setReceptacleInfo(info: any): Promise<void> {
         return null;
     }
-
 }

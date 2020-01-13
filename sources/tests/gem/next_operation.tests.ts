@@ -1,5 +1,6 @@
 import {
-    Gem, OperationStatusNames
+    Gem,
+    OperationStatusNames,
 } from '../../core';
 
 export function next_operation_tests(): void {
@@ -14,8 +15,8 @@ export function next_operation_tests(): void {
             expect(gem.nextOperation()).toThrow();
         } catch (e) {
             expect(e).toMatchObject({
-                message: 'Invalid actionType for nextOperation call (transfer instead of operation)'
-            })
+                message: 'Invalid actionType for nextOperation call (transfer instead of operation)',
+            });
         }
     });
 
@@ -26,8 +27,8 @@ export function next_operation_tests(): void {
             expect(gem.nextOperation()).toThrow();
         } catch (e) {
             expect(e).toMatchObject({
-                message: 'Invalid nextOperation call with null operationStatus'
-            })
+                message: 'Invalid nextOperation call with null operationStatus',
+            });
         }
     });
 
@@ -39,18 +40,18 @@ export function next_operation_tests(): void {
             layer: 0,
             operation_list: [
                 'op_1',
-                'op_2'
+                'op_2',
             ],
-            status: OperationStatusNames.OperationComplete
+            status: OperationStatusNames.OperationComplete,
         };
 
         gem.nextOperation();
 
         expect(gem.operationStatus).toMatchObject({
             operation_list: [
-                'op_2'
+                'op_2',
             ],
-            status: OperationStatusNames.ReadyForOperation
+            status: OperationStatusNames.ReadyForOperation,
         });
     });
 
@@ -61,9 +62,9 @@ export function next_operation_tests(): void {
             dosojin: 'dosojin',
             layer: 0,
             operation_list: [
-                'op_1'
+                'op_1',
             ],
-            status: OperationStatusNames.OperationComplete
+            status: OperationStatusNames.OperationComplete,
         };
 
         gem.nextOperation();
