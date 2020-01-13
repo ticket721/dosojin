@@ -146,7 +146,6 @@ export class Circuit {
                         gem.setConnectorStatus(TransferConnectorStatusNames.ReadyForTransfer);
 
                         if (layer + 1 < this.layers.length) {
-                            console.log('test');
                             gem = await this.layers[layer + 1].selectReceptacle(gem);
                             gem.setReceptacleStatus(TransferReceptacleStatusNames.ReadyForTransfer);
                         }
