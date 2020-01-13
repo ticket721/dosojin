@@ -2,6 +2,7 @@ import { ActionEntity } from './ActionEntity';
 import { Circuit } from './Circuit';
 import { Connector } from './Connector';
 import { Dosojin } from './Dosojin';
+import { ActionError, CircuitError, DosojinError, LayerError } from './errors';
 import { Gem } from './Gem';
 import { GemPayload } from './GemPayload';
 import { Layer } from './Layer';
@@ -14,12 +15,16 @@ import { TransferConnectorStatusNames, TransferEntityInfo, TransferReceptacleSta
 
 export {
     ActionEntity,
+    ActionError,
     Circuit,
+    CircuitError,
     Connector,
     Dosojin,
+    DosojinError,
     Gem,
     GemPayload,
     Layer,
+    LayerError,
     MinMax,
     Operation,
     OperationStatus,

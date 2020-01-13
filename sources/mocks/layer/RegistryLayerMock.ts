@@ -1,24 +1,19 @@
-import { Dosojin } from '../../core/Dosojin';
-import { CircuitError } from '../../core/errors/CircuitError';
-import { Gem } from '../../core/Gem';
-import { Layer } from '../../core/Layer';
+import {
+    Dosojin,
+    Gem,
+    Layer
+} from '../../core';
 
 export class RegistryLayerMock extends Layer {
 
     private add: (name: string) => void;
     private rm: (name: string) => void;
 
-    public addDosojin(dosojin: Dosojin): void {
-        try {
-            return this.add(dosojin.name);
-            // console.log('test');
-        } catch(e) {
-            console.log(e);
-            throw new CircuitError('circuitName', e);
-        }
+    public async addDosojin(dosojin: Dosojin): Promise<void> {
+        this.add(dosojin.name);
     }
 
-    public removeDosojin(dosojin: Dosojin): void {
+    public async removeDosojin(dosojin: Dosojin): Promise<void> {
         this.rm(dosojin.name);
     }
 

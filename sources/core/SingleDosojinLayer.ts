@@ -1,5 +1,5 @@
 import { Dosojin }    from './Dosojin';
-import { LayerError } from './errors/LayerError';
+import { LayerError } from './errors';
 import { Gem }        from './Gem';
 import { Layer }      from './Layer';
 
@@ -234,7 +234,7 @@ export class SingleDosojinLayer extends Layer {
             throw new LayerError(this.index, `no Dosojin in Layer ${this.name}`);
         }
 
-        return (await this.dosojin.selectOperations(gem)).setOperationLayer(this.index);
+        return (await this.dosojin.selectOperations(gem)).setOperationsLayer(this.index);
     }
 
     public setRegistry(add: (name: string) => void, rm: (name: string) => void): void {
