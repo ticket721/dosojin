@@ -4,7 +4,8 @@ module.exports = {
     coveragePathIgnorePatterns: [
         '<rootDir>/sources/log',
         '<rootDir>/dist/*',
-        '<rootDir>/sources/tests/*'
+        '<rootDir>/sources/tests/*',
+        '<rootDir>/sources/mocks/*'
     ],
     testPathIgnorePatterns: [
         '<rootDir>/dist/'
