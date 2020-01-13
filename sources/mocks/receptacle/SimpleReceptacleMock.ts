@@ -14,10 +14,6 @@ export class SimpleReceptacleMock extends Receptacle {
         return null;
     }
 
-    public async cost(gem: Gem): Promise<Gem> {
-        return null;
-    }
-
     public async scopes(gem: Gem): Promise<string[]> {
         return null;
     }

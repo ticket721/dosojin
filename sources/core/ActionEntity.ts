@@ -9,6 +9,5 @@ export abstract class ActionEntity {
 
     public abstract async run(gem: Gem): Promise<Gem>;
     public abstract async dryRun(gem: Gem): Promise<Gem>;
-    public abstract async cost(gem: Gem): Promise<Gem>;
     public abstract async scopes(gem: Gem): Promise<string[]>;
 }

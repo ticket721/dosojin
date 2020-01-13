@@ -25,12 +25,7 @@ class BasicDosojinReceptacle extends Receptacle {
     }
 
     public async dryRun(gem: Gem): Promise<Gem> {
-        gem = await this.cost(gem);
-        return gem.setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete);
-    }
-
-    public async cost(gem: Gem): Promise<Gem> {
-        return gem.addCost(
+        gem = gem.addCost(
             this.dosojin,
             {
                 max: new BN(4),
@@ -47,6 +42,8 @@ class BasicDosojinReceptacle extends Receptacle {
             'fiat_usd',
             'Money money usd',
         );
+
+        return gem.setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete);
     }
 
     public async scopes(gem: Gem): Promise<string[]> {
@@ -141,12 +138,7 @@ class BasicDosojinOperation extends Operation {
     }
 
     public async dryRun(gem: Gem): Promise<Gem> {
-        gem = await this.cost(gem);
-        return gem.setOperationStatus(OperationStatusNames.OperationComplete);
-    }
-
-    public async cost(gem: Gem): Promise<Gem> {
-        return gem.addCost(
+        gem = gem.addCost(
             this.dosojin,
             {
                 max: new BN(4),
@@ -163,6 +155,8 @@ class BasicDosojinOperation extends Operation {
             'fiat_usd',
             'Money money usd',
         );
+
+        return gem.setOperationStatus(OperationStatusNames.OperationComplete);
     }
 
     public async scopes(gem: Gem): Promise<string[]> {
