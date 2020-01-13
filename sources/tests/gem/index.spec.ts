@@ -1,0 +1,42 @@
+import {add_cost_tests} from "./add_cost.tests";
+import {add_history_entity_tests} from "./add_history_entity.tests";
+import {check_scopes_compatibility_tests} from "./check_scopes_compatibility.tests";
+import {error_tests} from "./error.tests";
+import {fatal_tests} from "./fatal.tests";
+import {missing_receptacle_tests} from "./missing_receptacle.tests";
+import {next_operation_tests} from "./next_operation.tests";
+import {set_action_type_tests} from "./set_action_type.tests";
+import {set_connector_entity_tests} from "./set_connector_entity.tests";
+import {set_connector_layer_tests} from "./set_connector_layer.tests";
+import {set_connector_status_tests} from "./set_connector_status.tests";
+import {set_gem_status_tests} from "./set_gem_status.tests";
+import {set_operation_entities_tests} from "./set_operation_entities.tests";
+import {set_operations_layer_tests} from "./set_operations_layer.tests";
+import {set_operations_status_tests} from "./set_operations_status.tests";
+import {set_receptacle_entity_tests} from "./set_receptacle_entity.tests";
+import {set_receptacle_layer_tests} from "./set_receptacle_layer.tests";
+import {set_receptacle_status_tests} from "./set_receptacle_status.tests";
+import {set_state_tests} from "./set_state.tests";
+
+describe('Gem', (): void => {
+
+    describe('addCost', add_cost_tests);
+    describe('addHistoryEntity', add_history_entity_tests);
+    describe('checkScopesCompatibility', check_scopes_compatibility_tests);
+    describe('error', error_tests);
+    describe('fatal', fatal_tests);
+    describe('missingReceptacle', missing_receptacle_tests);
+    describe('nextOperation', next_operation_tests);
+    describe('setActionType', set_action_type_tests);
+    describe('setConnectorEntity', set_connector_entity_tests);
+    describe('setConnectorLayer', set_connector_layer_tests);
+    describe('setConnectorStatus', set_connector_status_tests);
+    describe('setGemStatus', set_gem_status_tests);
+    describe('setOperationEntities', set_operation_entities_tests);
+    describe('setOperationsLayer', set_operations_layer_tests);
+    describe('setOperationsStatus', set_operations_status_tests);
+    describe('setReceptacleEntity', set_receptacle_entity_tests);
+    describe('setReceptacleLayer', set_receptacle_layer_tests);
+    describe('setReceptacleStatus', set_receptacle_status_tests);
+    describe('setState', set_state_tests);
+});
