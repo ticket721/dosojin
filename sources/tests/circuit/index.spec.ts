@@ -1,12 +1,12 @@
-import { clear_dosojin_tests } from './circuit_clear_dosojin.tests';
-import { create_gem_tests } from './circuit_create_gem.tests';
-import { dry_run_tests } from './circuit_dry_run.tests';
-import { dry_run_operation_tests } from './circuit_dry_run_operation.tests';
-import { dry_run_transfer_tests } from './circuit_dry_run_transfer.tests';
-import { register_dosojin_tests } from './circuit_register_dosojin.tests';
-import { run_tests } from './circuit_run.tests';
-import { run_operation_tests } from './circuit_run_operation.tests';
-import { run_transfer_tests } from './circuit_run_transfer.tests';
+import { clear_dosojin_tests } from './clear_dosojin.tests';
+import { create_gem_tests } from './create_gem.tests';
+import { dry_run_tests } from './dry_run.tests';
+import { dry_run_operation_tests } from './dry_run_operation.tests';
+import { dry_run_transfer_tests } from './dry_run_transfer.tests';
+import { register_dosojin_tests } from './register_dosojin.tests';
+import { run_tests } from './run.tests';
+import { run_operation_tests } from './run_operation.tests';
+import { run_transfer_tests } from './run_transfer.tests';
 
 describe('Circuit', (): void => {
 
