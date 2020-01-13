@@ -1,4 +1,5 @@
 import BN                                        from 'bn.js';
+import deepEqual                                 from 'deep-equal';
 import { Connector }                             from './Connector';
 import { Dosojin }                               from './Dosojin';
 import { GemPayload }                            from './GemPayload';
@@ -109,6 +110,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
         let layer: number;
         let entityName: string;
         let entityType: string;
+
         switch (this.actionType) {
             case 'transfer': {
                 if (this.transferStatus.connector && this.transferStatus.connector.dosojin === dosojin.name) {
@@ -166,18 +168,19 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
                 break;
             }
             default: {
-                throw new Error(`Cannot add cost on gem with no actionType`);
+                throw new Error(`Cannot add history entity on gem with no actionType`);
             }
         }
 
         const entityIdx = this.routeHistory.findIndex((entity: HistoryEntity) => {
             const countlessEntity: HistoryEntity = { ...entity, count: null };
+            const expectedEntity: HistoryEntity = {layer, dosojin: dosojin.name, entityName, entityType, count: null };
 
-            return countlessEntity === {layer, dosojin: Dosojin.name, entityName, entityType, count: null};
+            return deepEqual(countlessEntity, expectedEntity);
         });
 
         if (!this.routeHistory.length || entityIdx === -1) {
-            this.pushHistoryEntity({layer, dosojin: Dosojin.name, entityName, entityType, count: 1});
+            this.pushHistoryEntity({layer, dosojin: dosojin.name, entityName, entityType, count: 1});
         } else {
             this.routeHistory[entityIdx].count++;
         }
@@ -421,8 +424,8 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
         return this;
     }
 
-    public setOperationLayer(layer: number): Gem {
-        this.verifyActionType('operation', `Invalid actionType for setOperationLayer call (transfer instead of operation)`);
+    public setOperationsLayer(layer: number): Gem {
+        this.verifyActionType('operation', `Invalid actionType for setOperationsLayer call (transfer instead of operation)`);
 
         if (this.operationStatus === null) {
             this.operationStatus = {};
@@ -451,14 +454,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
     }
 
     private setOperationList(list: string[]): void {
-        this.verifyActionType('operation', `Invalid actionType for setOperationStatus call (transfer instead of operation)`);
-
-        if (!this.operationStatus) {
-            this.operationStatus = {};
-        }
-
         this.operationStatus.operation_list = list;
-
     }
 
     private setErrorInfos(dosojin: Dosojin, message: string): void {
@@ -467,11 +463,11 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
         let entityType: string;
         switch (this.actionType) {
             case 'transfer': {
-                if (this.transferStatus.connector && this.transferStatus.connector.name === dosojin.name) {
+                if (this.transferStatus.connector && this.transferStatus.connector.dosojin === dosojin.name) {
                     layer = this.transferStatus.connector.layer;
                     entityName = this.transferStatus.connector.name;
                     entityType = 'connector';
-                } else if (this.transferStatus.receptacle && this.transferStatus.receptacle.name === dosojin.name) {
+                } else if (this.transferStatus.receptacle && this.transferStatus.receptacle.dosojin === dosojin.name) {
                     layer = this.transferStatus.receptacle.layer;
                     entityName = this.transferStatus.receptacle.name;
                     entityType = 'receptacle';
