@@ -1,8 +1,12 @@
-import { anyOfClass, instance, mock, reset, verify, when } from 'ts-mockito';
-import { Circuit } from '../../core/Circuit';
-import { Gem } from '../../core/Gem';
-import { OperationStatusNames } from '../../core/OperationStatus';
-import { SingleDosojinLayer } from '../../core/SingleDosojinLayer';
+import { instance, mock, reset, verify, when} from 'ts-mockito';
+import {
+    Circuit,
+    Gem,
+    OperationStatusNames,
+    SingleDosojinLayer,
+    TransferConnectorStatusNames,
+    TransferReceptacleStatusNames
+} from '../../core';
 
 export function dry_run_operation_tests(): void {
     let circuit: Circuit;
@@ -13,11 +17,6 @@ export function dry_run_operation_tests(): void {
     beforeEach(() => {
         reset(mockSdl);
         reset(mockGem);
-
-        when(mockSdl.selectConnector(anyOfClass(Gem))).thenResolve(instance(mockGem));
-        when(mockGem.setConnectorStatus(anyOfClass(Gem))).thenReturn(instance(mockGem));
-        when(mockSdl.selectReceptacle(anyOfClass(Gem))).thenResolve(instance(mockGem));
-        when(mockGem.setReceptacleStatus(anyOfClass(Gem))).thenReturn(instance(mockGem));
 
         const sdl1: SingleDosojinLayer = instance(mockSdl);
         const sdl2: SingleDosojinLayer = instance(mockSdl);
@@ -40,7 +39,6 @@ export function dry_run_operation_tests(): void {
         when(mockGem.operationStatus).thenReturn({
             layer: 2
         });
-
         const gem: Gem = instance(mockGem);
 
         await expect(circuit.dryRunOperation(gem)).rejects.toThrow();
@@ -51,7 +49,7 @@ export function dry_run_operation_tests(): void {
         });
     });
 
-    test('run layer if operation is not complete', async () => {
+    test('dry run layer if operation is not complete', async () => {
         when(mockGem.operationStatus).thenReturn({
             layer: 0,
             status: OperationStatusNames.ReadyForOperation
@@ -59,7 +57,7 @@ export function dry_run_operation_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        circuit.dryRunOperation(gem);
+        await circuit.dryRunOperation(gem);
 
         verify(mockSdl.dryRun(gem)).once();
     });
@@ -81,12 +79,14 @@ export function dry_run_operation_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        circuit.dryRunOperation(gem);
+        await circuit.dryRunOperation(gem);
 
         verify(mockGem.nextOperation()).once();
     });
 
     test('select connector and set it status when switch to transfer', async () => {
+        when(mockSdl.selectConnector(instance(mockGem))).thenResolve(instance(mockGem));
+
         when(mockGem.nextOperation()).thenCall(() => {
             when(mockGem.operationStatus).thenReturn({
                 operation_list: [],
@@ -104,17 +104,19 @@ export function dry_run_operation_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        circuit.dryRunOperation(gem);
+        await circuit.dryRunOperation(gem);
 
         verify(mockGem.nextOperation()).once();
 
         verify(mockSdl.selectConnector(gem)).once();
-        // After selectConnector gem should not be null
 
-        // verify(mockGem.setConnectorStatus(anything())).once();
+        verify(mockGem.setConnectorStatus(TransferConnectorStatusNames.ReadyForTransfer)).once();
     });
 
     test('select connector/receptacle and set status when switch to transfer (with following layer)', async () => {
+        when(mockSdl.selectConnector(instance(mockGem))).thenResolve(instance(mockGem));
+        when(mockSdl.selectReceptacle(instance(mockGem))).thenResolve(instance(mockGem));
+
         when(mockGem.nextOperation()).thenCall(() => {
             when(mockGem.operationStatus).thenReturn({
                 operation_list: [],
@@ -132,17 +134,16 @@ export function dry_run_operation_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        circuit.dryRunOperation(gem);
+        await circuit.dryRunOperation(gem);
 
         verify(mockGem.nextOperation()).once();
 
         verify(mockSdl.selectConnector(gem)).once();
-        // After selectConnector gem should not be null
-        
-        // verify(mockGem.setConnectorStatus(anything())).once();
-    
-        // verify(mockSdl.selectReceptacle(gem)).once();
 
-        // verify(mockGem.setReceptacleStatus(anything())).once();
+        verify(mockGem.setConnectorStatus(TransferConnectorStatusNames.ReadyForTransfer)).once();
+
+        verify(mockSdl.selectReceptacle(gem)).once();
+
+        verify(mockGem.setReceptacleStatus(TransferReceptacleStatusNames.ReadyForTransfer)).once();
     });
 }

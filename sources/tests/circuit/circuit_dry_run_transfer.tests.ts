@@ -1,8 +1,12 @@
-import { anyOfClass, instance, mock, reset, verify, when } from 'ts-mockito';
-import { Circuit } from '../../core/Circuit';
-import { Gem } from '../../core/Gem';
-import { SingleDosojinLayer } from '../../core/SingleDosojinLayer';
-import { TransferConnectorStatusNames, TransferReceptacleStatusNames } from '../../core/TransferStatus';
+import { deepEqual, instance, mock, reset, verify, when } from 'ts-mockito';
+import {
+    Circuit,
+    Gem,
+    OperationStatusNames,
+    SingleDosojinLayer,
+    TransferConnectorStatusNames,
+    TransferReceptacleStatusNames
+} from '../../core';
 
 export function dry_run_transfer_tests(): void {
     let circuit: Circuit;
@@ -15,11 +19,6 @@ export function dry_run_transfer_tests(): void {
     beforeEach(() => {
         reset(mockSdl);
         reset(mockGem);
-
-        when(mockSdl.selectConnector(anyOfClass(Gem))).thenResolve(instance(mockGem));
-        when(mockGem.setConnectorStatus(anyOfClass(Gem))).thenReturn(instance(mockGem));
-        when(mockSdl.selectReceptacle(anyOfClass(Gem))).thenResolve(instance(mockGem));
-        when(mockGem.setReceptacleStatus(anyOfClass(Gem))).thenReturn(instance(mockGem));
 
         sdl1 = instance(mockSdl);
         sdl2 = instance(mockSdl);
@@ -43,6 +42,7 @@ export function dry_run_transfer_tests(): void {
             connector: null,
             receptacle: null
         });
+
         const gem: Gem = instance(mockGem);
 
         await expect(circuit.dryRunTransfer(gem)).rejects.toThrow();
@@ -53,7 +53,7 @@ export function dry_run_transfer_tests(): void {
         });
     });
 
-    test('set operations and set operations status when transfer is complete', async () => {
+    test('select operations and set operations status to readyForTransfer when transfer is complete', async () => {
         when(mockGem.transferStatus).thenReturn({
             connector: {
                 ...mockGem.transferStatus.connector,
@@ -70,23 +70,19 @@ export function dry_run_transfer_tests(): void {
 
         when(mockSdl.selectOperations(gem)).thenResolve(instance(mockGem));
 
-        const selectOperations = spyOn(sdl1, 'selectOperations');
-        // const setOperationStatus = spyOn(gem, 'setOperationStatus');
-
-        circuit.dryRunTransfer(gem);
+        await circuit.dryRunTransfer(gem);
 
         verify(mockGem.setActionType('operation')).once();
-        expect(selectOperations).toBeCalledTimes(1);
-        // gem should not be undefined 
-
-        // expect(setOperationStatus).toHaveBeenCalledTimes(1);
+        verify(mockSdl.selectOperations(gem)).once();
+        verify(mockGem.setOperationStatus(OperationStatusNames.ReadyForOperation)).once();
     });
 
-    test('select operations and set operations status when transfer is complete (no connector selected)', async () => {
+    test('select operations and set operations status to readyForTransfer when transfer is complete (no connector selected)', async () => {
         when(mockGem.transferStatus).thenReturn({
             connector: null,
             receptacle: {
                 ...mockGem.transferStatus.receptacle,
+                layer: 0,
                 status: TransferReceptacleStatusNames.TransferComplete
             }
         });
@@ -95,18 +91,14 @@ export function dry_run_transfer_tests(): void {
 
         when(mockSdl.selectOperations(gem)).thenResolve(instance(mockGem));
 
-        // const setOperationStatus = spyOn(gem, 'setOperationStatus');
-
-        circuit.dryRunTransfer(gem);
+        await circuit.dryRunTransfer(gem);
 
         verify(mockGem.setActionType('operation')).once();
-        // verify(mockSdl.selectOperations(gem)).once();
-        // gem should not be undefined 
-
-        // expect(setOperationStatus).toHaveBeenCalledTimes(1);
+        verify(mockSdl.selectOperations(gem)).once();
+        verify(mockGem.setOperationStatus(OperationStatusNames.ReadyForOperation)).once();
     });
 
-    test('set gem status to complete when transfer is complete and no layer and receptacle left', async () => {
+    test('set gem status to complete when transfer is complete and no layer/receptacle left', async () => {
         when(mockGem.transferStatus).thenReturn({
             connector: {
                 ...mockGem.transferStatus.connector,
@@ -118,7 +110,7 @@ export function dry_run_transfer_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        circuit.dryRunTransfer(gem);
+        await circuit.dryRunTransfer(gem);
 
         verify(mockGem.setGemStatus('Complete')).once();
     });
@@ -135,12 +127,12 @@ export function dry_run_transfer_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        circuit.dryRunTransfer(gem);
+        await circuit.dryRunTransfer(gem);
 
         verify(mockGem.missingReceptacle()).once();
     });
 
-    test('set connector info to __begin and run gem on layer when no connector on layer', async () => {
+    test('set connector info to __begin and dry run gem on layer when no connector on layer', async () => {
         when(mockGem.transferStatus).thenReturn({
             connector: null,
             receptacle: {
@@ -152,11 +144,11 @@ export function dry_run_transfer_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        circuit.dryRunTransfer(gem);
+        await circuit.dryRunTransfer(gem);
 
         verify(mockSdl.getReceptacleInfo(gem)).once();
-        // verify(mockSdl.setConnectorInfo(gem, {__begin: true})).once();
-        // verify(mockSdl.dryRun(gem)).once();
+        verify(mockSdl.setConnectorInfo(gem, deepEqual({__begin: true}))).once();
+        verify(mockSdl.dryRun(gem)).once();
     });
 
     test('throw circuit error when receptacle layer is out of circuit range', async () => {
@@ -189,8 +181,6 @@ export function dry_run_transfer_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        circuit.dryRunTransfer(gem);
-
         await expect(circuit.dryRunTransfer(gem)).rejects.toThrow();
         await expect(circuit.dryRunTransfer(gem)).rejects.toMatchObject({
             circuit: circuitName,
@@ -199,7 +189,7 @@ export function dry_run_transfer_tests(): void {
         });
     });
 
-    test('set receptacle info to __end and run gem on layer when no receptacle on layer', async () => {
+    test('set receptacle info to __end and dry run gem on layer when no receptacle on layer', async () => {
         when(mockGem.transferStatus).thenReturn({
             connector: {
                 ...mockGem.transferStatus.connector,
@@ -210,15 +200,15 @@ export function dry_run_transfer_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        circuit.dryRunTransfer(gem);
+        when(mockSdl.dryRun(gem)).thenResolve(instance(mockGem));
 
-        /* Verify calls :
-          - setReceptacleInfo once
-          - layer.dyrRun once
-        */
+        await circuit.dryRunTransfer(gem);
+
+        verify(mockSdl.setReceptacleInfo(gem, deepEqual({__end: true}))).once();
+        verify(mockSdl.dryRun(gem)).once();
     });
 
-    test('', async () => {
+    test('dry run gem on layer twice with receptacle and connector infos when both entities are ready for transfer', async () => {
         when(mockGem.transferStatus).thenReturn({
             connector: {
                 ...mockGem.transferStatus.connector,
@@ -234,14 +224,16 @@ export function dry_run_transfer_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        circuit.dryRunTransfer(gem);
+        when(mockSdl.dryRun(gem)).thenResolve(instance(mockGem));
+        when(mockSdl.getReceptacleInfo(gem)).thenResolve(instance(mockGem));
+        when(mockSdl.getConnectorInfo(gem)).thenResolve(instance(mockGem));
 
-        /* Verify calls :
-          - getReceptacleInfo
-          - setReceptacleInfo once
-          - layer.dryRun twice
-          - getConnectorInfo once
-          - setConnectorInfo once
-        */
+        await circuit.dryRunTransfer(gem);
+
+        verify(mockSdl.getReceptacleInfo(gem)).once();
+        verify(mockSdl.setReceptacleInfo(gem, instance(mockGem))).once();
+        verify(mockSdl.dryRun(gem)).twice();
+        verify(mockSdl.getConnectorInfo(gem)).once();
+        verify(mockSdl.setConnectorInfo(gem, instance(mockGem))).once();
     });
 }

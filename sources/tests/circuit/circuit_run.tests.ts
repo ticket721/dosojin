@@ -1,7 +1,9 @@
-import { instance, mock, reset, spy, when } from 'ts-mockito';
-import { Circuit } from '../../core/Circuit';
-import { CircuitError } from '../../core/errors/CircuitError';
-import { Gem } from '../../core/Gem';
+import {instance, mock, reset, spy, verify, when} from 'ts-mockito';
+import {
+    Circuit,
+    CircuitError,
+    Gem
+} from '../../core';
 
 export function run_tests(): void {
     let circuit: Circuit;
@@ -58,24 +60,30 @@ export function run_tests(): void {
     });
 
     test('Call run operation once when actionType is operation', async () => {
+        const spiedCircuit: Circuit = spy(circuit);
+
         const gem: Gem = instance(mockGem);
+
         when (mockGem.actionType).thenReturn('operation');
 
-        const runOperation = spyOn(circuit, 'runOperation');
+        when(spiedCircuit.runOperation(gem)).thenResolve(instance(mockGem));
 
-        circuit.run(gem);
+        await circuit.run(gem);
 
-        expect(runOperation).toBeCalledTimes(1);
+        verify(spiedCircuit.runOperation(gem)).once();
     });
 
     test('Call run transfer once when actionType is transfer', async () => {
+        const spiedCircuit: Circuit = spy(circuit);
+
         const gem: Gem = instance(mockGem);
+
         when (mockGem.actionType).thenReturn('transfer');
 
-        const runTransfer = spyOn(circuit, 'runTransfer');
+        when(spiedCircuit.runTransfer(gem)).thenResolve(instance(mockGem));
         
-        circuit.run(gem);
+        await circuit.run(gem);
 
-        expect(runTransfer).toBeCalledTimes(1);
+        verify(spiedCircuit.runTransfer(gem)).once();
     });
 }

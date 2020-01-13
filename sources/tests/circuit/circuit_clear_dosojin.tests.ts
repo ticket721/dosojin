@@ -1,5 +1,7 @@
-import { Circuit } from '../../core/Circuit';
-import { Dosojin } from '../../core/Dosojin';
+import {
+    Circuit,
+    Dosojin
+} from '../../core';
 import { RegistryLayerMock } from '../../mocks/layer/RegistryLayerMock';
 
 export function clear_dosojin_tests(): void {
@@ -15,9 +17,9 @@ export function clear_dosojin_tests(): void {
         circuit = new Circuit(circuitName, [sdl]);
     });
 
-    xtest('throw circuit error when dosojin name did not exists in registry', async () => {
-        expect(sdl.removeDosojin(dosojin)).toThrow();
-        expect(sdl.removeDosojin(dosojin)).toMatchObject({
+    test('throw circuit error when dosojin name did not exists in registry', async () => {
+        await expect(sdl.removeDosojin(dosojin)).rejects.toThrow();
+        await expect(sdl.removeDosojin(dosojin)).rejects.toMatchObject({
             circuit: circuitName,
             message: `Dosojin with name dosojin not registered by Circuit ${circuitName}`,
             name: 'CircuitError'
@@ -25,13 +27,13 @@ export function clear_dosojin_tests(): void {
     });
 
     test('unregister dosojin when dosojin name does exist in registry', async () => {
-        sdl.addDosojin(dosojin);
+        await sdl.addDosojin(dosojin);
 
         expect(circuit.getRegistry()).toMatchObject({
             'dosojin': true,
         });
 
-        sdl.removeDosojin(dosojin);
+        await sdl.removeDosojin(dosojin);
 
         expect(circuit.getRegistry()).toMatchObject({
             'dosojin': false,

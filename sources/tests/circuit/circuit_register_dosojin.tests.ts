@@ -1,5 +1,7 @@
-import { Circuit } from '../../core/Circuit';
-import { Dosojin } from '../../core/Dosojin';
+import {
+    Circuit,
+    Dosojin
+} from '../../core';
 import { RegistryLayerMock } from '../../mocks/layer/RegistryLayerMock';
 
 export function register_dosojin_tests(): void {
@@ -15,12 +17,13 @@ export function register_dosojin_tests(): void {
         dosojin = new Dosojin('dosojin');
         circuitName = 'circuitName';
         circuit = new Circuit(circuitName, [sdl1, sdl2]);
-        sdl1.addDosojin(dosojin);
     });
 
-    xtest('throw circuit error when dosojin name already exists in registry', async () => {
-        expect(sdl2.addDosojin(dosojin)).toThrow();
-        expect(sdl2.addDosojin(dosojin)).toMatchObject({
+    test('throw circuit error when dosojin name already exists in registry', async () => {
+        await sdl1.addDosojin(dosojin);
+
+        await expect(sdl2.addDosojin(dosojin)).rejects.toThrow();
+        await expect(sdl2.addDosojin(dosojin)).rejects.toMatchObject({
             circuit: circuitName,
             message: `Dosojin with name dosojin already registered by Circuit ${circuitName}`,
             name: 'CircuitError'
@@ -28,9 +31,11 @@ export function register_dosojin_tests(): void {
     });
 
     test('register new dosojin when dosojin name does not exist in registry', async () => {
+        await sdl1.addDosojin(dosojin);
+
         const anotherDosojin: Dosojin = new Dosojin('anotherDosojin');
 
-        sdl2.addDosojin(anotherDosojin);
+        await sdl2.addDosojin(anotherDosojin);
 
         expect(circuit.getRegistry()).toMatchObject({
             'anotherDosojin': true,
