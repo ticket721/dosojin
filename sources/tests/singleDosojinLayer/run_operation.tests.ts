@@ -29,8 +29,8 @@ export function run_operation_tests(): void {
     test('throw Layer error when gem operation status is null', async () => {
         const gem: Gem = instance(mockGem);
 
-        await expect(sdl.runOperation(gem)).rejects.toThrow();
-        await expect(sdl.runOperation(gem)).rejects.toMatchObject({
+        await expect(sdl.runOperation(gem, false)).rejects.toThrow();
+        await expect(sdl.runOperation(gem, false)).rejects.toMatchObject({
             layer: sdl.index,
             message: 'received Gem with null operationStatus',
             name: 'LayerError',
@@ -45,8 +45,8 @@ export function run_operation_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        await expect(sdl.runOperation(gem)).rejects.toThrow();
-        await expect(sdl.runOperation(gem)).rejects.toMatchObject({
+        await expect(sdl.runOperation(gem, false)).rejects.toThrow();
+        await expect(sdl.runOperation(gem, false)).rejects.toMatchObject({
             layer: sdl.index,
             message: `received Gem with invalid index: got 1, expected ${sdl.index}`,
             name: 'LayerError',
@@ -61,8 +61,8 @@ export function run_operation_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        await sdl.runOperation(gem);
+        await sdl.runOperation(gem, false);
 
-        verify(mockDosojin.run(gem)).once();
+        verify(mockDosojin.run(gem, false)).once();
     });
 }

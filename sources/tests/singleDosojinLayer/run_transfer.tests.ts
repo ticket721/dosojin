@@ -29,8 +29,8 @@ export function run_transfer_tests(): void {
     test('throw Layer error when gem transfer status is null', async () => {
         const gem: Gem = instance(mockGem);
 
-        await expect(sdl.runTransfer(gem)).rejects.toThrow();
-        await expect(sdl.runTransfer(gem)).rejects.toMatchObject({
+        await expect(sdl.runTransfer(gem, false)).rejects.toThrow();
+        await expect(sdl.runTransfer(gem, false)).rejects.toMatchObject({
             layer: sdl.index,
             message: 'received Gem with null transferStatus',
             name: 'LayerError',
@@ -51,8 +51,8 @@ export function run_transfer_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        await expect(sdl.runTransfer(gem)).rejects.toThrow();
-        await expect(sdl.runTransfer(gem)).rejects.toMatchObject({
+        await expect(sdl.runTransfer(gem, false)).rejects.toThrow();
+        await expect(sdl.runTransfer(gem, false)).rejects.toMatchObject({
             layer: sdl.index,
             message: `received Gem with \'transfer\' action type, but no Connector or Receptacle for ${sdlName} layer`,
             name: 'LayerError',
@@ -69,9 +69,9 @@ export function run_transfer_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        await sdl.runTransfer(gem);
+        await sdl.runTransfer(gem, false);
 
-        verify(mockDosojin.run(gem)).once();
+        verify(mockDosojin.run(gem, false)).once();
     });
 
     test('run gem on dosojin when gem receptacle layer match current layer', async () => {
@@ -84,8 +84,8 @@ export function run_transfer_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        await sdl.runTransfer(gem);
+        await sdl.runTransfer(gem, false);
 
-        verify(mockDosojin.run(gem)).once();
+        verify(mockDosojin.run(gem, false)).once();
     });
 }

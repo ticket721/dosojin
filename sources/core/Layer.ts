@@ -12,8 +12,7 @@ export abstract class Layer {
         this.index = idx;
     }
 
-    public abstract async run(gem: Gem): Promise<Gem>;
-    public abstract async dryRun(gem: Gem): Promise<Gem>;
+    public abstract async run(gem: Gem, dry: boolean): Promise<Gem>;
     public abstract async selectReceptacle(gem: Gem): Promise<Gem>;
     public abstract async selectConnector(gem: Gem): Promise<Gem>;
     public abstract async selectOperations(gem: Gem): Promise<Gem>;

@@ -20,7 +20,6 @@ class BasicDosojinReceptacle extends Receptacle {
 
     public async run(gem: Gem): Promise<Gem> {
         gem.setState(this.dosojin, {hello: 'lol'});
-        gem = gem.addHistoryEntity(this.dosojin);
         return gem.setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete);
     }
 
@@ -72,7 +71,6 @@ class BasicDosojinConnector extends Connector {
 
     public async run(gem: Gem): Promise<Gem> {
         console.log('running connector');
-        gem = gem.addHistoryEntity(this.dosojin);
         return gem.setConnectorStatus(TransferConnectorStatusNames.TransferComplete);
     }
 
@@ -126,7 +124,6 @@ class BasicDosojinOperation extends Operation {
     public async run(gem: Gem): Promise<Gem> {
 
         console.log(gem.getState(this.dosojin));
-        gem = gem.addHistoryEntity(this.dosojin);
         gem
             .addCost(this.dosojin, new BN(1), 'fiat_euro', 'Because it needed money')
             .setPayloadValues({

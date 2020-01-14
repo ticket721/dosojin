@@ -27,8 +27,8 @@ export function run_operation_tests(): void {
     test('throw error when operation status is null', async () => {
         const gem: Gem = instance(mockGem);
 
-        await expect(circuit.runOperation(gem)).rejects.toThrow();
-        await expect(circuit.runOperation(gem)).rejects.toMatchObject({
+        await expect(circuit.runOperation(gem, false)).rejects.toThrow();
+        await expect(circuit.runOperation(gem, false)).rejects.toMatchObject({
             circuit: circuitName,
             message: 'received Gem with null operationStatus',
             name: 'CircuitError',
@@ -41,8 +41,8 @@ export function run_operation_tests(): void {
         });
         const gem: Gem = instance(mockGem);
 
-        await expect(circuit.runOperation(gem)).rejects.toThrow();
-        await expect(circuit.runOperation(gem)).rejects.toMatchObject({
+        await expect(circuit.runOperation(gem, false)).rejects.toThrow();
+        await expect(circuit.runOperation(gem, false)).rejects.toMatchObject({
             circuit: circuitName,
             message: `received Gem with invalid Operation Layer index ${gem.operationStatus.layer} (max 1)`,
             name: 'CircuitError',
@@ -57,9 +57,9 @@ export function run_operation_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        await circuit.runOperation(gem);
+        await circuit.runOperation(gem, false);
 
-        verify(mockSdl.run(gem)).once();
+        verify(mockSdl.run(gem, false)).once();
     });
 
     test('call nextOperation when operation is complete', async () => {
@@ -79,7 +79,7 @@ export function run_operation_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        await circuit.runOperation(gem);
+        await circuit.runOperation(gem, false);
 
         verify(mockGem.nextOperation()).once();
     });
@@ -104,7 +104,7 @@ export function run_operation_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        await circuit.runOperation(gem);
+        await circuit.runOperation(gem, false);
 
         verify(mockGem.nextOperation()).once();
 
@@ -134,7 +134,7 @@ export function run_operation_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        await circuit.runOperation(gem);
+        await circuit.runOperation(gem, false);
 
         verify(mockGem.nextOperation()).once();
 

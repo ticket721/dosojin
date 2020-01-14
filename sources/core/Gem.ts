@@ -19,7 +19,7 @@ interface GemErrorInfo {
     message: string;
 }
 
-interface HistoryEntity {
+export interface HistoryEntity {
     layer: number;
     dosojin: string;
     entityName: string;
@@ -138,52 +138,6 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
         }
 
         this.pushCost({value, scope, dosojin: dosojin.name, entityName, entityType, layer, reason});
-
-        return this;
-    }
-
-    public addHistoryEntity(dosojin: Dosojin): Gem {
-        let layer: number;
-        let entityName: string;
-        let entityType: string;
-        switch (this.actionType) {
-            case 'transfer': {
-                if (this.transferStatus.connector && this.transferStatus.connector.dosojin === dosojin.name) {
-                    layer = this.transferStatus.connector.layer;
-                    entityName = this.transferStatus.connector.name;
-                    entityType = 'connector';
-                } else if (this.transferStatus.receptacle && this.transferStatus.receptacle.dosojin === dosojin.name) {
-                    layer = this.transferStatus.receptacle.layer;
-                    entityName = this.transferStatus.receptacle.name;
-                    entityType = 'receptacle';
-                } else {
-                    throw new Error(`Cannot find specified dosojin inside transferStatus`);
-                }
-                break;
-            }
-            case 'operation': {
-                layer = this.operationStatus.layer;
-                entityName = this.operationStatus.operation_list[0];
-                entityType = 'operation';
-                break;
-            }
-            default: {
-                throw new Error(`Cannot add history entity on gem with no actionType`);
-            }
-        }
-
-        const entityIdx = this.routeHistory.findIndex((entity: HistoryEntity) => {
-            const countlessEntity: HistoryEntity = { ...entity, count: null };
-            const expectedEntity: HistoryEntity = {layer, dosojin: dosojin.name, entityName, entityType, count: null };
-
-            return deepEqual(countlessEntity, expectedEntity);
-        });
-
-        if (!this.routeHistory.length || entityIdx === -1) {
-            this.pushHistoryEntity({layer, dosojin: dosojin.name, entityName, entityType, count: 1});
-        } else {
-            this.routeHistory[entityIdx].count++;
-        }
 
         return this;
     }
@@ -439,6 +393,14 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
         return this;
     }
 
+    public pushHistoryEntity(historyEntity: HistoryEntity): void {
+        this.routeHistory.push(historyEntity);
+    }
+
+    public incrementHistoryEntity(idx: number): void {
+        this.routeHistory[idx].count++;
+    }
+
     private verifyActionType(requiredType: 'operation' | 'transfer', error: string): void {
         if (requiredType !== this.actionType) {
             throw new Error(error);
@@ -447,10 +409,6 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
 
     private pushCost(scopedCost: ScopedCost): void {
         this.gemPayload.costs.push(scopedCost);
-    }
-
-    private pushHistoryEntity(historyEntity: HistoryEntity): void {
-        this.routeHistory.push(historyEntity);
     }
 
     private setOperationList(list: string[]): void {

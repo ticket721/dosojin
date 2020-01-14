@@ -20,8 +20,8 @@ export function run_tests(): void {
         const gem: Gem = instance(mockGem);
         when (mockGem.actionType).thenReturn(null);
 
-        await expect(dosojin.run(gem)).rejects.toThrow();
-        await expect(dosojin.run(gem)).rejects.toMatchObject({
+        await expect(dosojin.run(gem, false)).rejects.toThrow();
+        await expect(dosojin.run(gem, false)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: `received Gem with invalid actionType ${gem.actionType}`,
             name: 'DosojinError',
@@ -34,10 +34,10 @@ export function run_tests(): void {
 
         const spiedDosojin: Dosojin = spy(dosojin);
 
-        when(spiedDosojin.runOperation(gem)).thenThrow(new DosojinError(dosojinName, `operation failed`));
+        when(spiedDosojin.runOperation(gem, false)).thenThrow(new DosojinError(dosojinName, `operation failed`));
 
-        await expect(dosojin.run(gem)).rejects.toThrow();
-        await expect(dosojin.run(gem)).rejects.toMatchObject({
+        await expect(dosojin.run(gem, false)).rejects.toThrow();
+        await expect(dosojin.run(gem, false)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: 'operation failed',
             name: 'DosojinError',
@@ -49,10 +49,10 @@ export function run_tests(): void {
         when (mockGem.actionType).thenReturn('transfer');
 
         const spiedDosojin: Dosojin = spy(dosojin);
-        when(spiedDosojin.runTransfer(gem)).thenThrow(new DosojinError(dosojinName, `transfer failed`));
+        when(spiedDosojin.runTransfer(gem, false)).thenThrow(new DosojinError(dosojinName, `transfer failed`));
 
-        await expect(dosojin.run(gem)).rejects.toThrow();
-        await expect(dosojin.run(gem)).rejects.toMatchObject({
+        await expect(dosojin.run(gem, false)).rejects.toThrow();
+        await expect(dosojin.run(gem, false)).rejects.toMatchObject({
             dosojin: dosojinName,
             message: 'transfer failed',
             name: 'DosojinError',
@@ -65,11 +65,11 @@ export function run_tests(): void {
         const gem: Gem = instance(mockGem);
         when (mockGem.actionType).thenReturn('operation');
 
-        when(spiedDosojin.runOperation(gem)).thenResolve(instance(mockGem));
+        when(spiedDosojin.runOperation(gem, false)).thenResolve(instance(mockGem));
 
-        await dosojin.run(gem);
+        await dosojin.run(gem, false);
 
-        verify(spiedDosojin.runOperation(gem)).once();
+        verify(spiedDosojin.runOperation(gem, false)).once();
     });
 
     test('Call run transfer once when actionType is transfer', async () => {
@@ -78,10 +78,10 @@ export function run_tests(): void {
         const gem: Gem = instance(mockGem);
         when (mockGem.actionType).thenReturn('transfer');
 
-        when(spiedDosojin.runTransfer(gem)).thenResolve(instance(mockGem));
+        when(spiedDosojin.runTransfer(gem, false)).thenResolve(instance(mockGem));
 
-        await dosojin.run(gem);
+        await dosojin.run(gem, false);
 
-        verify(spiedDosojin.runTransfer(gem)).once();
+        verify(spiedDosojin.runTransfer(gem, false)).once();
     });
 }

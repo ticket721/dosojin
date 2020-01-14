@@ -34,7 +34,7 @@ export function run_tests(): void {
 
         const spiedCircuit: Circuit = spy(circuit);
 
-        when(spiedCircuit.runOperation(gem)).thenThrow(new CircuitError(circuitName, `operation failed`));
+        when(spiedCircuit.runOperation(gem, false)).thenThrow(new CircuitError(circuitName, `operation failed`));
 
         await expect(circuit.run(gem)).rejects.toThrow();
         await expect(circuit.run(gem)).rejects.toMatchObject({
@@ -49,7 +49,7 @@ export function run_tests(): void {
         when (mockGem.actionType).thenReturn('transfer');
 
         const spiedCircuit: Circuit = spy(circuit);
-        when(spiedCircuit.runTransfer(gem)).thenThrow(new CircuitError(circuitName, `transfer failed`));
+        when(spiedCircuit.runTransfer(gem, false)).thenThrow(new CircuitError(circuitName, `transfer failed`));
 
         await expect(circuit.run(gem)).rejects.toThrow();
         await expect(circuit.run(gem)).rejects.toMatchObject({
@@ -66,11 +66,11 @@ export function run_tests(): void {
 
         when (mockGem.actionType).thenReturn('operation');
 
-        when(spiedCircuit.runOperation(gem)).thenResolve(instance(mockGem));
+        when(spiedCircuit.runOperation(gem, false)).thenResolve(instance(mockGem));
 
         await circuit.run(gem);
 
-        verify(spiedCircuit.runOperation(gem)).once();
+        verify(spiedCircuit.runOperation(gem, false)).once();
     });
 
     test('Call run transfer once when actionType is transfer', async () => {
@@ -80,10 +80,10 @@ export function run_tests(): void {
 
         when (mockGem.actionType).thenReturn('transfer');
 
-        when(spiedCircuit.runTransfer(gem)).thenResolve(instance(mockGem));
+        when(spiedCircuit.runTransfer(gem, false)).thenResolve(instance(mockGem));
 
         await circuit.run(gem);
 
-        verify(spiedCircuit.runTransfer(gem)).once();
+        verify(spiedCircuit.runTransfer(gem, false)).once();
     });
 }

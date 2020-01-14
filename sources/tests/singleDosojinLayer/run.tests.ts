@@ -28,8 +28,8 @@ export function run_tests(): void {
     test('throw Layer error when sdl dosojin is not set', async () => {
         const gem: Gem = instance(mockGem);
 
-        await expect(sdl.run(gem)).rejects.toThrow();
-        await expect(sdl.run(gem)).rejects.toMatchObject({
+        await expect(sdl.run(gem, false)).rejects.toThrow();
+        await expect(sdl.run(gem, false)).rejects.toMatchObject({
             layer: sdl.index,
             message: `no Dosojin in Layer ${sdlName}`,
             name: 'LayerError',
@@ -42,8 +42,8 @@ export function run_tests(): void {
         const gem: Gem = instance(mockGem);
         when (mockGem.actionType).thenReturn(null);
 
-        await expect(sdl.run(gem)).rejects.toThrow();
-        await expect(sdl.run(gem)).rejects.toMatchObject({
+        await expect(sdl.run(gem, false)).rejects.toThrow();
+        await expect(sdl.run(gem, false)).rejects.toMatchObject({
             layer: sdl.index,
             message: `received Gem with invalid actionType ${gem.actionType}`,
             name: 'LayerError',
@@ -58,10 +58,10 @@ export function run_tests(): void {
 
         const spiedSdl: SingleDosojinLayer = spy(sdl);
 
-        when(spiedSdl.runOperation(gem)).thenThrow(new LayerError(0, `operation failed`));
+        when(spiedSdl.runOperation(gem, false)).thenThrow(new LayerError(0, `operation failed`));
 
-        await expect(sdl.run(gem)).rejects.toThrow();
-        await expect(sdl.run(gem)).rejects.toMatchObject({
+        await expect(sdl.run(gem, false)).rejects.toThrow();
+        await expect(sdl.run(gem, false)).rejects.toMatchObject({
             layer: sdl.index,
             message: 'operation failed',
             name: 'LayerError',
@@ -76,10 +76,10 @@ export function run_tests(): void {
 
         const spiedSdl: SingleDosojinLayer = spy(sdl);
 
-        when(spiedSdl.runTransfer(gem)).thenThrow(new LayerError(0, `transfer failed`));
+        when(spiedSdl.runTransfer(gem, false)).thenThrow(new LayerError(0, `transfer failed`));
 
-        await expect(sdl.run(gem)).rejects.toThrow();
-        await expect(sdl.run(gem)).rejects.toMatchObject({
+        await expect(sdl.run(gem, false)).rejects.toThrow();
+        await expect(sdl.run(gem, false)).rejects.toMatchObject({
             layer: sdl.index,
             message: 'transfer failed',
             name: 'LayerError',
@@ -95,11 +95,11 @@ export function run_tests(): void {
 
         when (mockGem.actionType).thenReturn('operation');
 
-        when(spiedSdl.runOperation(gem)).thenResolve(instance(mockGem));
+        when(spiedSdl.runOperation(gem, false)).thenResolve(instance(mockGem));
 
-        await sdl.run(gem);
+        await sdl.run(gem, false);
 
-        verify(spiedSdl.runOperation(gem)).once();
+        verify(spiedSdl.runOperation(gem, false)).once();
     });
 
     test('call run transfer once when actionType is transfer', async () => {
@@ -111,10 +111,10 @@ export function run_tests(): void {
 
         when (mockGem.actionType).thenReturn('transfer');
 
-        when(spiedSdl.runTransfer(gem)).thenResolve(instance(mockGem));
+        when(spiedSdl.runTransfer(gem, false)).thenResolve(instance(mockGem));
 
-        await sdl.run(gem);
+        await sdl.run(gem, false);
 
-        verify(spiedSdl.runTransfer(gem)).once();
+        verify(spiedSdl.runTransfer(gem, false)).once();
     });
 }

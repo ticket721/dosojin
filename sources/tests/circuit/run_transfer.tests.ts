@@ -29,8 +29,8 @@ export function run_transfer_tests(): void {
     test('throw error when transfer status is null', async () => {
         const gem: Gem = instance(mockGem);
 
-        await expect(circuit.runTransfer(gem)).rejects.toThrow();
-        await expect(circuit.runTransfer(gem)).rejects.toMatchObject({
+        await expect(circuit.runTransfer(gem, false)).rejects.toThrow();
+        await expect(circuit.runTransfer(gem, false)).rejects.toMatchObject({
             circuit: circuitName,
             message: 'received Gem with null transferStatus',
             name: 'CircuitError',
@@ -45,8 +45,8 @@ export function run_transfer_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        await expect(circuit.runTransfer(gem)).rejects.toThrow();
-        await expect(circuit.runTransfer(gem)).rejects.toMatchObject({
+        await expect(circuit.runTransfer(gem, false)).rejects.toThrow();
+        await expect(circuit.runTransfer(gem, false)).rejects.toMatchObject({
             circuit: circuitName,
             message: `received Gem with 'transfer' action type, but no Connector or Receptacle found`,
             name: 'CircuitError',
@@ -70,7 +70,7 @@ export function run_transfer_tests(): void {
 
         when(mockSdl.selectOperations(gem)).thenResolve(instance(mockGem));
 
-        await circuit.runTransfer(gem);
+        await circuit.runTransfer(gem, false);
 
         verify(mockGem.setActionType('operation')).once();
         verify(mockSdl.selectOperations(gem)).once();
@@ -91,7 +91,7 @@ export function run_transfer_tests(): void {
 
         when(mockSdl.selectOperations(gem)).thenResolve(instance(mockGem));
 
-        await circuit.runTransfer(gem);
+        await circuit.runTransfer(gem, false);
 
         verify(mockGem.setActionType('operation')).once();
         verify(mockSdl.selectOperations(gem)).once();
@@ -110,7 +110,7 @@ export function run_transfer_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        await circuit.runTransfer(gem);
+        await circuit.runTransfer(gem, false);
 
         verify(mockGem.setGemStatus('Complete')).once();
     });
@@ -127,7 +127,7 @@ export function run_transfer_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        await circuit.runTransfer(gem);
+        await circuit.runTransfer(gem, false);
 
         verify(mockGem.missingReceptacle()).once();
     });
@@ -144,11 +144,11 @@ export function run_transfer_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        await circuit.runTransfer(gem);
+        await circuit.runTransfer(gem, false);
 
         verify(mockSdl.getReceptacleInfo(gem)).once();
         verify(mockSdl.setConnectorInfo(gem, deepEqual({__begin: true}))).once();
-        verify(mockSdl.run(gem)).once();
+        verify(mockSdl.run(gem, false)).once();
     });
 
     test('throw circuit error when receptacle layer is out of circuit range', async () => {
@@ -162,8 +162,8 @@ export function run_transfer_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        await expect(circuit.runTransfer(gem)).rejects.toThrow();
-        await expect(circuit.runTransfer(gem)).rejects.toMatchObject({
+        await expect(circuit.runTransfer(gem, false)).rejects.toThrow();
+        await expect(circuit.runTransfer(gem, false)).rejects.toMatchObject({
             circuit: circuitName,
             message: 'received Gem with invalid Receptacle Layer index 2 (max 1)',
             name: 'CircuitError',
@@ -181,8 +181,8 @@ export function run_transfer_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        await expect(circuit.runTransfer(gem)).rejects.toThrow();
-        await expect(circuit.runTransfer(gem)).rejects.toMatchObject({
+        await expect(circuit.runTransfer(gem, false)).rejects.toThrow();
+        await expect(circuit.runTransfer(gem, false)).rejects.toMatchObject({
             circuit: circuitName,
             message: 'received Gem with invalid Connector Layer index 2 (max 1)',
             name: 'CircuitError',
@@ -200,12 +200,12 @@ export function run_transfer_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        when(mockSdl.run(gem)).thenResolve(instance(mockGem));
+        when(mockSdl.run(gem, false)).thenResolve(instance(mockGem));
 
-        await circuit.runTransfer(gem);
+        await circuit.runTransfer(gem, false);
 
         verify(mockSdl.setReceptacleInfo(gem, deepEqual({__end: true}))).once();
-        verify(mockSdl.run(gem)).once();
+        verify(mockSdl.run(gem, false)).once();
     });
 
     test('run gem on layer twice with receptacle and connector infos when both entities are ready for transfer', async () => {
@@ -224,15 +224,15 @@ export function run_transfer_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        when(mockSdl.run(gem)).thenResolve(instance(mockGem));
+        when(mockSdl.run(gem, false)).thenResolve(instance(mockGem));
         when(mockSdl.getReceptacleInfo(gem)).thenResolve(instance(mockGem));
         when(mockSdl.getConnectorInfo(gem)).thenResolve(instance(mockGem));
 
-        await circuit.runTransfer(gem);
+        await circuit.runTransfer(gem, false);
 
         verify(mockSdl.getReceptacleInfo(gem)).once();
         verify(mockSdl.setReceptacleInfo(gem, instance(mockGem))).once();
-        verify(mockSdl.run(gem)).twice();
+        verify(mockSdl.run(gem, false)).twice();
         verify(mockSdl.getConnectorInfo(gem)).once();
         verify(mockSdl.setConnectorInfo(gem, instance(mockGem))).once();
     });
