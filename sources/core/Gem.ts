@@ -1,5 +1,4 @@
 import BN                                        from 'bn.js';
-import deepEqual                                 from 'deep-equal';
 import { Connector }                             from './Connector';
 import { Dosojin }                               from './Dosojin';
 import { GemPayload }                            from './GemPayload';

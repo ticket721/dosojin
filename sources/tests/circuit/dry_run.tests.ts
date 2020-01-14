@@ -1,7 +1,6 @@
 import { instance, mock, reset, spy, verify, when } from 'ts-mockito';
 import {
     Circuit,
-    CircuitError,
     Gem,
 } from '../../core';
 import {CompleteGemMock} from '../../mocks/gem/CompleteGemMock';
