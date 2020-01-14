@@ -1,8 +1,7 @@
-import { CircuitError }                                                from './errors/CircuitError';
+import { CircuitError }                                                from './errors';
 import { Gem }                                                         from './Gem';
 import { Layer }                                                       from './Layer';
 import { OperationStatusNames }                                        from './OperationStatus';
-import { ScopedValues }                                                from './Scope';
 import { TransferConnectorStatusNames, TransferReceptacleStatusNames } from './TransferStatus';
 
 export class Circuit {
@@ -20,27 +19,28 @@ export class Circuit {
         }
     }
 
-    public async createGem<DosojinState = any>(initialValue: ScopedValues = {}, initialArguments: DosojinState = null): Promise<Gem> {
-
+    public async createGem<DosojinState = any>(initialGem: Gem = new Gem({}), initialArguments: DosojinState = null): Promise<Gem> {
         if (!this.layers.length) {
-            throw new CircuitError(this.name, `cannot create Gem in empty Circuit`);
+            throw new CircuitError(
+                this.name,
+                `cannot create Gem in empty Circuit`);
         }
 
-        let gem = new Gem(initialValue);
+        initialGem.setReceptacleStatus(TransferReceptacleStatusNames.ReadyForTransfer);
+        initialGem = await this.layers[0].selectReceptacle(initialGem);
 
-        gem.setReceptacleStatus(TransferReceptacleStatusNames.ReadyForTransfer);
-        gem = await this.layers[0].selectReceptacle(gem);
-
-        if (!gem.transferStatus.receptacle.dosojin) {
-            throw new CircuitError(this.name, `no Receptacle found after initial Gem setup`);
+        if (!initialGem.transferStatus.receptacle.dosojin) {
+            throw new CircuitError(
+                this.name,
+                `no Receptacle found after initial Gem setup`);
         }
 
-        gem.setState<DosojinState>(gem.transferStatus.receptacle.dosojin, initialArguments);
+        initialGem.setState<DosojinState>(initialGem.transferStatus.receptacle.dosojin, initialArguments);
 
-        return gem;
+        return initialGem;
     }
 
-    public async runOperation(gem: Gem): Promise<Gem> {
+    public async runOperation(gem: Gem, dry: boolean): Promise<Gem> {
         if (gem.operationStatus) {
             if (gem.operationStatus.layer < this.layers.length) {
 
@@ -63,25 +63,34 @@ export class Circuit {
                     return gem;
                 }
 
-                return this.layers[gem.operationStatus.layer].run(gem);
+                return this.layers[gem.operationStatus.layer].run(gem, dry);
 
             } else {
-                throw new CircuitError(this.name, `received Gem with invalid Operation Layer index ${gem.operationStatus.layer} (max ${this.layers.length})`);
+                throw new CircuitError(
+                    this.name,
+                    `received Gem with invalid Operation Layer index ${gem.operationStatus.layer} (max ${this.layers.length - 1})`,
+                );
             }
         } else {
-            throw new CircuitError(this.name, `received Gem with null operationStatus`);
+            throw new CircuitError(
+                this.name,
+                `received Gem with null operationStatus`);
         }
     }
 
-    public async runTransfer(gem: Gem): Promise<Gem> {
+    public async runTransfer(gem: Gem, dry: boolean): Promise<Gem> {
         if (gem.transferStatus) {
 
             if (!gem.transferStatus.receptacle && !gem.transferStatus.connector) {
-                throw new CircuitError(this.name, `received Gem with 'transfer' action type, but no Connector or Receptacle found`);
+                throw new CircuitError(
+                    this.name,
+                    `received Gem with 'transfer' action type, but no Connector or Receptacle found`,
+                );
             }
 
             if (
-                ((gem.transferStatus.connector && gem.transferStatus.connector.status === TransferConnectorStatusNames.TransferComplete) || !gem.transferStatus.connector)
+                ((gem.transferStatus.connector && gem.transferStatus.connector.status === TransferConnectorStatusNames.TransferComplete) ||
+                    !gem.transferStatus.connector)
                 && ((gem.transferStatus.receptacle && gem.transferStatus.receptacle.status === TransferReceptacleStatusNames.TransferComplete))
             ) {
 
@@ -98,7 +107,7 @@ export class Circuit {
                 if (gem.transferStatus.connector.layer === this.layers.length - 1) {
                     return gem.setGemStatus('Complete');
                 } else {
-                    return gem.missingReceptacle()
+                    return gem.missingReceptacle();
                 }
             }
 
@@ -109,52 +118,78 @@ export class Circuit {
                 if (gem.transferStatus.receptacle.layer < this.layers.length) {
                     receptacleInfo = await this.layers[gem.transferStatus.receptacle.layer].getReceptacleInfo(gem);
                 } else {
-                    throw new CircuitError(this.name, `received Gem with invalid Receptacle Layer index ${gem.transferStatus.receptacle.layer} (max ${this.layers.length})`);
+                    throw new CircuitError(
+                        this.name,
+                        `received Gem with invalid Receptacle Layer index ${gem.transferStatus.receptacle.layer} (max ${this.layers.length - 1})`,
+                    );
                 }
             }
 
             if (gem.transferStatus.connector) {
                 if (gem.transferStatus.connector.layer < this.layers.length) {
                     await this.layers[gem.transferStatus.connector.layer].setReceptacleInfo(gem, receptacleInfo);
-                    gem = await this.layers[gem.transferStatus.connector.layer].run(gem);
+                    gem = await this.layers[gem.transferStatus.connector.layer].run(gem, dry);
                     connectorInfo = await this.layers[gem.transferStatus.connector.layer].getConnectorInfo(gem);
                 } else {
-                    throw new CircuitError(this.name, `received Gem with invalid Connector Layer index ${gem.transferStatus.connector.layer} (max ${this.layers.length})`);
+                    throw new CircuitError(
+                        this.name,
+                        `received Gem with invalid Connector Layer index ${gem.transferStatus.connector.layer} (max ${this.layers.length - 1})`,
+                    );
                 }
             }
 
             if (gem.transferStatus.receptacle) {
                 await this.layers[gem.transferStatus.receptacle.layer].setConnectorInfo(gem, connectorInfo);
-                gem = await this.layers[gem.transferStatus.receptacle.layer].run(gem);
+                gem = await this.layers[gem.transferStatus.receptacle.layer].run(gem, dry);
             }
 
             return gem;
 
         } else {
-            throw new CircuitError(this.name, `received Gem with null transferStatus`);
+            throw new CircuitError(
+                this.name,
+                `received Gem with null transferStatus`,
+            );
         }
     }
 
-    public async run(gem: Gem): Promise<Gem> {
+    public async run(gem: Gem, dry: boolean = false): Promise<Gem> {
         switch (gem.actionType) {
             case 'operation': {
                 try {
-                    return await this.runOperation(gem);
+                    return await this.runOperation(gem, dry);
                 } catch (e) {
-                    throw new CircuitError(this.name, e);
+                    throw new CircuitError(
+                        this.name,
+                        e,
+                    );
                 }
             }
             case 'transfer': {
                 try {
-                    return await this.runTransfer(gem);
+                    return await this.runTransfer(gem, dry);
                 } catch (e) {
-                    throw new CircuitError(this.name, e);
+                    throw new CircuitError(
+                        this.name,
+                        e,
+                    );
                 }
             }
             default: {
-                throw new CircuitError(this.name, `received Gem with invalid actionType ${gem.actionType}`);
+                throw new CircuitError(
+                    this.name,
+                    `received Gem with invalid actionType ${gem.actionType}`,
+                );
             }
         }
+    }
+
+    public async dryRun(gem: Gem): Promise<Gem> {
+        while (['Complete', 'Error', 'Fatal'].indexOf(gem.gemStatus) === -1) {
+            gem = await this.run(gem, true);
+        }
+
+        return gem;
     }
 
     public pushLayer(layer: Layer): void {
@@ -163,16 +198,25 @@ export class Circuit {
         this.layers.push(layer);
     }
 
+    public getRegistry(): {[key: string]: boolean} {
+        return this.registry;
+    }
     private registerDosojin(name: string): void {
         if (this.registry[name]) {
-            throw new CircuitError(this.name, `Dosojin with name ${name} already registered by Circuit ${this.name}`);
+            throw new CircuitError(
+                this.name,
+                `Dosojin with name ${name} already registered by Circuit ${this.name}`,
+            );
         }
         this.registry[name] = true;
     }
 
     private clearDosojin(name: string): void {
         if (!this.registry[name]) {
-            throw new CircuitError(this.name, `Dosojin with name ${name} not registered by Circuit ${this.name}`);
+            throw new CircuitError(
+                this.name,
+                `Dosojin with name ${name} not registered by Circuit ${this.name}`,
+            );
         }
         this.registry[name] = false;
     }

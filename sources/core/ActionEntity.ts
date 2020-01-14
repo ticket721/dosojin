@@ -1,5 +1,4 @@
 import { Gem }          from './Gem';
-import { ScopedValues } from './Scope';
 
 export abstract class ActionEntity {
     public name: string;
@@ -9,6 +8,6 @@ export abstract class ActionEntity {
     }
 
     public abstract async run(gem: Gem): Promise<Gem>;
-    public abstract async cost(gem: Gem): Promise<ScopedValues>;
+    public abstract async dryRun(gem: Gem): Promise<Gem>;
     public abstract async scopes(gem: Gem): Promise<string[]>;
 }

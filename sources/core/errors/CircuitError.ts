@@ -18,5 +18,4 @@ export class CircuitError extends LayerError {
         }
         this.circuit = circuit;
     }
-
 }

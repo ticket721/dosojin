@@ -1,8 +1,9 @@
 import { Connector }    from './Connector';
-import { DosojinError } from './errors/DosojinError';
-import { Gem }          from './Gem';
+import { DosojinError } from './errors';
+import {Gem, HistoryEntity} from './Gem';
 import { Operation }    from './Operation';
 import { Receptacle }   from './Receptacle';
+import deepEqual from 'deep-equal';
 
 export class Dosojin {
 
@@ -15,7 +16,7 @@ export class Dosojin {
         this.name = name;
     }
 
-    public async runTransfer(gem: Gem): Promise<Gem> {
+    public async runTransfer(gem: Gem, dry: boolean): Promise<Gem> {
 
         if (gem.transferStatus) {
 
@@ -24,10 +25,16 @@ export class Dosojin {
                 const connectorIndex = this.connectors.findIndex((co: Connector) => co.name === gem.transferStatus.connector.name);
 
                 if (connectorIndex === -1) {
-                    throw new DosojinError(this.name, `unkown Connector ${gem.transferStatus.connector.name} in Dosojin ${this.name}`);
+                    throw new DosojinError(this.name, `unknown Connector ${gem.transferStatus.connector.name} in Dosojin ${this.name}`);
                 }
 
                 const connector: Connector = this.connectors[connectorIndex];
+
+                this.addHistoryEntity(gem);
+
+                if (dry) {
+                    return connector.dryRun(gem);
+                }
 
                 return connector.run(gem);
 
@@ -35,15 +42,23 @@ export class Dosojin {
                 const receptacleIndex = this.receptacles.findIndex((re: Receptacle) => re.name === gem.transferStatus.receptacle.name);
 
                 if (receptacleIndex === -1) {
-                    throw new DosojinError(this.name, `unkown Receptacle ${gem.transferStatus.receptacle.name} in Dosojin ${this.name}`);
+                    throw new DosojinError(this.name, `unknown Receptacle ${gem.transferStatus.receptacle.name} in Dosojin ${this.name}`);
                 }
 
                 const receptacle: Receptacle = this.receptacles[receptacleIndex];
 
+                this.addHistoryEntity(gem);
+
+                if (dry) {
+                    return receptacle.dryRun(gem);
+                }
+
                 return receptacle.run(gem);
 
             } else {
-                throw new DosojinError(this.name, `received Gem with 'transfer' action type, but no Connector or Receptacle for ${this.name} dosojin`);
+                throw new DosojinError(
+                    this.name,
+                    `received Gem with 'transfer' action type, but no Connector or Receptacle for ${this.name} dosojin`);
             }
 
         } else {
@@ -52,16 +67,19 @@ export class Dosojin {
 
     }
 
-    public async runOperation(gem: Gem): Promise<Gem> {
+    public async runOperation(gem: Gem, dry: boolean): Promise<Gem> {
 
         if (gem.operationStatus) {
 
             if (gem.operationStatus.dosojin !== this.name) {
-                throw new DosojinError(this.name, `received invalid Gem with invalid Dosojin name: expected ${this.name}, got ${gem.operationStatus.dosojin}`)
+                throw new DosojinError(
+                    this.name,
+                    `received invalid Gem with invalid Dosojin name: expected ${this.name}, got ${gem.operationStatus.dosojin}`,
+                );
             }
 
             if (gem.operationStatus.operation_list.length === 0) {
-                throw new DosojinError(this.name, `received invalid Gem with no Operations left.`)
+                throw new DosojinError(this.name, `received invalid Gem with no Operations left.`);
             }
 
             const operationIndex: number = this.operations.findIndex((op: Operation) => op.name === gem.operationStatus.operation_list[0]);
@@ -72,6 +90,12 @@ export class Dosojin {
 
             const operation: Operation = this.operations[operationIndex];
 
+            this.addHistoryEntity(gem);
+
+            if (dry) {
+                return operation.dryRun(gem);
+            }
+
             return operation.run(gem);
 
         } else {
@@ -80,18 +104,18 @@ export class Dosojin {
 
     }
 
-    public async run(gem: Gem): Promise<Gem> {
+    public async run(gem: Gem, dry: boolean): Promise<Gem> {
         switch (gem.actionType) {
             case 'operation': {
                 try {
-                    return await this.runOperation(gem);
+                    return await this.runOperation(gem, dry);
                 } catch (e) {
                     throw new DosojinError(this.name, e);
                 }
             }
             case 'transfer': {
                 try {
-                    return await this.runTransfer(gem);
+                    return await this.runTransfer(gem, dry);
                 } catch (e) {
                     throw new DosojinError(this.name, e);
                 }
@@ -112,7 +136,10 @@ export class Dosojin {
                         const connectorIndex = this.connectors.findIndex((co: Connector) => co.name === gem.transferStatus.connector.name);
 
                         if (connectorIndex === -1) {
-                            throw new DosojinError(this.name, `unkown Connector ${gem.transferStatus.connector.name} in Dosojin ${this.name}`);
+                            throw new DosojinError(
+                                this.name,
+                                `unknown Connector ${gem.transferStatus.connector.name} in Dosojin ${this.name}`,
+                            );
                         }
 
                         const connector: Connector = this.connectors[connectorIndex];
@@ -122,7 +149,10 @@ export class Dosojin {
                         return ;
 
                     } else {
-                        throw new DosojinError(this.name, `received Gem with 'transfer' action type, but no Connector or Receptacle for ${this.name} dosojin`);
+                        throw new DosojinError(
+                            this.name,
+                            `received Gem with 'transfer' action type, but no Connector or Receptacle for ${this.name} Dosojin`,
+                        );
                     }
 
                 } catch (e) {
@@ -130,7 +160,10 @@ export class Dosojin {
                 }
             }
             default: {
-                throw new DosojinError(this.name, `received Gem with invalid actionType ${gem.actionType} while getting Connector info`);
+                throw new DosojinError(
+                    this.name,
+                    `received Gem with invalid actionType ${gem.actionType} while getting Connector info`,
+                );
             }
         }
     }
@@ -145,7 +178,10 @@ export class Dosojin {
                         const connectorIndex = this.connectors.findIndex((co: Connector) => co.name === gem.transferStatus.connector.name);
 
                         if (connectorIndex === -1) {
-                            throw new DosojinError(this.name, `unkown Connector ${gem.transferStatus.connector.name} in Dosojin ${this.name}`);
+                            throw new DosojinError(
+                                this.name,
+                                `unknown Connector ${gem.transferStatus.connector.name} in Dosojin ${this.name}`,
+                            );
                         }
 
                         const connector: Connector = this.connectors[connectorIndex];
@@ -153,7 +189,10 @@ export class Dosojin {
                         return connector.getConnectorInfo(gem);
 
                     } else {
-                        throw new DosojinError(this.name, `received Gem with 'transfer' action type, but no Connector or Receptacle for ${this.name} dosojin`);
+                        throw new DosojinError(
+                            this.name,
+                            `received Gem with 'transfer' action type, but no Connector or Receptacle for ${this.name} Dosojin`,
+                        );
                     }
 
                 } catch (e) {
@@ -161,7 +200,10 @@ export class Dosojin {
                 }
             }
             default: {
-                throw new DosojinError(this.name, `received Gem with invalid actionType ${gem.actionType} while getting Connector info`);
+                throw new DosojinError(
+                    this.name,
+                    `received Gem with invalid actionType ${gem.actionType} while getting Connector info`,
+                );
             }
         }
     }
@@ -175,7 +217,10 @@ export class Dosojin {
                         const receptacleIndex = this.receptacles.findIndex((re: Receptacle) => re.name === gem.transferStatus.receptacle.name);
 
                         if (receptacleIndex === -1) {
-                            throw new DosojinError(this.name, `unkown Receptacle ${gem.transferStatus.receptacle.name} in Dosojin ${this.name}`);
+                            throw new DosojinError(
+                                this.name,
+                                `unknown Receptacle ${gem.transferStatus.receptacle.name} in Dosojin ${this.name}`,
+                            );
                         }
 
                         const receptacle: Receptacle = this.receptacles[receptacleIndex];
@@ -185,7 +230,10 @@ export class Dosojin {
                         return ;
 
                     } else {
-                        throw new DosojinError(this.name, `received Gem with 'transfer' action type, but no Connector or Receptacle for ${this.name} Dosojin`);
+                        throw new DosojinError(
+                            this.name,
+                            `received Gem with 'transfer' action type, but no Connector or Receptacle for ${this.name} Dosojin`,
+                        );
                     }
 
                 } catch (e) {
@@ -193,7 +241,10 @@ export class Dosojin {
                 }
             }
             default: {
-                throw new DosojinError(this.name, `received Gem with invalid actionType ${gem.actionType} while getting Receptacle info`);
+                throw new DosojinError(
+                    this.name,
+                    `received Gem with invalid actionType ${gem.actionType} while getting Receptacle info`,
+                );
             }
         }
     }
@@ -207,7 +258,10 @@ export class Dosojin {
                         const receptacleIndex = this.receptacles.findIndex((re: Receptacle) => re.name === gem.transferStatus.receptacle.name);
 
                         if (receptacleIndex === -1) {
-                            throw new DosojinError(this.name, `unkown Receptacle ${gem.transferStatus.receptacle.name} in Dosojin ${this.name}`);
+                            throw new DosojinError(
+                                this.name,
+                                `unknown Receptacle ${gem.transferStatus.receptacle.name} in Dosojin ${this.name}`,
+                            );
                         }
 
                         const receptacle: Receptacle = this.receptacles[receptacleIndex];
@@ -215,7 +269,10 @@ export class Dosojin {
                         return receptacle.getReceptacleInfo(gem);
 
                     } else {
-                        throw new DosojinError(this.name, `received Gem with 'transfer' action type, but no Connector or Receptacle for ${this.name} Dosojin`);
+                        throw new DosojinError(
+                            this.name,
+                            `received Gem with 'transfer' action type, but no Connector or Receptacle for ${this.name} Dosojin`,
+                        );
                     }
 
                 } catch (e) {
@@ -223,7 +280,10 @@ export class Dosojin {
                 }
             }
             default: {
-                throw new DosojinError(this.name, `received Gem with invalid actionType ${gem.actionType} while getting Receptacle info`);
+                throw new DosojinError(
+                    this.name,
+                    `received Gem with invalid actionType ${gem.actionType} while getting Receptacle info`,
+                );
             }
         }
     }
@@ -231,11 +291,17 @@ export class Dosojin {
     public async selectReceptacle(gem: Gem): Promise<Gem> {
 
         if (this.receptacles.length === 0) {
-            throw new DosojinError(this.name, `trying to select Receptacle, but Dosojin does not contain any`)
+            throw new DosojinError(
+                this.name,
+                `trying to select Receptacle, but Dosojin does not contain any`,
+            );
         }
 
         if (this.receptacles.length > 1) {
-            throw new DosojinError(this.name, `trying to select Receptacle, but Dosojin contains more than one. Override selectReceptacle method to provide custom selection.`)
+            throw new DosojinError(
+                this.name,
+                `trying to select Receptacle, but Dosojin contains more than one. Override selectReceptacle method to provide custom selection.`,
+            );
         }
 
         return gem.setReceptacleEntity(this.name, this.receptacles[0]);
@@ -244,11 +310,17 @@ export class Dosojin {
     public async selectConnector(gem: Gem): Promise<Gem> {
 
         if (this.connectors.length === 0) {
-            throw new DosojinError(this.name, `trying to select Connector, but Dosojin does not contain any`)
+            throw new DosojinError(
+                this.name,
+                `trying to select Connector, but Dosojin does not contain any`,
+            );
         }
 
         if (this.connectors.length > 1) {
-            throw new DosojinError(this.name, `trying to select Connector, but Dosojin contains more than one. Override selectConnector method to provide custom selection.`)
+            throw new DosojinError(
+                this.name,
+                `trying to select Connector, but Dosojin contains more than one. Override selectConnector method to provide custom selection.`,
+            );
         }
 
         return gem.setConnectorEntity(this.name, this.connectors[0]);
@@ -259,16 +331,57 @@ export class Dosojin {
         return gem.setOperationEntities(this.name, this.operations);
     }
 
-    protected addConnector(connector: Connector): void {
+    public addConnector(connector: Connector): void {
         this.connectors.push(connector);
     }
 
-    protected addReceptacle(receptacle: Receptacle): void {
+    public addReceptacle(receptacle: Receptacle): void {
         this.receptacles.push(receptacle);
     }
 
-    protected addOperation(operation: Operation): void {
+    public addOperation(operation: Operation): void {
         this.operations.push(operation);
     }
 
+    private addHistoryEntity(gem: Gem): Gem {
+        let layer: number;
+        let entityName: string;
+        let entityType: string;
+
+        switch (gem.actionType) {
+            case 'transfer': {
+                if (gem.transferStatus.connector && gem.transferStatus.connector.dosojin === this.name) {
+                    layer = gem.transferStatus.connector.layer;
+                    entityName = gem.transferStatus.connector.name;
+                    entityType = 'connector';
+                } else {
+                    layer = gem.transferStatus.receptacle.layer;
+                    entityName = gem.transferStatus.receptacle.name;
+                    entityType = 'receptacle';
+                }
+                break;
+            }
+            case 'operation': {
+                layer = gem.operationStatus.layer;
+                entityName = gem.operationStatus.operation_list[0];
+                entityType = 'operation';
+                break;
+            }
+        }
+
+        const entityIdx = gem.routeHistory.findIndex((entity: HistoryEntity) => {
+            const countlessEntity: HistoryEntity = { ...entity, count: null };
+            const expectedEntity: HistoryEntity = {layer, dosojin: this.name, entityName, entityType, count: null };
+
+            return deepEqual(countlessEntity, expectedEntity);
+        });
+
+        if (!gem.routeHistory.length || entityIdx === -1) {
+            gem.pushHistoryEntity({layer, dosojin: this.name, entityName, entityType, count: 1});
+        } else {
+            gem.incrementHistoryEntity(entityIdx);
+        }
+
+        return gem;
+    }
 }

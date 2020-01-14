@@ -1,11 +1,11 @@
 export enum TransferConnectorStatusNames {
     ReadyForTransfer = 'ReadyForTransfer',
-    TransferComplete = 'TransferComplete'
+    TransferComplete = 'TransferComplete',
 }
 
 export enum TransferReceptacleStatusNames {
     ReadyForTransfer = 'ReadyForTransfer',
-    TransferComplete = 'TransferComplete'
+    TransferComplete = 'TransferComplete',
 }
 
 export interface TransferEntityInfo<CustomStatusSet> {
@@ -22,4 +22,3 @@ export interface TransferStatus<
     connector: TransferEntityInfo<TransferConnectorStatusNames>;
     receptacle: TransferEntityInfo<TransferReceptacleStatusNames>;
 }
-

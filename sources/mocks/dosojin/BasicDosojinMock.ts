@@ -1,21 +1,18 @@
 import BN                       from 'bn.js';
-import { Connector }            from '../../core/Connector';
-import { Dosojin }              from '../../core/Dosojin';
-import { ActionError }          from '../../core/errors/ActionError';
-import { Gem }                  from '../../core/Gem';
-import { Operation }            from '../../core/Operation';
-import { OperationStatusNames } from '../../core/OperationStatus';
-import { Receptacle }           from '../../core/Receptacle';
-import { ScopedValues }         from '../../core/Scope';
 import {
+    Connector,
+    Gem,
+    Dosojin,
+    Operation,
+    OperationStatusNames,
+    Receptacle,
     TransferConnectorStatusNames,
     TransferReceptacleStatusNames,
-}                               from '../../core/TransferStatus';
-
+}            from '../../core';
 
 class BasicDosojinReceptacle extends Receptacle {
 
-    private connectorInfo: any = null;
+    public connectorInfo: any = null;
 
     constructor(dosojin: Dosojin) {
         super('BasicDosojinReceptacle', dosojin);
@@ -26,10 +23,26 @@ class BasicDosojinReceptacle extends Receptacle {
         return gem.setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete);
     }
 
-    public async cost(gem: Gem): Promise<ScopedValues> {
-        return {
-            fiat_euro: new BN(1)
-        };
+    public async dryRun(gem: Gem): Promise<Gem> {
+        gem = gem.addCost(
+            this.dosojin,
+            {
+                max: new BN(4),
+                min: new BN(2),
+            },
+            'fiat_euro',
+            'Money money euro',
+        ).addCost(
+            this.dosojin,
+            {
+                max: new BN(2),
+                min: new BN(1),
+            },
+            'fiat_usd',
+            'Money money usd',
+        );
+
+        return gem.setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete);
     }
 
     public async scopes(gem: Gem): Promise<string[]> {
@@ -38,7 +51,7 @@ class BasicDosojinReceptacle extends Receptacle {
 
     public async getReceptacleInfo(gem: Gem): Promise<any> {
         return {
-            iban: 'an iban'
+            iban: 'an iban',
         };
     }
 
@@ -50,7 +63,7 @@ class BasicDosojinReceptacle extends Receptacle {
 // tslint:disable-next-line:max-classes-per-file
 class BasicDosojinConnector extends Connector {
 
-    private receptacleInfo: any = null;
+    public receptacleInfo: any = null;
 
     constructor(dosojin: Dosojin) {
         super('BasicDosojinConnector', dosojin);
@@ -61,10 +74,27 @@ class BasicDosojinConnector extends Connector {
         return gem.setConnectorStatus(TransferConnectorStatusNames.TransferComplete);
     }
 
-    public async cost(gem: Gem): Promise<ScopedValues> {
-        return {
-            fiat_euro: new BN(1)
-        };
+    public async dryRun(gem: Gem): Promise<Gem> {
+        gem = gem.addCost(
+            this.dosojin,
+            {
+
+                max: new BN(4),
+                min: new BN(2),
+            },
+            'fiat_euro',
+            'Money money euro',
+        ).addCost(
+            this.dosojin,
+            {
+                max: new BN(2),
+                min: new BN(1),
+            },
+            'fiat_usd',
+            'Money money usd',
+        );
+
+        return gem.setConnectorStatus(TransferConnectorStatusNames.TransferComplete);
     }
 
     public async scopes(gem: Gem): Promise<string[]> {
@@ -73,7 +103,7 @@ class BasicDosojinConnector extends Connector {
 
     public async getConnectorInfo(gem: Gem): Promise<any> {
         return {
-            transfer_id: 'abcdefg'
+            transfer_id: 'abcdefg',
         };
     }
 
@@ -98,16 +128,32 @@ class BasicDosojinOperation extends Operation {
             .addCost(this.dosojin, new BN(1), 'fiat_euro', 'Because it needed money')
             .setPayloadValues({
                 ...gem.gemPayload.values,
-                fiat_euro: gem.gemPayload.values.fiat_euro.sub(new BN(1))
+                fiat_euro: gem.gemPayload.values.fiat_euro.sub(new BN(1)),
             });
 
         return gem.setOperationStatus(OperationStatusNames.OperationComplete);
     }
 
-    public async cost(gem: Gem): Promise<ScopedValues> {
-        return {
-            fiat_euro: new BN(1)
-        };
+    public async dryRun(gem: Gem): Promise<Gem> {
+        gem = gem.addCost(
+            this.dosojin,
+            {
+                max: new BN(4),
+                min: new BN(2),
+            },
+            'fiat_euro',
+            'Money money euro',
+        ).addCost(
+            this.dosojin,
+            {
+                max: new BN(2),
+                min: new BN(1),
+            },
+            'fiat_usd',
+            'Money money usd',
+        );
+
+        return gem.setOperationStatus(OperationStatusNames.OperationComplete);
     }
 
     public async scopes(gem: Gem): Promise<string[]> {

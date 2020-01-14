@@ -5,7 +5,7 @@ import { GemPayload }                            from './GemPayload';
 import { Operation }                             from './Operation';
 import { OperationStatus, OperationStatusNames } from './OperationStatus';
 import { Receptacle }                            from './Receptacle';
-import { ScopedCost, ScopedValues }              from './Scope';
+import { MinMax, ScopedCost, ScopedValues }              from './Scope';
 import { TransferConnectorStatusNames, TransferReceptacleStatusNames, TransferStatus } from './TransferStatus';
 
 type GemStatus = 'Running' | 'Complete' | 'Error' | 'Fatal' | 'MissingReceptacle';
@@ -18,6 +18,14 @@ interface GemErrorInfo {
     message: string;
 }
 
+export interface HistoryEntity {
+    layer: number;
+    dosojin: string;
+    entityName: string;
+    entityType: string;
+    count: number;
+}
+
 export class Gem<CustomOperationStatusSet extends OperationStatusNames = OperationStatusNames,
     CustomTransferConnectorStatusSet extends TransferConnectorStatusNames = TransferConnectorStatusNames,
     CustomTransferReceptacleStatusSet extends TransferReceptacleStatusNames = TransferReceptacleStatusNames> {
@@ -27,12 +35,13 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
     public gemStatus: GemStatus;
     public gemPayload: GemPayload = null;
     public errorInfo: GemErrorInfo = null;
+    public routeHistory: HistoryEntity[] = [];
     private gemData: {[key: string]: any} = {};
 
     constructor(initialValues: ScopedValues) {
         this.gemPayload = {
             costs: [],
-            values: initialValues
+            values: initialValues,
         };
     }
 
@@ -55,7 +64,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
             entityName: this.transferStatus.connector.name,
             entityType: 'connector',
             layer: this.transferStatus.connector.layer,
-            message: null
+            message: null,
         };
         return this;
     }
@@ -91,22 +100,23 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
 
         this.gemData[stateKey] = {
             ...this.gemData[stateKey],
-            ...data
+            ...data,
         };
 
     }
 
-    public addCost(dosojin: Dosojin, value: BN, scope: string, reason: string): Gem {
+    public addCost(dosojin: Dosojin, value: BN | MinMax, scope: string, reason: string): Gem {
         let layer: number;
         let entityName: string;
         let entityType: string;
+
         switch (this.actionType) {
             case 'transfer': {
-                if (this.transferStatus.connector && this.transferStatus.connector.name === dosojin.name) {
+                if (this.transferStatus.connector && this.transferStatus.connector.dosojin === dosojin.name) {
                     layer = this.transferStatus.connector.layer;
                     entityName = this.transferStatus.connector.name;
                     entityType = 'connector';
-                } else if (this.transferStatus.receptacle && this.transferStatus.receptacle.name === dosojin.name) {
+                } else if (this.transferStatus.receptacle && this.transferStatus.receptacle.dosojin === dosojin.name) {
                     layer = this.transferStatus.receptacle.layer;
                     entityName = this.transferStatus.receptacle.name;
                     entityType = 'receptacle';
@@ -190,8 +200,8 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
             ...this.transferStatus,
             receptacle: {
                 ...(this.transferStatus.receptacle || {layer: null, dosojin: null, name: null}),
-                status
-            }
+                status,
+            },
         };
 
         return this;
@@ -231,7 +241,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
 
         const entityScopes = await entity.scopes(this);
         if (!this.checkScopesCompatibility(entityScopes)) {
-            throw new Error(`Incompatible scopes with entity ${entity.name}: got ${entityScopes} expected to match ${this.getCurrentScopes()}`)
+            throw new Error(`Incompatible scopes with entity ${entity.name}: got ${entityScopes} expected to match ${this.getCurrentScopes()}`);
         }
 
         if (this.transferStatus === null) {
@@ -243,8 +253,8 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
             receptacle: {
                 ...(this.transferStatus.receptacle || {layer: null, status: null}),
                 dosojin,
-                name: entity.name
-            }
+                name: entity.name,
+            },
         };
 
         return this;
@@ -261,8 +271,8 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
             ...this.transferStatus,
             receptacle: {
                 ...(this.transferStatus.receptacle || {status: null, dosojin: null, name: null}),
-                layer
-            }
+                layer,
+            },
         };
 
         return this;
@@ -279,8 +289,8 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
             ...this.transferStatus,
             connector: {
                 ...(this.transferStatus.connector || {layer: null, dosojin: null, name: null}),
-                status
-            }
+                status,
+            },
         };
 
         return this;
@@ -291,7 +301,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
 
         const entityScopes = await entity.scopes(this);
         if (!this.checkScopesCompatibility(entityScopes)) {
-            throw new Error(`Incompatible scopes with entity ${entity.name}: got ${entityScopes} expected to match ${this.getCurrentScopes()}`)
+            throw new Error(`Incompatible scopes with entity ${entity.name}: got ${entityScopes} expected to match ${this.getCurrentScopes()}`);
         }
 
         if (this.transferStatus === null) {
@@ -303,8 +313,8 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
             connector: {
                 ...(this.transferStatus.connector || {layer: null, status: null}),
                 dosojin,
-                name: entity.name
-            }
+                name: entity.name,
+            },
         };
 
         return this;
@@ -321,8 +331,8 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
             ...this.transferStatus,
             connector: {
                 ...(this.transferStatus.connector || {status: null, dosojin: null, name: null}),
-                layer
-            }
+                layer,
+            },
         };
 
         return this;
@@ -337,7 +347,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
 
         this.operationStatus = {
             ...this.operationStatus,
-            status
+            status,
         };
 
         return this;
@@ -349,7 +359,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
         for (const operation of operations) {
             const operationScopes = await operation.scopes(this);
             if (!this.checkScopesCompatibility(operationScopes)) {
-                throw new Error(`Incompatible scopes with operation ${operation.name}: got ${operationScopes} expected to match ${this.getCurrentScopes()}`)
+                throw new Error(`Incompatible scopes with operation ${operation.name}: got ${operationScopes} expected to match ${this.getCurrentScopes()}`);
             }
 
         }
@@ -361,14 +371,14 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
         this.operationStatus = {
             ...this.operationStatus,
             dosojin,
-            operation_list: operations.map((op: Operation) => op.name)
+            operation_list: operations.map((op: Operation) => op.name),
         };
 
         return this;
     }
 
-    public setOperationLayer(layer: number): Gem {
-        this.verifyActionType('operation', `Invalid actionType for setOperationLayer call (transfer instead of operation)`);
+    public setOperationsLayer(layer: number): Gem {
+        this.verifyActionType('operation', `Invalid actionType for setOperationsLayer call (transfer instead of operation)`);
 
         if (this.operationStatus === null) {
             this.operationStatus = {};
@@ -376,10 +386,18 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
 
         this.operationStatus = {
             ...this.operationStatus,
-            layer
+            layer,
         };
 
         return this;
+    }
+
+    public pushHistoryEntity(historyEntity: HistoryEntity): void {
+        this.routeHistory.push(historyEntity);
+    }
+
+    public incrementHistoryEntity(idx: number): void {
+        this.routeHistory[idx].count++;
     }
 
     private verifyActionType(requiredType: 'operation' | 'transfer', error: string): void {
@@ -393,14 +411,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
     }
 
     private setOperationList(list: string[]): void {
-        this.verifyActionType('operation', `Invalid actionType for setOperationStatus call (transfer instead of operation)`);
-
-        if (!this.operationStatus) {
-            this.operationStatus = {};
-        }
-
         this.operationStatus.operation_list = list;
-
     }
 
     private setErrorInfos(dosojin: Dosojin, message: string): void {
@@ -409,11 +420,11 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
         let entityType: string;
         switch (this.actionType) {
             case 'transfer': {
-                if (this.transferStatus.connector && this.transferStatus.connector.name === dosojin.name) {
+                if (this.transferStatus.connector && this.transferStatus.connector.dosojin === dosojin.name) {
                     layer = this.transferStatus.connector.layer;
                     entityName = this.transferStatus.connector.name;
                     entityType = 'connector';
-                } else if (this.transferStatus.receptacle && this.transferStatus.receptacle.name === dosojin.name) {
+                } else if (this.transferStatus.receptacle && this.transferStatus.receptacle.dosojin === dosojin.name) {
                     layer = this.transferStatus.receptacle.layer;
                     entityName = this.transferStatus.receptacle.name;
                     entityType = 'receptacle';
@@ -438,8 +449,8 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
             entityName,
             entityType,
             layer,
-            message
-        }
+            message,
+        };
 
     }
 
