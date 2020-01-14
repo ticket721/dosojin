@@ -32,84 +32,15 @@ export function dry_run_tests(): void {
         await expect(circuit.dryRun(gem)).resolves.toMatchObject(gem);
     });
 
-    test('call dryRunEntitySelection while gem status is not \'Complete\', \'Error\' or \'Fatal\'', async () => {
+    test('call run with dry = true while gem status is not \'Complete\', \'Error\' or \'Fatal\'', async () => {
         const spiedCircuit = spy(circuit);
 
         const gem: Gem = instance(mockGem);
 
-        when(spiedCircuit.dryRunEntitySelection(gem)).thenResolve(new CompleteGemMock());
+        when(spiedCircuit.run(gem, true)).thenResolve(new CompleteGemMock());
 
         await circuit.dryRun(gem);
 
-        verify(spiedCircuit.dryRunEntitySelection(gem)).once();
-    });
-
-    test('throw Circuit error when gem actionType is null', async () => {
-        const gem: Gem = instance(mockGem);
-        when (mockGem.actionType).thenReturn(null);
-
-        await expect(circuit.dryRunEntitySelection(gem)).rejects.toThrow();
-        await expect(circuit.dryRunEntitySelection(gem)).rejects.toMatchObject({
-            circuit: circuitName,
-            message: `received Gem with invalid actionType ${gem.actionType}`,
-            name: 'CircuitError',
-        });
-    });
-
-    test('throw Circuit error when run Operation failed', async () => {
-        const gem: Gem = instance(mockGem);
-        when (mockGem.actionType).thenReturn('operation');
-
-        const spiedCircuit: Circuit = spy(circuit);
-
-        when(spiedCircuit.dryRunOperation(gem)).thenThrow(new CircuitError(circuitName, `operation failed`));
-
-        await expect(circuit.dryRunEntitySelection(gem)).rejects.toThrow();
-        await expect(circuit.dryRunEntitySelection(gem)).rejects.toMatchObject({
-            circuit: circuitName,
-            message: 'operation failed',
-            name: 'CircuitError',
-        });
-    });
-
-    test('throw Circuit error when run Transfer failed', async () => {
-        const gem: Gem = instance(mockGem);
-        when (mockGem.actionType).thenReturn('transfer');
-
-        const spiedCircuit: Circuit = spy(circuit);
-        when(spiedCircuit.dryRunTransfer(gem)).thenThrow(new CircuitError(circuitName, `transfer failed`));
-
-        await expect(circuit.dryRunEntitySelection(gem)).rejects.toThrow();
-        await expect(circuit.dryRunEntitySelection(gem)).rejects.toMatchObject({
-            circuit: circuitName,
-            message: 'transfer failed',
-            name: 'CircuitError',
-        });
-    });
-
-    test('Call dry run operation once when actionType is operation', async () => {
-        const spiedCircuit: Circuit = spy(circuit);
-
-        const gem: Gem = instance(mockGem);
-        when (mockGem.actionType).thenReturn('operation');
-
-        when(spiedCircuit.dryRunOperation(gem)).thenResolve(instance(mockGem));
-
-        await circuit.dryRunEntitySelection(gem);
-
-        verify(spiedCircuit.dryRunOperation(gem)).once();
-    });
-
-    test('Call dry run transfer once when actionType is transfer', async () => {
-        const spiedCircuit: Circuit = spy(circuit);
-
-        const gem: Gem = instance(mockGem);
-        when (mockGem.actionType).thenReturn('transfer');
-
-        when(spiedCircuit.dryRunTransfer(gem)).thenResolve(instance(mockGem));
-
-        await circuit.dryRunEntitySelection(gem);
-
-        verify(spiedCircuit.dryRunTransfer(gem)).once();
+        verify(spiedCircuit.run(gem, true)).once();
     });
 }

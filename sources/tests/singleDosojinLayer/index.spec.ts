@@ -1,6 +1,3 @@
-import { dry_run_tests } from './dry_run.tests';
-import { dry_run_operation_tests } from './dry_run_operation.tests';
-import { dry_run_transfer_tests } from './dry_run_transfer.tests';
 import {get_connector_info_tests} from './get_connector_info.tests';
 import {get_receptacle_info_tests} from './get_receptacle_info.tests';
 import { run_tests } from './run.tests';
@@ -17,9 +14,6 @@ describe('SingleDosojinLayer', (): void => {
     describe('run', run_tests);
     describe('runOperation', run_operation_tests);
     describe('runTransfer', run_transfer_tests);
-    describe('dryRun', dry_run_tests);
-    describe('dryRunOperation', dry_run_operation_tests);
-    describe('dryRunTransfer', dry_run_transfer_tests);
     describe('getConnectorInfo', get_connector_info_tests);
     describe('getReceptacleInfo', get_receptacle_info_tests);
     describe('setConnectorInfo', set_connector_info_tests);

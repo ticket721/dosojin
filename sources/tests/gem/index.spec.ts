@@ -1,5 +1,4 @@
 import {add_cost_tests} from './add_cost.tests';
-import {add_history_entity_tests} from './add_history_entity.tests';
 import {check_scopes_compatibility_tests} from './check_scopes_compatibility.tests';
 import {error_tests} from './error.tests';
 import {fatal_tests} from './fatal.tests';
@@ -21,7 +20,6 @@ import {set_state_tests} from './set_state.tests';
 describe('Gem', (): void => {
 
     describe('addCost', add_cost_tests);
-    describe('addHistoryEntity', add_history_entity_tests);
     describe('checkScopesCompatibility', check_scopes_compatibility_tests);
     describe('error', error_tests);
     describe('fatal', fatal_tests);
