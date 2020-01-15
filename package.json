@@ -8,7 +8,8 @@
         "test:jest": "jest --expand --verbose",
         "test:coverage": "npm run test:jest -- --coverage",
         "test:editorconfig": "editorconfig-cli",
-        "build:module": "tsc",
+        "prebuild": "rimraf dist",
+        "build:module": "npm run prebuild && tsc",
         "build:doc": "rm -rf docs && typedoc --out docs sources/index.ts --theme markdown --readme none --name Dōsojin",
         "prepublish": "npm run build:module"
     },

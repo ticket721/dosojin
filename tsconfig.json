@@ -11,5 +11,13 @@
         "forceConsistentCasingInFileNames": true,
         "strictNullChecks": false,
         "downlevelIteration": true
-    }
+    },
+
+    "exclude": [
+        "node_modules",
+        "dist",
+        "**/*spec.ts",
+        "**/*tests.ts",
+        "./sources/mocks"
+    ]
 }
