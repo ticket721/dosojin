@@ -49,7 +49,7 @@
         "@commitlint/cli": "8.2.0",
         "@commitlint/config-conventional": "8.2.0",
         "@htmlacademy/editorconfig-cli": "1.0.0",
-        "@types/bn.js": "4.11.5",
+        "@types/bn.js": "4.11.6",
         "@types/deep-equal": "1.0.1",
         "@types/jest": "24.0.25",
         "coveralls": "3.0.9",
