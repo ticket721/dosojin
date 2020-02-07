@@ -30,8 +30,8 @@ class BasicDosojinReceptacle extends Receptacle {
                 max: new BN(4),
                 min: new BN(2),
             },
-            'fiat_euro',
-            'Money money euro',
+            'fiat_eur',
+            'Money money eur',
         ).addCost(
             this.dosojin,
             {
@@ -46,7 +46,7 @@ class BasicDosojinReceptacle extends Receptacle {
     }
 
     public async scopes(gem: Gem): Promise<string[]> {
-        return ['fiat_euro', 'fiat_usd'];
+        return ['fiat_eur', 'fiat_usd'];
     }
 
     public async getReceptacleInfo(gem: Gem): Promise<any> {
@@ -82,8 +82,8 @@ class BasicDosojinConnector extends Connector {
                 max: new BN(4),
                 min: new BN(2),
             },
-            'fiat_euro',
-            'Money money euro',
+            'fiat_eur',
+            'Money money eur',
         ).addCost(
             this.dosojin,
             {
@@ -98,7 +98,7 @@ class BasicDosojinConnector extends Connector {
     }
 
     public async scopes(gem: Gem): Promise<string[]> {
-        return ['fiat_euro', 'fiat_usd'];
+        return ['fiat_eur', 'fiat_usd'];
     }
 
     public async getConnectorInfo(gem: Gem): Promise<any> {
@@ -125,10 +125,10 @@ class BasicDosojinOperation extends Operation {
 
         console.log(gem.getState(this.dosojin));
         gem
-            .addCost(this.dosojin, new BN(1), 'fiat_euro', 'Because it needed money')
+            .addCost(this.dosojin, new BN(1), 'fiat_eur', 'Because it needed money')
             .setPayloadValues({
                 ...gem.gemPayload.values,
-                fiat_euro: gem.gemPayload.values.fiat_euro.sub(new BN(1)),
+                fiat_eur: gem.gemPayload.values.fiat_eur.sub(new BN(1)),
             });
 
         return gem.setOperationStatus(OperationStatusNames.OperationComplete);
@@ -141,8 +141,8 @@ class BasicDosojinOperation extends Operation {
                 max: new BN(4),
                 min: new BN(2),
             },
-            'fiat_euro',
-            'Money money euro',
+            'fiat_eur',
+            'Money money eur',
         ).addCost(
             this.dosojin,
             {
