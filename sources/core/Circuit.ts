@@ -45,6 +45,8 @@ export class Circuit {
             if (gem.operationStatus.layer < this.layers.length) {
 
                 if (gem.operationStatus.status === OperationStatusNames.OperationComplete) {
+                    gem.setRefreshTimer(null);
+                    
                     const layer = gem.operationStatus.layer;
 
                     gem.nextOperation();
@@ -93,6 +95,8 @@ export class Circuit {
                     !gem.transferStatus.connector)
                 && ((gem.transferStatus.receptacle && gem.transferStatus.receptacle.status === TransferReceptacleStatusNames.TransferComplete))
             ) {
+
+                gem.setRefreshTimer(null);
 
                 const layer = gem.transferStatus.receptacle.layer;
                 gem.setActionType('operation');
