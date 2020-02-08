@@ -9,7 +9,7 @@ import {select_receptacle_tests} from '../tests/core/dosojin/select_receptacle.t
 import {set_connector_info_tests} from '../tests/core/dosojin/set_connector_info.tests';
 import {set_receptacle_info_tests} from '../tests/core/dosojin/set_receptacle_info.tests';
 
-xdescribe('Dosojin', (): void => {
+describe('Dosojin', (): void => {
 
     describe('run', run_tests);
     describe('runOperation', run_operation_tests);

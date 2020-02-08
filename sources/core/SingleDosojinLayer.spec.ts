@@ -9,7 +9,7 @@ import {select_receptacle_tests} from '../tests/core/singleDosojinLayer/select_r
 import {set_connector_info_tests} from '../tests/core/singleDosojinLayer/set_connector_info.tests';
 import {set_receptacle_info_tests} from '../tests/core/singleDosojinLayer/set_receptacle_info.tests';
 
-xdescribe('SingleDosojinLayer', (): void => {
+describe('SingleDosojinLayer', (): void => {
 
     describe('run', run_tests);
     describe('runOperation', run_operation_tests);

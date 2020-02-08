@@ -17,7 +17,7 @@ import {set_receptacle_layer_tests} from '../tests/core/gem/set_receptacle_layer
 import {set_receptacle_status_tests} from '../tests/core/gem/set_receptacle_status.tests';
 import {set_state_tests} from '../tests/core/gem/set_state.tests';
 
-xdescribe('Gem', (): void => {
+describe('Gem', (): void => {
 
     describe('addCost', add_cost_tests);
     describe('checkScopesCompatibility', check_scopes_compatibility_tests);
