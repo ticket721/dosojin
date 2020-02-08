@@ -1,0 +1,103 @@
+import { instance, mock, reset, when, verify, deepEqual } from 'ts-mockito';
+import { SepaDebitPaymentIntentReceptacle } from '../../../stripe_dosojin';
+import { Gem, TransferReceptacleStatusNames } from '../../../core';
+import { Stripe } from 'stripe';
+import { StripeDosojin } from '../../../stripe_dosojin/StripeDosojin';
+import BN = require('bn.js');
+
+export function dry_run_tests(): void {
+    let sepaDebitPiReceptacle: SepaDebitPaymentIntentReceptacle;
+    let piResource: Stripe.PaymentIntentsResource;
+    let dosojin: StripeDosojin;
+
+    const mockPiResource: Stripe.PaymentIntentsResource = mock(Stripe.PaymentIntentsResource);
+    const mockDosojin: StripeDosojin = mock(StripeDosojin);
+    const mockGem: Gem = mock(Gem);
+
+    beforeEach(() => {
+        reset(mockPiResource);
+        reset(mockGem);
+        reset(mockDosojin);
+
+        when(mockDosojin.name).thenReturn('dosojinName');
+        piResource = instance(mockPiResource);
+        dosojin = instance(mockDosojin);
+
+        sepaDebitPiReceptacle = new SepaDebitPaymentIntentReceptacle(dosojin);
+    });
+
+    test('throw Error when dosojin state does not exist on gem', async () => {
+        const gem: Gem = instance(mockGem);
+        
+        when (mockGem.getState(dosojin)).thenReturn(null);
+
+        await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toThrow();
+        await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toMatchObject({
+            message: `gem state does not contain a dosojinName Dosojin property`
+        });
+    });
+
+    test('throw Error when paymentIntentId does not exist on dosojin state', async () => {
+        const gem: Gem = instance(mockGem);
+        
+        when(mockGem.getState<any>(dosojin)).thenReturn({
+            paymentIntentId: null
+        });
+
+        await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toThrow();
+        await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toMatchObject({
+            message: `gem dosojinName state does not contain any paymentIntentId property`
+        });
+    });
+
+    test('throw Error when paymentIntent retrieve failed', async () => {
+        const gem: Gem = instance(mockGem);
+        const piId: string = 'pi_mockId';
+        
+        when(mockDosojin.name).thenReturn('dosojinName');
+        
+        when(mockGem.getState<any>(dosojin)).thenReturn({
+            paymentIntentId: piId
+        });
+
+        when(mockDosojin.getStripePiResource()).thenReturn(piResource);
+
+        when(mockPiResource.retrieve(piId)).thenThrow(new Error('retrieve failed'));
+
+        await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toThrow();
+        await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toMatchObject(new Error('retrieve failed'));
+    });
+
+    test('Verify that receptacle status is set to transfer complete', async () => {
+        const gem: Gem = instance(mockGem);
+        const piId: string = 'pi_mockId';
+
+        const expectedPi = {
+            amount: 1000,
+            currency: 'eur',
+            description: 'desc',
+        }
+        
+        when(mockDosojin.name).thenReturn('dosojinName');
+        when(mockGem.getState<any>(dosojin)).thenReturn({
+            paymentIntentId: piId
+        });
+        when(mockDosojin.getStripePiResource()).thenReturn(piResource);
+        when(mockPiResource.retrieve(piId)).thenResolve(<any>expectedPi);
+
+        await sepaDebitPiReceptacle.dryRun(gem);
+
+        verify(mockGem.addPayloadValue(
+            deepEqual(`fiat_${expectedPi.currency}`),
+            deepEqual(expectedPi.amount)
+        )).once();
+        verify(mockGem.addCost(
+            deepEqual(dosojin),
+            deepEqual(new BN(expectedPi.amount)),
+            deepEqual(`fiat_${expectedPi.currency}`),
+            deepEqual(`Stripe checkout with sepa debit: ${expectedPi.description}`)
+        )).once();
+
+        verify(mockGem.setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete)).once();
+    });
+}
