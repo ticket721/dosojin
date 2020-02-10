@@ -1,15 +1,15 @@
-import { Receptacle, Dosojin, Gem, TransferReceptacleStatusNames } from '../core';
+import { Connector, Gem, TransferConnectorStatusNames } from '../core';
 import { Stripe } from 'stripe';
-import BN = require('bn.js');
 import { StripeDosojin } from '.';
 import { SECOND, MINUTE } from '../core/ActionEntity';
+import BN = require('bn.js');
 
-export class BankAccountPayoutReceptacle extends Receptacle {
+export class CardPayoutConnector extends Connector {
 
     public dosojin: StripeDosojin;
 
     constructor(dosojin: StripeDosojin) {
-        super('BankAccountPayoutReceptacle', dosojin);
+        super('CardPayoutConnector', dosojin);
         this.refreshTimer = 5 * SECOND;
     }
 
@@ -22,12 +22,14 @@ export class BankAccountPayoutReceptacle extends Receptacle {
                 const poId = gem.getState(this.dosojin).payoutId;
 
                 try {
-                    const payout: Stripe.Payout = await poResource.retrieve(poId);
+                    const payout: Stripe.Payout = await poResource.retrieve(poId, {
+                        expand: ['balance_transaction'],
+                    });
 
-                    if (!(payout.type === 'bank_account')) {
+                    if (!(payout.type === 'card')) {
                         gem.setGemStatus('Error');
 
-                        throw new Error('This Receptacle can manage only bank account Payout');
+                        throw new Error('This Connector can manage only card Payout');
                     }
 
                     if (payout.status === 'failed') {
@@ -47,21 +49,24 @@ export class BankAccountPayoutReceptacle extends Receptacle {
                     }
 
                     if (payout.status === 'paid') {
-                        // gem.addPayloadValue(`fiat_${paymentIntent.currency}`, paymentIntent.amount);
+                        const balanceTransaction: Stripe.BalanceTransaction = payout.balance_transaction as Stripe.BalanceTransaction;
+                        gem.addPayloadValue(`fiat_${balanceTransaction.currency}`, balanceTransaction.fee);
 
-                        // gem.addCost(
-                        //     this.dosojin,
-                        //     new BN(paymentIntent.amount),
-                        //     `fiat_${paymentIntent.currency}`,
-                        //     `Stripe checkout with card: ${paymentIntent.description}`
-                        // );
+                        for (const feeItem of balanceTransaction.fee_details) {
+                            gem.addCost(
+                                this.dosojin,
+                                new BN(feeItem.amount),
+                                `fiat_${feeItem.currency}`,
+                                `|stripe| Payout with card (${feeItem.type}): ${feeItem.description}`,
+                            );
+                        }
 
-                        return gem.setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete);
+                        return gem.setConnectorStatus(TransferConnectorStatusNames.TransferComplete);
                     }
 
                     gem.setState(this.dosojin, { refreshTimer: this.refreshTimer });
 
-                    return gem; 
+                    return gem;
 
                 } catch (e) {
                     throw e;
@@ -76,30 +81,36 @@ export class BankAccountPayoutReceptacle extends Receptacle {
 
     public async dryRun(gem: Gem): Promise<Gem> {
         const poResource: Stripe.PayoutsResource = this.dosojin.getStripePoResource();
-        
+
         if (gem.getState(this.dosojin)) {
 
             if (gem.getState(this.dosojin).payoutId) {
                 const poId = gem.getState(this.dosojin).payoutId;
 
                 try {
-                    const payout: Stripe.Payout = await poResource.retrieve(poId);
+                    const payout: Stripe.Payout = await poResource.retrieve(poId, {
+                        expand: ['balance_transaction'],
+                    });
 
-                    if (!(payout.type === 'bank_account')) {
+                    if (!(payout.type === 'card')) {
                         gem.setGemStatus('Error');
 
-                        throw new Error('This Receptacle can manage only bank account Payout');
+                        throw new Error('This Connector can manage only card Payout');
                     }
-                    // gem.addPayloadValue(`fiat_${paymentIntent.currency}`, paymentIntent.amount);
 
-                    // gem.addCost(
-                    //     this.dosojin,
-                    //     new BN(paymentIntent.amount),
-                    //     `fiat_${paymentIntent.currency}`,
-                    //     `Stripe checkout with card: ${paymentIntent.description}`
-                    // );
+                    const balanceTransaction: Stripe.BalanceTransaction = payout.balance_transaction as Stripe.BalanceTransaction;
+                    gem.addPayloadValue(`fiat_${balanceTransaction.currency}`, balanceTransaction.fee);
 
-                    return gem.setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete);
+                    for (const feeItem of balanceTransaction.fee_details) {
+                        gem.addCost(
+                            this.dosojin,
+                            new BN(feeItem.amount),
+                            `fiat_${feeItem.currency}`,
+                            `|stripe| Payout with card (${feeItem.type}): ${feeItem.description}`,
+                        );
+                    }
+
+                    return gem.setConnectorStatus(TransferConnectorStatusNames.TransferComplete);
 
                 } catch (e) {
                     throw e;
@@ -116,15 +127,13 @@ export class BankAccountPayoutReceptacle extends Receptacle {
         return ['fiat_*'];
     }
 
-    // CardPaymentIntentReceptacle can only be present at the very beginning of Circuit
-    // Therefore no Connector will ever ask for any informations about CardPaymentIntentReceptacle
-    public async getReceptacleInfo(gem: Gem): Promise<any> {
+    // TODO: implement getConnectorInfo
+    public async getConnectorInfo(gem: Gem): Promise<any> {
         return ;
     }
 
-    // CardPaymentIntentReceptacle can only be present at the very beginning of Circuit
-    // Therefore no Connector informations will ever been set by CardPaymentIntentReceptacle
-    public async setConnectorInfo(info: any): Promise<void> {
+    // TODO: implement setReceptacleInfo
+    public async setReceptacleInfo(info: any): Promise<void> {
         return ;
     }
 }

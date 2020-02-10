@@ -7,5 +7,5 @@ export const stripe = new Stripe('process.env.STRIPE_SECRET_KEY_TEST', {
 export { StripeDosojin } from './StripeDosojin';
 export { CardPaymentIntentReceptacle } from './CardPaymentIntentReceptacle';
 export { SepaDebitPaymentIntentReceptacle } from './SepaDebitPaymentIntentReceptacle';
-export { CardPayoutReceptacle } from './CardPayoutReceptacle';
-export { BankAccountPayoutReceptacle } from './BankAccountPayoutReceptacle';
+export { CardPayoutConnector } from './CardPayoutConnector';
+export { BankAccountPayoutConnector } from './BankAccountPayoutConnector';

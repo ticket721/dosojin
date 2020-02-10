@@ -1,10 +1,10 @@
 import { instance, mock, reset, when } from 'ts-mockito';
-import { BankAccountPayoutReceptacle } from '../../../stripe_dosojin';
+import { BankAccountPayoutConnector } from '../../../stripe_dosojin';
 import { Gem } from '../../../core';
 import { StripeDosojin } from '../../../stripe_dosojin/StripeDosojin';
 
 export function scopes_tests(): void {
-    let bankAccountPoReceptacle: BankAccountPayoutReceptacle;
+    let bankAccountPoConnector: BankAccountPayoutConnector;
     let dosojin: StripeDosojin;
 
     const mockDosojin: StripeDosojin = mock(StripeDosojin);
@@ -18,12 +18,12 @@ export function scopes_tests(): void {
 
         dosojin = instance(mockDosojin);
 
-        bankAccountPoReceptacle = new BankAccountPayoutReceptacle(dosojin);
+        bankAccountPoConnector = new BankAccountPayoutConnector(dosojin);
     });
 
     test('Return all fiat on scopes call', async () => {
         const gem: Gem = instance(mockGem);
 
-        await expect(bankAccountPoReceptacle.scopes(gem)).resolves.toMatchObject(['fiat_*']);
+        await expect(bankAccountPoConnector.scopes(gem)).resolves.toMatchObject(['fiat_*']);
     });
 }

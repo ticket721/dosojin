@@ -2,8 +2,8 @@ import { CardPaymentIntentReceptacle } from './CardPaymentIntentReceptacle';
 import { Dosojin } from '..';
 import Stripe from 'stripe';
 import { SepaDebitPaymentIntentReceptacle } from './SepaDebitPaymentIntentReceptacle';
-import { CardPayoutReceptacle } from './CardPayoutReceptacle';
-import { BankAccountPayoutReceptacle } from './BankAccountPayoutReceptacle';
+import { CardPayoutConnector } from './CardPayoutConnector';
+import { BankAccountPayoutConnector } from './BankAccountPayoutConnector';
 
 export class StripeDosojin extends Dosojin {
     private stripe: Stripe;
@@ -14,8 +14,8 @@ export class StripeDosojin extends Dosojin {
         this.addReceptacle(new CardPaymentIntentReceptacle(this));
         this.addReceptacle(new SepaDebitPaymentIntentReceptacle(this));
 
-        this.addReceptacle(new CardPayoutReceptacle(this));
-        this.addReceptacle(new BankAccountPayoutReceptacle(this));
+        this.addConnector(new CardPayoutConnector(this));
+        this.addConnector(new BankAccountPayoutConnector(this));
     }
 
     public getStripePiResource(): Stripe.PaymentIntentsResource {
