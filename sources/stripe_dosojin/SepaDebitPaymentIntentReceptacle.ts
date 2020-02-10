@@ -24,6 +24,18 @@ export class SepaDebitPaymentIntentReceptacle extends Receptacle {
                 try {
                     const paymentIntent: Stripe.PaymentIntent = await piResource.retrieve(piId);
 
+                    if (!paymentIntent.payment_method_types.includes('sepa_debit')) {
+                        gem.setGemStatus('Error');
+
+                        throw new Error('Payment intent with a different payment method than a sepa debit cannot be manage by this Receptacle');
+                    }
+
+                    if (paymentIntent.status === 'canceled') {
+                        gem.setGemStatus('Error');
+
+                        throw new Error('Payment intent was canceled');
+                    }
+
                     if (paymentIntent.status === 'succeeded') {
                         gem.addPayloadValue(`fiat_${paymentIntent.currency}`, paymentIntent.amount);
 
@@ -35,12 +47,6 @@ export class SepaDebitPaymentIntentReceptacle extends Receptacle {
                         );
 
                         return gem.setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete);
-                    }
-
-                    if (paymentIntent.status === 'canceled') {
-                        gem.setGemStatus('Error');
-
-                        throw new Error('Payment intent was canceled');
                     }
 
                     gem.setState(this.dosojin, { refreshTimer: this.refreshTimer });
@@ -68,6 +74,12 @@ export class SepaDebitPaymentIntentReceptacle extends Receptacle {
 
                 try {
                     const paymentIntent: Stripe.PaymentIntent = await piResource.retrieve(piId);
+
+                    if (!paymentIntent.payment_method_types.includes('sepa_debit')) {
+                        gem.setGemStatus('Error');
+
+                        throw new Error('Payment intent with a different payment method than a sepa debit cannot be manage by this Receptacle');
+                    }
 
                     gem.addPayloadValue(`fiat_${paymentIntent.currency}`, paymentIntent.amount);
 

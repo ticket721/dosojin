@@ -68,6 +68,33 @@ export function dry_run_tests(): void {
         await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toMatchObject(new Error('retrieve failed'));
     });
 
+    test('throw Error when the payment method of paymentIntent is not a sepa debit', async () => {
+        const gem: Gem = instance(mockGem);
+        const piId: string = 'pi_mockId';
+        
+        when(mockDosojin.name).thenReturn('dosojinName');
+        
+        when(mockGem.getState<any>(dosojin)).thenReturn({
+            paymentIntentId: piId
+        });
+
+        when(mockDosojin.getStripePiResource()).thenReturn(piResource);
+
+        when(mockPiResource.retrieve(piId)).thenResolve(<any>{
+            payment_method_types: [
+                'card'
+            ]
+        });
+
+        await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toThrow();
+
+        verify(mockGem.setGemStatus('Error')).once();
+
+        await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toMatchObject(
+            new Error('Payment intent with a different payment method than a sepa debit cannot be manage by this Receptacle')
+        );
+    });
+
     test('Verify that receptacle status is set to transfer complete', async () => {
         const gem: Gem = instance(mockGem);
         const piId: string = 'pi_mockId';
@@ -76,6 +103,9 @@ export function dry_run_tests(): void {
             amount: 1000,
             currency: 'eur',
             description: 'desc',
+            payment_method_types: [
+                'sepa_debit'
+            ]
         }
         
         when(mockDosojin.name).thenReturn('dosojinName');

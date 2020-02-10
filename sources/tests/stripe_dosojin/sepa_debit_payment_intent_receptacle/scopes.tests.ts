@@ -1,10 +1,10 @@
 import { instance, mock, reset, when } from 'ts-mockito';
-import { CardPaymentIntentReceptacle } from '../../../stripe_dosojin';
+import { SepaDebitPaymentIntentReceptacle } from '../../../stripe_dosojin';
 import { Gem } from '../../../core';
 import { StripeDosojin } from '../../../stripe_dosojin/StripeDosojin';
 
 export function scopes_tests(): void {
-    let cardPiReceptacle: CardPaymentIntentReceptacle;
+    let sepaDebitPiReceptacle: SepaDebitPaymentIntentReceptacle;
     let dosojin: StripeDosojin;
 
     const mockDosojin: StripeDosojin = mock(StripeDosojin);
@@ -18,12 +18,12 @@ export function scopes_tests(): void {
 
         dosojin = instance(mockDosojin);
 
-        cardPiReceptacle = new CardPaymentIntentReceptacle(dosojin);
+        sepaDebitPiReceptacle = new SepaDebitPaymentIntentReceptacle(dosojin);
     });
 
     test('Return all fiat on scopes call', async () => {
         const gem: Gem = instance(mockGem);
 
-        await expect(cardPiReceptacle.scopes(gem)).resolves.toMatchObject(['fiat_*']);
+        await expect(sepaDebitPiReceptacle.scopes(gem)).resolves.toMatchObject(['fiat_*']);
     });
 }
