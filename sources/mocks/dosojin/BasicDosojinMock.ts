@@ -157,7 +157,7 @@ class BasicDosojinOperation extends Operation {
     }
 
     public async scopes(gem: Gem): Promise<string[]> {
-        return ['fiat_euro', 'fiat_usd'];
+        return ['fiat_eur', 'fiat_usd'];
     }
 
 }
