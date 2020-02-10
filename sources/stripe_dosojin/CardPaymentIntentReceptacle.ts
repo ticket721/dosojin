@@ -1,14 +1,14 @@
 import { Receptacle, Gem, TransferReceptacleStatusNames } from '../core';
 import { Stripe } from 'stripe';
 import BN = require('bn.js');
-import { StripeDosojin } from '.';
+import { GenericStripeDosojin } from '.';
 import { SECOND } from '../core/ActionEntity';
 
 export class CardPaymentIntentReceptacle extends Receptacle {
 
-    public dosojin: StripeDosojin;
+    public dosojin: GenericStripeDosojin;
 
-    constructor(dosojin: StripeDosojin) {
+    constructor(dosojin: GenericStripeDosojin) {
         super('CardPaymentIntentReceptacle', dosojin);
         this.refreshTimer = 5 * SECOND;
     }

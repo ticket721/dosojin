@@ -1,7 +1,7 @@
 import { instance, mock, reset, when, verify, deepEqual } from 'ts-mockito';
 import { Gem, TransferConnectorStatusNames } from '../../../core';
 import { Stripe } from 'stripe';
-import { StripeDosojin } from '../../../stripe_dosojin/StripeDosojin';
+import { GenericStripeDosojin } from '../../../stripe_dosojin/GenericStripeDosojin';
 import { BankAccountPayoutConnector } from '../../../stripe_dosojin';
 import { MINUTE } from '../../../core/ActionEntity';
 import BN = require('bn.js');
@@ -9,10 +9,10 @@ import BN = require('bn.js');
 export function run_tests(): void {
     let bankAccountPoConnector: BankAccountPayoutConnector;
     let poResource: Stripe.PayoutsResource;
-    let dosojin: StripeDosojin;
+    let dosojin: GenericStripeDosojin;
 
     const mockPoResource: Stripe.PayoutsResource = mock(Stripe.PayoutsResource);
-    const mockDosojin: StripeDosojin = mock(StripeDosojin);
+    const mockDosojin: GenericStripeDosojin = mock(GenericStripeDosojin);
     const mockGem: Gem = mock(Gem);
 
     beforeEach(() => {

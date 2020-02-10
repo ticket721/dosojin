@@ -1,13 +1,13 @@
 import { instance, mock, reset, when } from 'ts-mockito';
 import { SepaDebitPaymentIntentReceptacle } from '../../../stripe_dosojin';
 import { Gem } from '../../../core';
-import { StripeDosojin } from '../../../stripe_dosojin/StripeDosojin';
+import { GenericStripeDosojin } from '../../../stripe_dosojin/GenericStripeDosojin';
 
 export function scopes_tests(): void {
     let sepaDebitPiReceptacle: SepaDebitPaymentIntentReceptacle;
-    let dosojin: StripeDosojin;
+    let dosojin: GenericStripeDosojin;
 
-    const mockDosojin: StripeDosojin = mock(StripeDosojin);
+    const mockDosojin: GenericStripeDosojin = mock(GenericStripeDosojin);
     const mockGem: Gem = mock(Gem);
 
     beforeEach(() => {

@@ -10,12 +10,12 @@ import {
     TransferReceptacleStatusNames,
 }            from '../../core';
 
-class BasicDosojinReceptacle extends Receptacle {
+class GenericStripeDosojinReceptacle extends Receptacle {
 
     public connectorInfo: any = null;
 
     constructor(dosojin: Dosojin) {
-        super('BasicDosojinReceptacle', dosojin);
+        super('GenericStripeDosojinReceptacle', dosojin);
     }
 
     public async run(gem: Gem): Promise<Gem> {
@@ -61,12 +61,12 @@ class BasicDosojinReceptacle extends Receptacle {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-class BasicDosojinConnector extends Connector {
+class GenericStripeDosojinConnector extends Connector {
 
     public receptacleInfo: any = null;
 
     constructor(dosojin: Dosojin) {
-        super('BasicDosojinConnector', dosojin);
+        super('GenericStripeDosojinConnector', dosojin);
     }
 
     public async run(gem: Gem): Promise<Gem> {
@@ -115,10 +115,10 @@ class BasicDosojinConnector extends Connector {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-class BasicDosojinOperation extends Operation {
+class GenericStripeDosojinOperation extends Operation {
 
     constructor(dosojin: Dosojin) {
-        super('BasicDosojinOperation', dosojin);
+        super('GenericStripeDosojinOperation', dosojin);
     }
 
     public async run(gem: Gem): Promise<Gem> {
@@ -163,13 +163,13 @@ class BasicDosojinOperation extends Operation {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class BasicDosojinMock extends Dosojin {
+export class GenericStripeDosojinMock extends Dosojin {
 
     constructor(extra?: string) {
-        super(extra ? `BasicDosojinMock_${extra}` : 'BasicDosojinMock');
-        this.addConnector(new BasicDosojinConnector(this));
-        this.addReceptacle(new BasicDosojinReceptacle(this));
-        this.addOperation(new BasicDosojinOperation(this));
+        super(extra ? `GenericStripeDosojinMock_${extra}` : 'GenericStripeDosojinMock');
+        this.addConnector(new GenericStripeDosojinConnector(this));
+        this.addReceptacle(new GenericStripeDosojinReceptacle(this));
+        this.addOperation(new GenericStripeDosojinOperation(this));
     }
 
 }

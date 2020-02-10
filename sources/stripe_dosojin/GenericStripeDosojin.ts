@@ -5,10 +5,10 @@ import { SepaDebitPaymentIntentReceptacle } from './SepaDebitPaymentIntentRecept
 import { CardPayoutConnector } from './CardPayoutConnector';
 import { BankAccountPayoutConnector } from './BankAccountPayoutConnector';
 
-export class StripeDosojin extends Dosojin {
+export class GenericStripeDosojin extends Dosojin {
     private stripe: Stripe;
 
-    protected constructor(name: string, stripe: Stripe) {
+    public constructor(name: string, stripe: Stripe) {
         super(name);
         this.stripe = stripe;
         this.addReceptacle(new CardPaymentIntentReceptacle(this));

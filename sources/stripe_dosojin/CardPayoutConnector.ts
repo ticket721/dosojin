@@ -1,14 +1,14 @@
 import { Connector, Gem, TransferConnectorStatusNames } from '../core';
 import { Stripe } from 'stripe';
-import { StripeDosojin } from '.';
+import { GenericStripeDosojin } from '.';
 import { SECOND, MINUTE } from '../core/ActionEntity';
 import BN = require('bn.js');
 
 export class CardPayoutConnector extends Connector {
 
-    public dosojin: StripeDosojin;
+    public dosojin: GenericStripeDosojin;
 
-    constructor(dosojin: StripeDosojin) {
+    constructor(dosojin: GenericStripeDosojin) {
         super('CardPayoutConnector', dosojin);
         this.refreshTimer = 5 * SECOND;
     }

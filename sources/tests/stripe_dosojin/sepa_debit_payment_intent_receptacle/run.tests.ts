@@ -2,16 +2,16 @@ import { instance, mock, reset, when, verify, deepEqual } from 'ts-mockito';
 import { SepaDebitPaymentIntentReceptacle } from '../../../stripe_dosojin';
 import { Gem, TransferReceptacleStatusNames } from '../../../core';
 import { Stripe } from 'stripe';
-import { StripeDosojin } from '../../../stripe_dosojin/StripeDosojin';
+import { GenericStripeDosojin } from '../../../stripe_dosojin/GenericStripeDosojin';
 import BN = require('bn.js');
 
 export function run_tests(): void {
     let sepaDebitPiReceptacle: SepaDebitPaymentIntentReceptacle;
     let piResource: Stripe.PaymentIntentsResource;
-    let dosojin: StripeDosojin;
+    let dosojin: GenericStripeDosojin;
 
     const mockPiResource: Stripe.PaymentIntentsResource = mock(Stripe.PaymentIntentsResource);
-    const mockDosojin: StripeDosojin = mock(StripeDosojin);
+    const mockDosojin: GenericStripeDosojin = mock(GenericStripeDosojin);
     const mockGem: Gem = mock(Gem);
 
     beforeEach(() => {
