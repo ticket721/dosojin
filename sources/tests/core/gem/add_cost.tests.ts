@@ -16,7 +16,7 @@ export function add_cost_tests(): void {
     beforeEach(() => {
         reset(mockDosojin);
 
-        gem = new Gem({fiat_euro: new BN(10), fiat_usd: new BN(5)});
+        gem = new Gem({fiat_eur: new BN(10), fiat_usd: new BN(5)});
 
         dosojin = instance(mockDosojin);
     });

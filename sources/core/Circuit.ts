@@ -46,7 +46,7 @@ export class Circuit {
 
                 if (gem.operationStatus.status === OperationStatusNames.OperationComplete) {
                     gem.setRefreshTimer(null);
-                    
+
                     const layer = gem.operationStatus.layer;
 
                     gem.nextOperation();

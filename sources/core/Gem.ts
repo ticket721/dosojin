@@ -155,8 +155,22 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
         return this;
     }
 
+    public updatePayloadValue(scope: string, value: BN | number): Gem {
+        if (!this.getCurrentScopes().includes(scope)) {
+            throw new Error(`The scope ${scope} does not exist on gem payload`);
+        }
+
+        if (typeof value === 'number') {
+            this.gemPayload.values[scope] = new BN(value);
+        } else {
+            this.gemPayload.values[scope] = value;
+        }
+
+        return this;
+    }
+
     public addPayloadValue(scope: string, value: BN | number): Gem {
-        if (!this.gemPayload.values[scope]) {
+        if (!this.getCurrentScopes().includes(scope)) {
             this.gemPayload.values[scope] = new BN(0);
         }
 
@@ -165,7 +179,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
         } else {
             this.gemPayload.values[scope] = this.gemPayload.values[scope].add(value);
         }
-        
+
         return this;
     }
 
