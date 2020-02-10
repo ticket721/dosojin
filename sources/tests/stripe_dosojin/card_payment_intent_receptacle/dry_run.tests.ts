@@ -62,7 +62,9 @@ export function dry_run_tests(): void {
 
         when(mockDosojin.getStripePiResource()).thenReturn(piResource);
 
-        when(mockPiResource.retrieve(piId)).thenThrow(new Error('retrieve failed'));
+        when(mockPiResource.retrieve(piId, deepEqual({
+            expand: [ 'charges.data.balance_transaction' ]
+        }))).thenThrow(new Error('retrieve failed'));
 
         await expect(cardPiReceptacle.dryRun(gem)).rejects.toThrow();
         await expect(cardPiReceptacle.dryRun(gem)).rejects.toMatchObject(new Error('retrieve failed'));
@@ -80,7 +82,9 @@ export function dry_run_tests(): void {
 
         when(mockDosojin.getStripePiResource()).thenReturn(piResource);
 
-        when(mockPiResource.retrieve(piId)).thenResolve(<any>{
+        when(mockPiResource.retrieve(piId, deepEqual({
+            expand: [ 'charges.data.balance_transaction' ]
+        }))).thenResolve(<any>{
             payment_method_types: [
                 'sepa_debit'
             ]
@@ -99,8 +103,34 @@ export function dry_run_tests(): void {
         const gem: Gem = instance(mockGem);
         const piId: string = 'pi_mockId';
 
+        const expectedBalanceTx = {
+            currency: 'eur',
+            fee_details: [
+                {
+                    amount: 30,
+                    currency: 'eur',
+                    description: 'Stripe processing fee',
+                    type: 'stripe_fee',
+                },
+                {
+                    amount: 10,
+                    currency: 'eur',
+                    description: 'Application processing fee',
+                    type: 'application_fee',
+                },
+            ],
+            net: 960,
+        };
+
         const expectedPi = {
-            amount: 1000,
+            amount_received: 1000,
+            charges: {
+                data: [
+                    {
+                        balance_transaction: expectedBalanceTx
+                    }
+                ]
+            },
             currency: 'eur',
             description: 'desc',
             payment_method_types: [
@@ -113,19 +143,36 @@ export function dry_run_tests(): void {
             paymentIntentId: piId
         });
         when(mockDosojin.getStripePiResource()).thenReturn(piResource);
-        when(mockPiResource.retrieve(piId)).thenResolve(<any>expectedPi);
+        when(mockPiResource.retrieve(piId, deepEqual({
+            expand: [ 'charges.data.balance_transaction' ]
+        }))).thenResolve(<any>expectedPi);
 
         await cardPiReceptacle.dryRun(gem);
 
         verify(mockGem.addPayloadValue(
             deepEqual(`fiat_${expectedPi.currency}`),
-            deepEqual(expectedPi.amount)
+            deepEqual(expectedPi.amount_received)
         )).once();
+        
         verify(mockGem.addCost(
             deepEqual(dosojin),
-            deepEqual(new BN(expectedPi.amount)),
-            deepEqual(`fiat_${expectedPi.currency}`),
-            deepEqual(`Stripe checkout with card: ${expectedPi.description}`)
+            deepEqual(new BN(expectedBalanceTx.net)),
+            deepEqual(`fiat_${expectedBalanceTx.currency}`),
+            deepEqual(`|stripe| Checkout with card (net_amount): ${expectedPi.description}`)
+        )).once();
+
+        verify(mockGem.addCost(
+            deepEqual(dosojin),
+            deepEqual(new BN(expectedBalanceTx.fee_details[0].amount)),
+            deepEqual(`fiat_${expectedBalanceTx.fee_details[0].currency}`),
+            deepEqual(`|stripe| Checkout with card (${expectedBalanceTx.fee_details[0].type}): ${expectedBalanceTx.fee_details[0].description}`)
+        )).once();
+
+        verify(mockGem.addCost(
+            deepEqual(dosojin),
+            deepEqual(new BN(expectedBalanceTx.fee_details[1].amount)),
+            deepEqual(`fiat_${expectedBalanceTx.fee_details[1].currency}`),
+            deepEqual(`|stripe| Checkout with card (${expectedBalanceTx.fee_details[1].type}): ${expectedBalanceTx.fee_details[1].description}`)
         )).once();
 
         verify(mockGem.setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete)).once();
