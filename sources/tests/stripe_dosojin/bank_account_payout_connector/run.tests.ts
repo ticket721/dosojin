@@ -74,6 +74,7 @@ export function run_tests(): void {
     test('throw Error when the destination of payout is not a bank account', async () => {
         const gem: Gem = instance(mockGem);
         const poId: string = 'po_mockId';
+        const expectedErrorMessage: string = 'BankAccountPayoutConnector can manage only bank account Payout';
         
         when(mockDosojin.name).thenReturn('dosojinName');
         
@@ -89,12 +90,16 @@ export function run_tests(): void {
             type: 'card'
         });
 
+        when(mockGem.errorInfo).thenReturn(<any>{
+            message: expectedErrorMessage
+        });
+
         await expect(bankAccountPoConnector.run(gem)).rejects.toThrow();
 
-        verify(mockGem.setGemStatus('Error')).once();
+        verify(mockGem.fatal(dosojin, expectedErrorMessage)).once();
 
         await expect(bankAccountPoConnector.run(gem)).rejects.toMatchObject(
-            new Error('This Connector can manage only bank account Payout')
+            new Error(expectedErrorMessage)
         );
     });
 
@@ -107,6 +112,7 @@ export function run_tests(): void {
             status: 'failed',
             type: 'bank_account'
         }
+        const expectedErrorMessage: string = `Payout failed for the following reason: ${expectedPo.failure_message} (${expectedPo.failure_code})`;
         
         when(mockDosojin.name).thenReturn('dosojinName');
         
@@ -120,12 +126,16 @@ export function run_tests(): void {
             expand: ['balance_transaction']
         }))).thenResolve(<any>expectedPo);
 
+        when(mockGem.errorInfo).thenReturn(<any>{
+            message: expectedErrorMessage
+        });
+
         await expect(bankAccountPoConnector.run(gem)).rejects.toThrow();
 
-        verify(mockGem.setGemStatus('Error')).once();
+        verify(mockGem.fatal(dosojin, expectedErrorMessage)).once();
 
         await expect(bankAccountPoConnector.run(gem)).rejects.toMatchObject(
-            new Error(`Payout failed for the following reason: ${expectedPo.failure_message} (${expectedPo.failure_code})`)
+            new Error(expectedErrorMessage)
         );
     });
 
@@ -138,6 +148,7 @@ export function run_tests(): void {
             status: 'canceled',
             type: 'bank_account'
         }
+        const expectedErrorMessage: string = `Payout was canceled for the following reason: ${expectedPo.failure_message} (${expectedPo.failure_code})`;
         
         when(mockDosojin.name).thenReturn('dosojinName');
         
@@ -151,12 +162,16 @@ export function run_tests(): void {
             expand: ['balance_transaction']
         }))).thenResolve(<any>expectedPo);
 
+        when(mockGem.errorInfo).thenReturn(<any>{
+            message: expectedErrorMessage
+        });
+        
         await expect(bankAccountPoConnector.run(gem)).rejects.toThrow();
 
-        verify(mockGem.setGemStatus('Error')).once();
+        verify(mockGem.fatal(dosojin, expectedErrorMessage)).once();
 
         await expect(bankAccountPoConnector.run(gem)).rejects.toMatchObject(
-            new Error(`Payout was canceled for the following reason: ${expectedPo.failure_message} (${expectedPo.failure_code})`)
+            new Error(expectedErrorMessage)
         );
     });
 

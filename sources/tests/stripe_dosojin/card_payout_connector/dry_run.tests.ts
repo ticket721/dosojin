@@ -73,6 +73,7 @@ export function dry_run_tests(): void {
     test('throw Error when the destination of payout is not a card', async () => {
         const gem: Gem = instance(mockGem);
         const poId: string = 'po_mockId';
+        const expectedErrorMessage: string = 'CardPayoutConnector can manage only card Payout';
         
         when(mockDosojin.name).thenReturn('dosojinName');
         
@@ -88,12 +89,16 @@ export function dry_run_tests(): void {
             type: 'bank_account'
         });
 
+        when(mockGem.errorInfo).thenReturn(<any>{
+            message: expectedErrorMessage
+        });
+        
         await expect(cardPoConnector.dryRun(gem)).rejects.toThrow();
 
-        verify(mockGem.setGemStatus('Error')).once();
+        verify(mockGem.fatal(dosojin, expectedErrorMessage)).once();
 
         await expect(cardPoConnector.dryRun(gem)).rejects.toMatchObject(
-            new Error('This Connector can manage only card Payout')
+            new Error(expectedErrorMessage)
         );
     });
 

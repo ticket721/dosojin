@@ -73,6 +73,7 @@ export function run_tests(): void {
     test('throw Error when the payment method of paymentIntent is not a card', async () => {
         const gem: Gem = instance(mockGem);
         const piId: string = 'pi_mockId';
+        const expectedErrorMessage: string = 'CardPaymentIntentReceptacle can manage only card Payment Intent (Update to a card payment method or choose an appropriate receptacle)';
         
         when(mockDosojin.name).thenReturn('dosojinName');
         
@@ -90,18 +91,33 @@ export function run_tests(): void {
             ]
         });
 
+        when(mockGem.errorInfo).thenReturn(<any>{
+            message: expectedErrorMessage
+        });
+
         await expect(cardPiReceptacle.run(gem)).rejects.toThrow();
 
-        verify(mockGem.setGemStatus('Error')).once();
+        verify(mockGem.error(dosojin, expectedErrorMessage)).once();
 
         await expect(cardPiReceptacle.run(gem)).rejects.toMatchObject(
-            new Error('Payment intent with a different payment method than a card cannot be manage by this Receptacle')
+            new Error(expectedErrorMessage)
         );
     });
 
     test('throw Error when paymentIntent status is \'canceled\'', async () => {
         const gem: Gem = instance(mockGem);
         const piId: string = 'pi_mockId';
+        const expectedPi = {
+            last_payment_error: {
+                code: 'mockFailureCode',
+                message: 'mock failure message',
+            },
+            status: 'canceled',
+            payment_method_types: [
+                'card'
+            ]
+        };
+        const expectedErrorMessage: string = `Payment intent was canceled for the following reason: ${expectedPi.last_payment_error.message} (${expectedPi.last_payment_error.code})`;
         
         when(mockDosojin.name).thenReturn('dosojinName');
         
@@ -113,18 +129,17 @@ export function run_tests(): void {
 
         when(mockPiResource.retrieve(piId, deepEqual({
             expand: [ 'charges.data.balance_transaction' ]
-        }))).thenResolve(<any>{
-            status: 'canceled',
-            payment_method_types: [
-                'card'
-            ]
+        }))).thenResolve(<any>expectedPi);
+
+        when(mockGem.errorInfo).thenReturn(<any>{
+            message: expectedErrorMessage
         });
 
         await expect(cardPiReceptacle.run(gem)).rejects.toThrow();
 
-        verify(mockGem.setGemStatus('Error')).once();
+        verify(mockGem.fatal(dosojin, expectedErrorMessage)).once();
 
-        await expect(cardPiReceptacle.run(gem)).rejects.toMatchObject(new Error('Payment intent was canceled'));
+        await expect(cardPiReceptacle.run(gem)).rejects.toMatchObject(new Error(expectedErrorMessage));
     });
 
     test('Set refreshTimer when payment intent process has not finished yet', async () => {

@@ -27,15 +27,15 @@ export class CardPaymentIntentReceptacle extends Receptacle {
                     });
 
                     if (!paymentIntent.payment_method_types.includes('card')) {
-                        gem.setGemStatus('Error');
+                        gem.error(this.dosojin, 'CardPaymentIntentReceptacle can manage only card Payment Intent (Update to a card payment method or choose an appropriate receptacle)');
 
-                        throw new Error('Payment intent with a different payment method than a card cannot be manage by this Receptacle');
+                        throw new Error(gem.errorInfo.message);
                     }
 
                     if (paymentIntent.status === 'canceled') {
-                        gem.setGemStatus('Error');
+                        gem.fatal(this.dosojin, `Payment intent was canceled for the following reason: ${paymentIntent.last_payment_error.message} (${paymentIntent.last_payment_error.code})`);
 
-                        throw new Error('Payment intent was canceled');
+                        throw new Error(gem.errorInfo.message);
                     }
 
                     if (paymentIntent.status === 'succeeded') {
@@ -92,9 +92,9 @@ export class CardPaymentIntentReceptacle extends Receptacle {
                     });
 
                     if (!paymentIntent.payment_method_types.includes('card')) {
-                        gem.setGemStatus('Error');
+                        gem.error(this.dosojin, 'CardPaymentIntentReceptacle can manage only card Payment Intent (Update to a card payment method or choose an appropriate receptacle)');
 
-                        throw new Error('Payment intent with a different payment method than a card cannot be manage by this Receptacle');
+                        throw new Error(gem.errorInfo.message);
                     }
 
                     const balanceTransaction: Stripe.BalanceTransaction =

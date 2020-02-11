@@ -27,21 +27,21 @@ export class BankAccountPayoutConnector extends Connector {
                     });
 
                     if (!(payout.type === 'bank_account')) {
-                        gem.setGemStatus('Error');
+                        gem.fatal(this.dosojin, 'BankAccountPayoutConnector can manage only bank account Payout');
 
-                        throw new Error('This Connector can manage only bank account Payout');
+                        throw new Error(gem.errorInfo.message);
                     }
 
                     if (payout.status === 'failed') {
-                        gem.setGemStatus('Error');
+                        gem.fatal(this.dosojin, `Payout failed for the following reason: ${payout.failure_message} (${payout.failure_code})`);
 
-                        throw new Error(`Payout failed for the following reason: ${payout.failure_message} (${payout.failure_code})`);
+                        throw new Error(gem.errorInfo.message);
                     }
 
                     if (payout.status === 'canceled') {
-                        gem.setGemStatus('Error');
+                        gem.fatal(this.dosojin, `Payout was canceled for the following reason: ${payout.failure_message} (${payout.failure_code})`);
 
-                        throw new Error(`Payout was canceled for the following reason: ${payout.failure_message} (${payout.failure_code})`);
+                        throw new Error(gem.errorInfo.message);
                     }
 
                     if (payout.status === 'in_transit') {
@@ -93,9 +93,9 @@ export class BankAccountPayoutConnector extends Connector {
                     });
 
                     if (!(payout.type === 'bank_account')) {
-                        gem.setGemStatus('Error');
+                        gem.fatal(this.dosojin, 'BankAccountPayoutConnector can manage only bank account Payout');
 
-                        throw new Error('This Connector can manage only bank account Payout');
+                        throw new Error(gem.errorInfo.message);
                     }
 
                     const balanceTransaction: Stripe.BalanceTransaction = payout.balance_transaction as Stripe.BalanceTransaction;

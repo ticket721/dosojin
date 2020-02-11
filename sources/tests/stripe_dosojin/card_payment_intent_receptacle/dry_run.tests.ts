@@ -73,6 +73,7 @@ export function dry_run_tests(): void {
     test('throw Error when the payment method of paymentIntent is not a card', async () => {
         const gem: Gem = instance(mockGem);
         const piId: string = 'pi_mockId';
+        const expectedErrorMessage: string = 'CardPaymentIntentReceptacle can manage only card Payment Intent (Update to a card payment method or choose an appropriate receptacle)';
         
         when(mockDosojin.name).thenReturn('dosojinName');
         
@@ -90,12 +91,16 @@ export function dry_run_tests(): void {
             ]
         });
 
+        when(mockGem.errorInfo).thenReturn(<any>{
+            message: expectedErrorMessage
+        });
+        
         await expect(cardPiReceptacle.dryRun(gem)).rejects.toThrow();
 
-        verify(mockGem.setGemStatus('Error')).once();
+        verify(mockGem.error(dosojin, expectedErrorMessage)).once();
 
         await expect(cardPiReceptacle.dryRun(gem)).rejects.toMatchObject(
-            new Error('Payment intent with a different payment method than a card cannot be manage by this Receptacle')
+            new Error(expectedErrorMessage)
         );
     });
 

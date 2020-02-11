@@ -73,6 +73,7 @@ export function dry_run_tests(): void {
     test('throw Error when the payment method of paymentIntent is not a sepa debit', async () => {
         const gem: Gem = instance(mockGem);
         const piId: string = 'pi_mockId';
+        const expectedErrorMessage: string = 'SepaDebitPaymentIntentReceptacle can manage only sepa debit Payment Intent (Update to a sepa debit payment method or choose an appropriate receptacle)';
         
         when(mockDosojin.name).thenReturn('dosojinName');
         
@@ -90,12 +91,16 @@ export function dry_run_tests(): void {
             ]
         });
 
+        when(mockGem.errorInfo).thenReturn(<any>{
+            message: expectedErrorMessage
+        });
+        
         await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toThrow();
 
-        verify(mockGem.setGemStatus('Error')).once();
+        verify(mockGem.error(dosojin, expectedErrorMessage)).once();
 
         await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toMatchObject(
-            new Error('Payment intent with a different payment method than a sepa debit cannot be manage by this Receptacle')
+            new Error(expectedErrorMessage)
         );
     });
 
