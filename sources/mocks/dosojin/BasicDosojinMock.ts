@@ -10,12 +10,12 @@ import {
     TransferReceptacleStatusNames,
 }            from '../../core';
 
-class GenericStripeDosojinReceptacle extends Receptacle {
+class BasicDosojinReceptacle extends Receptacle {
 
     public connectorInfo: any = null;
 
     constructor(dosojin: Dosojin) {
-        super('GenericStripeDosojinReceptacle', dosojin);
+        super('BasicDosojinReceptacle', dosojin);
     }
 
     public async run(gem: Gem): Promise<Gem> {
@@ -61,12 +61,12 @@ class GenericStripeDosojinReceptacle extends Receptacle {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-class GenericStripeDosojinConnector extends Connector {
+class BasicDosojinConnector extends Connector {
 
     public receptacleInfo: any = null;
 
     constructor(dosojin: Dosojin) {
-        super('GenericStripeDosojinConnector', dosojin);
+        super('BasicDosojinConnector', dosojin);
     }
 
     public async run(gem: Gem): Promise<Gem> {
@@ -115,10 +115,10 @@ class GenericStripeDosojinConnector extends Connector {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-class GenericStripeDosojinOperation extends Operation {
+class BasicDosojinOperation extends Operation {
 
     constructor(dosojin: Dosojin) {
-        super('GenericStripeDosojinOperation', dosojin);
+        super('BasicDosojinOperation', dosojin);
     }
 
     public async run(gem: Gem): Promise<Gem> {
@@ -163,13 +163,13 @@ class GenericStripeDosojinOperation extends Operation {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class GenericStripeDosojinMock extends Dosojin {
+export class BasicDosojinMock extends Dosojin {
 
     constructor(extra?: string) {
-        super(extra ? `GenericStripeDosojinMock_${extra}` : 'GenericStripeDosojinMock');
-        this.addConnector(new GenericStripeDosojinConnector(this));
-        this.addReceptacle(new GenericStripeDosojinReceptacle(this));
-        this.addOperation(new GenericStripeDosojinOperation(this));
+        super(extra ? `BasicDosojinMock_${extra}` : 'BasicDosojinMock');
+        this.addConnector(new BasicDosojinConnector(this));
+        this.addReceptacle(new BasicDosojinReceptacle(this));
+        this.addOperation(new BasicDosojinOperation(this));
     }
 
 }
