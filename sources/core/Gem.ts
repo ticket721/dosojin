@@ -37,6 +37,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
     public errorInfo: GemErrorInfo = null;
     public routeHistory: HistoryEntity[] = [];
     private gemData: {[key: string]: any} = {};
+    private refreshTimer: number = null;
 
     constructor(initialValues: ScopedValues) {
         this.gemPayload = {
@@ -67,6 +68,14 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
             message: null,
         };
         return this;
+    }
+
+    public setRefreshTimer(milliseconds: number): void {
+        this.refreshTimer = milliseconds;
+    }
+
+    public getRefreshTimer(): number {
+        return this.refreshTimer;
     }
 
     public getState<DosojinState = any>(dosojin: Dosojin): DosojinState {
@@ -143,6 +152,34 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
 
     public setPayloadValues(values: ScopedValues): Gem {
         this.gemPayload.values = values;
+        return this;
+    }
+
+    public updatePayloadValue(scope: string, value: BN | number): Gem {
+        if (!this.getCurrentScopes().includes(scope)) {
+            throw new Error(`The scope ${scope} does not exist on gem payload`);
+        }
+
+        if (typeof value === 'number') {
+            this.gemPayload.values[scope] = new BN(value);
+        } else {
+            this.gemPayload.values[scope] = value;
+        }
+
+        return this;
+    }
+
+    public addPayloadValue(scope: string, value: BN | number): Gem {
+        if (!this.getCurrentScopes().includes(scope)) {
+            this.gemPayload.values[scope] = new BN(0);
+        }
+
+        if (typeof value === 'number') {
+            this.gemPayload.values[scope] = this.gemPayload.values[scope].addn(value);
+        } else {
+            this.gemPayload.values[scope] = this.gemPayload.values[scope].add(value);
+        }
+
         return this;
     }
 
