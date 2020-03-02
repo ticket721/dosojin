@@ -2,7 +2,9 @@
     "name": "dosojin",
     "version": "1.0.0",
     "description": "dosojin is a flexible funds movement engine",
-    "main": "index.js",
+    "main": "dist/index.js",
+    "module": "dist/index.js",
+    "types": "dist/index.d.ts",
     "scripts": {
         "test:lint": "tslint --project .",
         "test:jest": "jest --expand --verbose",

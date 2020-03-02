@@ -1,12 +1,13 @@
-import BN                                        from 'bn.js';
-import { Connector }                             from './Connector';
-import { Dosojin }                               from './Dosojin';
-import { GemPayload }                            from './GemPayload';
-import { Operation }                             from './Operation';
-import { OperationStatus, OperationStatusNames } from './OperationStatus';
-import { Receptacle }                            from './Receptacle';
-import { MinMax, ScopedCost, ScopedValues }              from './Scope';
+import BN                                                                              from 'bn.js';
+import { Connector }                                                                   from './Connector';
+import { Dosojin }                                                                     from './Dosojin';
+import { GemPayload }                                                                  from './GemPayload';
+import { Operation }                                                                   from './Operation';
+import { OperationStatus, OperationStatusNames }                                       from './OperationStatus';
+import { Receptacle }                                                                  from './Receptacle';
+import { MinMax, ScopedCost, ScopedValues }                                            from './Scope';
 import { TransferConnectorStatusNames, TransferReceptacleStatusNames, TransferStatus } from './TransferStatus';
+import { RawGem }                                                                      from './RawGem';
 
 type GemStatus = 'Running' | 'Complete' | 'Error' | 'Fatal' | 'MissingReceptacle';
 
@@ -36,14 +37,81 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
     public gemPayload: GemPayload = null;
     public errorInfo: GemErrorInfo = null;
     public routeHistory: HistoryEntity[] = [];
-    private gemData: {[key: string]: any} = {};
+    private gemData: { [key: string]: any } = {};
     private refreshTimer: number = null;
 
-    constructor(initialValues: ScopedValues) {
+    constructor(initialValues: ScopedValues = {}) {
         this.gemPayload = {
             costs: [],
             values: initialValues,
         };
+    }
+
+    public get raw(): RawGem {
+        const values: { [key: string]: string } = {};
+
+        for (const valueKey of Object.keys(this.gemPayload.values)) {
+            values[valueKey] = this.gemPayload.values[valueKey].toString();
+        }
+
+        return {
+            actionType: this.actionType,
+            operationStatus: this.operationStatus as any,
+            transferStatus: this.transferStatus as any,
+            gemStatus: this.gemStatus,
+            gemPayload: {
+                values,
+                costs: this.gemPayload.costs.map((cost: ScopedCost): any => {
+                    let value;
+                    if ((cost.value as any).min && (cost.value as any).max) {
+                        cost.value = cost.value as MinMax;
+                        value = {
+                            min: cost.value.min.toString(),
+                            max: cost.value.max.toString(),
+                        };
+                    } else {
+                        value = cost.value.toString();
+                    }
+
+                    return {
+                        ...cost,
+                        value,
+                    };
+                }),
+            },
+            errorInfo: this.errorInfo,
+            routeHistory: this.routeHistory,
+            gemData: this.gemData,
+            refreshTimer: this.refreshTimer,
+        };
+    }
+
+    public load(raw: RawGem): Gem {
+        const values: { [key: string]: BN } = {};
+
+        for (const valueKey of Object.keys(raw.gemPayload.values)) {
+            values[valueKey] = new BN(raw.gemPayload.values[valueKey]);
+        }
+        this.actionType = raw.actionType;
+        this.operationStatus = raw.operationStatus as Partial<OperationStatus<CustomOperationStatusSet>>;
+        this.transferStatus = raw.transferStatus as Partial<TransferStatus<CustomTransferConnectorStatusSet, CustomTransferReceptacleStatusSet>>;
+        this.gemStatus = raw.gemStatus;
+        this.gemPayload = {
+            values,
+            costs: raw.gemPayload.costs.map((cost: any): ScopedCost => ({
+                ...cost,
+                value: typeof cost.value === 'string' ? new BN(cost.value) : {
+                    min: new BN(cost.value.min),
+                    max: new BN(cost.value.max),
+                },
+            })),
+        };
+        this.errorInfo = raw.errorInfo;
+        this.routeHistory = raw.routeHistory;
+        this.gemData = raw.gemData;
+        this.refreshTimer = raw.refreshTimer;
+
+        return this;
     }
 
     public fatal(dosojin: Dosojin, message: string): Gem {
@@ -85,18 +153,18 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
     public setState<DosojinState = any>(dosojin: Dosojin | string, data: Partial<DosojinState>): void {
 
         if (!data) {
-            return ;
+            return;
         }
 
-        let stateKey: string = null ;
+        let stateKey: string = null;
 
         switch (typeof dosojin) {
             case 'string':
                 stateKey = dosojin;
-                break ;
+                break;
             case 'object':
                 stateKey = dosojin.name;
-                break ;
+                break;
         }
 
         if (stateKey === null) {
@@ -145,7 +213,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
             }
         }
 
-        this.pushCost({value, scope, dosojin: dosojin.name, entityName, entityType, layer, reason});
+        this.pushCost({ value, scope, dosojin: dosojin.name, entityName, entityType, layer, reason });
 
         return this;
     }
@@ -236,7 +304,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
         this.transferStatus = {
             ...this.transferStatus,
             receptacle: {
-                ...(this.transferStatus.receptacle || {layer: null, dosojin: null, name: null}),
+                ...(this.transferStatus.receptacle || { layer: null, dosojin: null, name: null }),
                 status,
             },
         };
@@ -260,7 +328,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
                 if (regexp.test(currentScope)) {
                     currentScopes.splice(idx, 1);
                     matched = true;
-                    break ;
+                    break;
                 }
             }
 
@@ -270,7 +338,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
 
         }
 
-        return currentScopes.length === 0 ;
+        return currentScopes.length === 0;
     }
 
     public async setReceptacleEntity(dosojin: string, entity: Receptacle): Promise<Gem> {
@@ -288,7 +356,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
         this.transferStatus = {
             ...this.transferStatus,
             receptacle: {
-                ...(this.transferStatus.receptacle || {layer: null, status: null}),
+                ...(this.transferStatus.receptacle || { layer: null, status: null }),
                 dosojin,
                 name: entity.name,
             },
@@ -307,7 +375,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
         this.transferStatus = {
             ...this.transferStatus,
             receptacle: {
-                ...(this.transferStatus.receptacle || {status: null, dosojin: null, name: null}),
+                ...(this.transferStatus.receptacle || { status: null, dosojin: null, name: null }),
                 layer,
             },
         };
@@ -325,7 +393,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
         this.transferStatus = {
             ...this.transferStatus,
             connector: {
-                ...(this.transferStatus.connector || {layer: null, dosojin: null, name: null}),
+                ...(this.transferStatus.connector || { layer: null, dosojin: null, name: null }),
                 status,
             },
         };
@@ -348,7 +416,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
         this.transferStatus = {
             ...this.transferStatus,
             connector: {
-                ...(this.transferStatus.connector || {layer: null, status: null}),
+                ...(this.transferStatus.connector || { layer: null, status: null }),
                 dosojin,
                 name: entity.name,
             },
@@ -367,7 +435,7 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
         this.transferStatus = {
             ...this.transferStatus,
             connector: {
-                ...(this.transferStatus.connector || {status: null, dosojin: null, name: null}),
+                ...(this.transferStatus.connector || { status: null, dosojin: null, name: null }),
                 layer,
             },
         };
