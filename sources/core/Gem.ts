@@ -55,11 +55,29 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
         }
 
         return {
-            actionType: this.actionType,
-            operationStatus: this.operationStatus as any,
-            transferStatus: this.transferStatus as any,
-            gemStatus: this.gemStatus,
-            gemPayload: {
+            action_type: this.actionType,
+            operation_status: this.operationStatus ? {
+                status: this.operationStatus.status,
+                layer: this.operationStatus.layer,
+                dosojin: this.operationStatus.dosojin,
+                operation_list: this.operationStatus.operation_list
+            } : null,
+            transfer_status: this.transferStatus ? {
+                connector: this.transferStatus.connector ? {
+                    status: this.transferStatus.connector.status,
+                    layer: this.transferStatus.connector.layer,
+                    dosojin: this.transferStatus.connector.dosojin,
+                    name: this.transferStatus.connector.name,
+                } : null,
+                receptacle: this.transferStatus.receptacle ? {
+                    status: this.transferStatus.receptacle.status,
+                    layer: this.transferStatus.receptacle.layer,
+                    dosojin: this.transferStatus.receptacle.dosojin,
+                    name: this.transferStatus.receptacle.name,
+                } : null,
+            } : null,
+            gem_status: this.gemStatus,
+            gem_payload: {
                 values,
                 costs: this.gemPayload.costs.map((cost: ScopedCost): any => {
                     let value;
@@ -74,42 +92,95 @@ export class Gem<CustomOperationStatusSet extends OperationStatusNames = Operati
                     }
 
                     return {
-                        ...cost,
+                        scope: cost.scope,
+                        dosojin: cost.dosojin,
+                        entity_name: cost.entityName,
+                        entity_type: cost.entityType,
+                        layer: cost.layer,
+                        reason: cost.reason,
                         value,
                     };
                 }),
             },
-            errorInfo: this.errorInfo,
-            routeHistory: this.routeHistory,
-            gemData: this.gemData,
-            refreshTimer: this.refreshTimer,
+            error_info: this.errorInfo ? {
+                dosojin: this.errorInfo.dosojin,
+                entity_name: this.errorInfo.entityName,
+                entity_type: this.errorInfo.entityType,
+                layer: this.errorInfo.layer,
+                message: this.errorInfo.message,
+            } : null,
+            route_history: this.routeHistory.map((rh: HistoryEntity): any => ({
+                layer: rh.layer,
+                dosojin: rh.dosojin,
+                entity_name: rh.entityName,
+                entity_type: rh.entityType,
+                count: rh.count,
+            })),
+            gem_data: this.gemData,
+            refresh_timer: this.refreshTimer,
         };
     }
 
     public load(raw: RawGem): Gem {
         const values: { [key: string]: BN } = {};
 
-        for (const valueKey of Object.keys(raw.gemPayload.values)) {
-            values[valueKey] = new BN(raw.gemPayload.values[valueKey]);
+        for (const valueKey of Object.keys(raw.gem_payload.values)) {
+            values[valueKey] = new BN(raw.gem_payload.values[valueKey]);
         }
-        this.actionType = raw.actionType;
-        this.operationStatus = raw.operationStatus as Partial<OperationStatus<CustomOperationStatusSet>>;
-        this.transferStatus = raw.transferStatus as Partial<TransferStatus<CustomTransferConnectorStatusSet, CustomTransferReceptacleStatusSet>>;
-        this.gemStatus = raw.gemStatus;
+
+        this.actionType = raw.action_type;
+        this.operationStatus = raw.operation_status ? {
+            status: raw.operation_status.status as any,
+            layer: raw.operation_status.layer,
+            dosojin: raw.operation_status.dosojin,
+            operation_list: raw.operation_status.operation_list,
+        } : null;
+        this.transferStatus = raw.transfer_status ? {
+            connector: raw.transfer_status.connector ? {
+                status: raw.transfer_status.connector.status as any,
+                layer: raw.transfer_status.connector.layer,
+                dosojin: raw.transfer_status.connector.dosojin,
+                name: raw.transfer_status.connector.name,
+            } : null,
+            receptacle: raw.transfer_status.receptacle ? {
+                status: raw.transfer_status.receptacle.status as any,
+                layer: raw.transfer_status.receptacle.layer,
+                dosojin: raw.transfer_status.receptacle.dosojin,
+                name: raw.transfer_status.receptacle.name,
+            } : null
+        } : null;
+        this.gemStatus = raw.gem_status;
         this.gemPayload = {
             values,
-            costs: raw.gemPayload.costs.map((cost: any): ScopedCost => ({
-                ...cost,
+            costs: raw.gem_payload.costs.map((cost: any): ScopedCost => ({
                 value: typeof cost.value === 'string' ? new BN(cost.value) : {
                     min: new BN(cost.value.min),
                     max: new BN(cost.value.max),
                 },
+                scope: cost.scope,
+                dosojin: cost.dosojin,
+                entityName: cost.entity_name,
+                entityType: cost.entity_type,
+                layer: cost.layer,
+                reason: cost.reason,
             })),
         };
-        this.errorInfo = raw.errorInfo;
-        this.routeHistory = raw.routeHistory;
-        this.gemData = raw.gemData;
-        this.refreshTimer = raw.refreshTimer;
+        this.errorInfo = raw.error_info ? {
+            dosojin: raw.error_info.dosojin,
+            entityName: raw.error_info.entity_name,
+            entityType: raw.error_info.entity_type,
+            layer: raw.error_info.layer,
+            message: raw.error_info.message,
+        } : null;
+        this.routeHistory = raw.route_history.map((rh: any): HistoryEntity => ({
+            layer: rh.layer,
+            dosojin: rh.dosojin,
+            entityName: rh.entity_name,
+            entityType: rh.entity_type,
+            count: rh.count,
+        }));
+        this.gemData = raw.gem_data;
+        this.refreshTimer = raw.refresh_timer;
 
         return this;
     }

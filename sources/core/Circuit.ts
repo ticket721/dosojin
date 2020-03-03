@@ -8,7 +8,7 @@ export class Circuit {
 
     private layers: Layer[] = [];
     private registry: {[key: string]: boolean} = {};
-    private readonly name: string;
+    public readonly name: string;
 
     constructor(name: string, initialLayers?: Layer[]) {
         this.name = name;

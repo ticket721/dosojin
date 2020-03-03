@@ -1,12 +1,12 @@
 export interface RawGem {
-    actionType: 'operation' | 'transfer';
-    operationStatus: {
+    action_type: 'operation' | 'transfer';
+    operation_status: {
         status: string;
         layer: number;
         dosojin: string;
         operation_list: string[];
     };
-    transferStatus: {
+    transfer_status: {
         connector: {
             status: string;
             layer: number;
@@ -20,8 +20,8 @@ export interface RawGem {
             name: string;
         };
     };
-    gemStatus: 'Running' | 'Complete' | 'Error' | 'Fatal' | 'MissingReceptacle';
-    gemPayload: {
+    gem_status: 'Running' | 'Complete' | 'Error' | 'Fatal' | 'MissingReceptacle';
+    gem_payload: {
         values: {
             [key: string]: string;
         };
@@ -32,26 +32,26 @@ export interface RawGem {
             };
             scope: string;
             dosojin: string;
-            entityName: string;
-            entityType: string;
+            entity_name: string;
+            entity_type: string;
             layer: number;
             reason: string;
         }[];
     };
-    errorInfo: {
+    error_info: {
         dosojin: string;
-        entityName: string;
-        entityType: string;
+        entity_name: string;
+        entity_type: string;
         layer: number;
         message: string;
     };
-    routeHistory: {
+    route_history: {
         layer: number;
         dosojin: string;
-        entityName: string;
-        entityType: string;
+        entity_name: string;
+        entity_type: string;
         count: number;
     }[];
-    gemData: {[key: string]: any};
-    refreshTimer: number;
+    gem_data: {[key: string]: any};
+    refresh_timer: number;
 }

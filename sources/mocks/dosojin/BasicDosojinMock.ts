@@ -70,7 +70,6 @@ class BasicDosojinConnector extends Connector {
     }
 
     public async run(gem: Gem): Promise<Gem> {
-        console.log('running connector');
         return gem.setConnectorStatus(TransferConnectorStatusNames.TransferComplete);
     }
 
@@ -108,7 +107,6 @@ class BasicDosojinConnector extends Connector {
     }
 
     public async setReceptacleInfo(info: any): Promise<void> {
-        console.log('in connector', info);
         this.receptacleInfo = info;
     }
 
@@ -123,7 +121,6 @@ class BasicDosojinOperation extends Operation {
 
     public async run(gem: Gem): Promise<Gem> {
 
-        console.log(gem.getState(this.dosojin));
         gem
             .addCost(this.dosojin, new BN(1), 'fiat_eur', 'Because it needed money')
             .setPayloadValues({
