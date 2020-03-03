@@ -74,6 +74,6 @@
         "@types/stripe": "7.13.21",
         "bn.js": "5.1.1",
         "deep-equal": "2.0.1",
-        "stripe": "8.12.0"
+        "stripe": "8.25.0"
     }
 }
