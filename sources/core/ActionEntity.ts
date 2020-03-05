@@ -1,4 +1,4 @@
-import { Gem }          from './Gem';
+import { Gem } from './Gem';
 
 export const SECOND: number = 1000;
 export const MINUTE: number = 60000;

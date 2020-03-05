@@ -1,8 +1,8 @@
-import BN                                   from 'bn.js';
+import BN from 'bn.js';
 import { instance, mock, reset, spy, when } from 'ts-mockito';
-import { Dosojin, Gem, Receptacle }         from '../../../core';
-import { RawGem }                           from '../../../core/RawGem';
-import { SimpleConnectorMock }                       from '../../../mocks/connector/SimpleConnectorMock';
+import { Dosojin, Gem, Receptacle } from '../../../core';
+import { RawGem } from '../../../core/RawGem';
+import { SimpleConnectorMock } from '../../../mocks/connector/SimpleConnectorMock';
 import { SimpleOperationMock, SimpleReceptacleMock } from '../../../mocks';
 
 export function raw_tests(): void {
@@ -25,7 +25,6 @@ export function raw_tests(): void {
     });
 
     test('recover raw gem value with connector set', async () => {
-
         when(mockDosojin.name).thenReturn('Dosojin');
         const spiedConnector: SimpleConnectorMock = spy(connector);
         when(spiedConnector.scopes(gem)).thenResolve(['fiat_eur', 'fiat_usd']);
@@ -48,7 +47,7 @@ export function raw_tests(): void {
                     layer: null,
                     status: null,
                     dosojin: 'Dosojin',
-                    name: 'connector'
+                    name: 'connector',
                 },
                 receptacle: null,
             },
@@ -56,7 +55,7 @@ export function raw_tests(): void {
             gem_payload: {
                 values: {
                     fiat_eur: '10',
-                    fiat_usd: '5'
+                    fiat_usd: '5',
                 },
                 costs: [
                     {
@@ -66,32 +65,34 @@ export function raw_tests(): void {
                         entity_name: 'connector',
                         entity_type: 'connector',
                         layer: null,
-                        reason: 'purely testing'
+                        reason: 'purely testing',
                     },
                     {
                         value: {
                             min: '1',
-                            max: '0'
+                            max: '0',
                         },
                         scope: 'test',
                         dosojin: 'Dosojin',
                         entity_name: 'connector',
                         entity_type: 'connector',
                         layer: null,
-                        reason: 'purely testing'
-                    }
-                ]
+                        reason: 'purely testing',
+                    },
+                ],
             },
             error_info: null,
-            route_history: [{
-                layer: 0,
-                dosojin: 'Dosojin',
-                entity_name: 'connector',
-                entity_type: 'connector',
-                count: 1,
-            }],
+            route_history: [
+                {
+                    layer: 0,
+                    dosojin: 'Dosojin',
+                    entity_name: 'connector',
+                    entity_type: 'connector',
+                    count: 1,
+                },
+            ],
             gem_data: {},
-            refresh_timer: null
+            refresh_timer: null,
         };
 
         const rawGem: RawGem = gem.raw;
@@ -103,11 +104,9 @@ export function raw_tests(): void {
         const secondRawGem: RawGem = newGem.raw;
 
         expect(secondRawGem).toEqual(rawGem);
-
     });
 
     test('recover raw gem value with receptacle set', async () => {
-
         when(mockDosojin.name).thenReturn('Dosojin');
         const spiedReceptacle: SimpleReceptacleMock = spy(receptacle);
         when(spiedReceptacle.scopes(gem)).thenResolve(['fiat_eur', 'fiat_usd']);
@@ -123,7 +122,7 @@ export function raw_tests(): void {
                     layer: null,
                     status: null,
                     dosojin: 'Dosojin',
-                    name: 'receptacle'
+                    name: 'receptacle',
                 },
                 connector: null,
             },
@@ -131,7 +130,7 @@ export function raw_tests(): void {
             gem_payload: {
                 values: {
                     fiat_eur: '10',
-                    fiat_usd: '5'
+                    fiat_usd: '5',
                 },
                 costs: [
                     {
@@ -141,26 +140,26 @@ export function raw_tests(): void {
                         entity_name: 'receptacle',
                         entity_type: 'receptacle',
                         layer: null,
-                        reason: 'purely testing'
+                        reason: 'purely testing',
                     },
                     {
                         value: {
                             min: '1',
-                            max: '0'
+                            max: '0',
                         },
                         scope: 'test',
                         dosojin: 'Dosojin',
                         entity_name: 'receptacle',
                         entity_type: 'receptacle',
                         layer: null,
-                        reason: 'purely testing'
-                    }
-                ]
+                        reason: 'purely testing',
+                    },
+                ],
             },
             error_info: null,
             route_history: [],
             gem_data: {},
-            refresh_timer: null
+            refresh_timer: null,
         };
 
         const rawGem: RawGem = gem.raw;
@@ -172,11 +171,9 @@ export function raw_tests(): void {
         const secondRawGem: RawGem = newGem.raw;
 
         expect(secondRawGem).toEqual(rawGem);
-
     });
 
     test('recover raw gem value with operation set', async () => {
-
         when(mockDosojin.name).thenReturn('Dosojin');
         const spiedOperation: SimpleOperationMock = spy(operation);
         when(spiedOperation.scopes(gem)).thenResolve(['fiat_eur', 'fiat_usd']);
@@ -191,16 +188,14 @@ export function raw_tests(): void {
                 status: undefined,
                 layer: undefined,
                 dosojin: 'Dosojin',
-                operation_list: [
-                    'operation'
-                ]
+                operation_list: ['operation'],
             },
             transfer_status: null,
             gem_status: undefined,
             gem_payload: {
                 values: {
                     fiat_eur: '10',
-                    fiat_usd: '5'
+                    fiat_usd: '5',
                 },
                 costs: [
                     {
@@ -210,26 +205,26 @@ export function raw_tests(): void {
                         entity_name: 'operation',
                         entity_type: 'operation',
                         layer: undefined,
-                        reason: 'purely testing'
+                        reason: 'purely testing',
                     },
                     {
                         value: {
                             min: '1',
-                            max: '0'
+                            max: '0',
                         },
                         scope: 'test',
                         dosojin: 'Dosojin',
                         entity_name: 'operation',
                         entity_type: 'operation',
                         layer: undefined,
-                        reason: 'purely testing'
-                    }
-                ]
+                        reason: 'purely testing',
+                    },
+                ],
             },
             error_info: null,
             route_history: [],
             gem_data: {},
-            refresh_timer: null
+            refresh_timer: null,
         };
 
         const rawGem: RawGem = gem.raw;
@@ -241,11 +236,9 @@ export function raw_tests(): void {
         const secondRawGem: RawGem = newGem.raw;
 
         expect(secondRawGem).toEqual(rawGem);
-
     });
 
     test('recover raw gem value with error info set', async () => {
-
         when(mockDosojin.name).thenReturn('Dosojin');
         const spiedOperation: SimpleOperationMock = spy(operation);
         when(spiedOperation.scopes(gem)).thenResolve(['fiat_eur', 'fiat_usd']);
@@ -261,16 +254,14 @@ export function raw_tests(): void {
                 status: undefined,
                 layer: undefined,
                 dosojin: 'Dosojin',
-                operation_list: [
-                    'operation'
-                ]
+                operation_list: ['operation'],
             },
             transfer_status: null,
             gem_status: 'Error',
             gem_payload: {
                 values: {
                     fiat_eur: '10',
-                    fiat_usd: '5'
+                    fiat_usd: '5',
                 },
                 costs: [
                     {
@@ -280,21 +271,21 @@ export function raw_tests(): void {
                         entity_name: 'operation',
                         entity_type: 'operation',
                         layer: undefined,
-                        reason: 'purely testing'
+                        reason: 'purely testing',
                     },
                     {
                         value: {
                             min: '1',
-                            max: '0'
+                            max: '0',
                         },
                         scope: 'test',
                         dosojin: 'Dosojin',
                         entity_name: 'operation',
                         entity_type: 'operation',
                         layer: undefined,
-                        reason: 'purely testing'
-                    }
-                ]
+                        reason: 'purely testing',
+                    },
+                ],
             },
             error_info: {
                 dosojin: 'Dosojin',
@@ -305,7 +296,7 @@ export function raw_tests(): void {
             },
             route_history: [],
             gem_data: {},
-            refresh_timer: null
+            refresh_timer: null,
         };
 
         const rawGem: RawGem = gem.raw;
@@ -317,8 +308,5 @@ export function raw_tests(): void {
         const secondRawGem: RawGem = newGem.raw;
 
         expect(secondRawGem).toEqual(rawGem);
-
     });
-
-
 }

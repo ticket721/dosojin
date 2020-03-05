@@ -18,7 +18,7 @@ export interface TransferEntityInfo<CustomStatusSet> {
 export interface TransferStatus<
     CustomConnectorStatusSet extends TransferConnectorStatusNames = TransferConnectorStatusNames,
     CustomReceptacleStatusSet extends TransferReceptacleStatusNames = TransferReceptacleStatusNames
-    > {
+> {
     connector: TransferEntityInfo<TransferConnectorStatusNames>;
     receptacle: TransferEntityInfo<TransferReceptacleStatusNames>;
 }

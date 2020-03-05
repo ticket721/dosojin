@@ -147,7 +147,7 @@ export function run_transfer_tests(): void {
         await circuit.runTransfer(gem, false);
 
         verify(mockSdl.getReceptacleInfo(gem)).once();
-        verify(mockSdl.setConnectorInfo(gem, deepEqual({__begin: true}))).once();
+        verify(mockSdl.setConnectorInfo(gem, deepEqual({ __begin: true }))).once();
         verify(mockSdl.run(gem, false)).once();
     });
 
@@ -204,7 +204,7 @@ export function run_transfer_tests(): void {
 
         await circuit.runTransfer(gem, false);
 
-        verify(mockSdl.setReceptacleInfo(gem, deepEqual({__end: true}))).once();
+        verify(mockSdl.setReceptacleInfo(gem, deepEqual({ __end: true }))).once();
         verify(mockSdl.run(gem, false)).once();
     });
 

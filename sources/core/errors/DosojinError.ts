@@ -1,19 +1,18 @@
 import { ActionError } from './ActionError';
 
 export class DosojinError extends ActionError {
-
     public readonly dosojin: string;
 
     constructor(dosojin: string, err: ActionError | string, errType: string = 'DosojinError') {
         switch (typeof err) {
             case 'object': {
                 super(err.action, err, errType);
-                break ;
+                break;
             }
             case 'string': {
                 super(null, err);
                 this.name = 'DosojinError';
-                break ;
+                break;
             }
         }
         this.dosojin = dosojin;

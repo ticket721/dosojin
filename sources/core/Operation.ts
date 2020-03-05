@@ -1,5 +1,5 @@
 import { ActionEntity } from './ActionEntity';
-import { Dosojin }      from './Dosojin';
+import { Dosojin } from './Dosojin';
 
 export abstract class Operation extends ActionEntity {
     protected dosojin: Dosojin;
@@ -8,5 +8,4 @@ export abstract class Operation extends ActionEntity {
         super(name);
         this.dosojin = dosojin;
     }
-
 }

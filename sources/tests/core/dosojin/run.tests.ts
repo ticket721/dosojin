@@ -1,9 +1,5 @@
-import {instance, mock, reset, spy, verify, when} from 'ts-mockito';
-import {
-    Dosojin,
-    DosojinError,
-    Gem,
-} from '../../../core';
+import { instance, mock, reset, spy, verify, when } from 'ts-mockito';
+import { Dosojin, DosojinError, Gem } from '../../../core';
 
 export function run_tests(): void {
     let dosojin: Dosojin;
@@ -18,7 +14,7 @@ export function run_tests(): void {
 
     test('throw Dosojin error when gem actionType is null', async () => {
         const gem: Gem = instance(mockGem);
-        when (mockGem.actionType).thenReturn(null);
+        when(mockGem.actionType).thenReturn(null);
 
         await expect(dosojin.run(gem, false)).rejects.toThrow();
         await expect(dosojin.run(gem, false)).rejects.toMatchObject({
@@ -30,7 +26,7 @@ export function run_tests(): void {
 
     test('throw Dosojin error when run Operation failed', async () => {
         const gem: Gem = instance(mockGem);
-        when (mockGem.actionType).thenReturn('operation');
+        when(mockGem.actionType).thenReturn('operation');
 
         const spiedDosojin: Dosojin = spy(dosojin);
 
@@ -46,7 +42,7 @@ export function run_tests(): void {
 
     test('throw Dosojin error when run Transfer failed', async () => {
         const gem: Gem = instance(mockGem);
-        when (mockGem.actionType).thenReturn('transfer');
+        when(mockGem.actionType).thenReturn('transfer');
 
         const spiedDosojin: Dosojin = spy(dosojin);
         when(spiedDosojin.runTransfer(gem, false)).thenThrow(new DosojinError(dosojinName, `transfer failed`));
@@ -63,7 +59,7 @@ export function run_tests(): void {
         const spiedDosojin: Dosojin = spy(dosojin);
 
         const gem: Gem = instance(mockGem);
-        when (mockGem.actionType).thenReturn('operation');
+        when(mockGem.actionType).thenReturn('operation');
 
         when(spiedDosojin.runOperation(gem, false)).thenResolve(instance(mockGem));
 
@@ -76,7 +72,7 @@ export function run_tests(): void {
         const spiedDosojin: Dosojin = spy(dosojin);
 
         const gem: Gem = instance(mockGem);
-        when (mockGem.actionType).thenReturn('transfer');
+        when(mockGem.actionType).thenReturn('transfer');
 
         when(spiedDosojin.runTransfer(gem, false)).thenResolve(instance(mockGem));
 

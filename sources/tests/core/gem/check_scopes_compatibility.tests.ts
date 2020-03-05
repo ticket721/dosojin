@@ -1,13 +1,11 @@
 import BN from 'bn.js';
-import {
-    Gem,
-} from '../../../core';
+import { Gem } from '../../../core';
 
 export function check_scopes_compatibility_tests(): void {
     let gem: Gem;
 
     beforeEach(() => {
-        gem = new Gem({fiat_eur: new BN(10), fiat_usd: new BN(5)});
+        gem = new Gem({ fiat_eur: new BN(10), fiat_usd: new BN(5) });
     });
 
     test('return false when specified scope list is empty', () => {

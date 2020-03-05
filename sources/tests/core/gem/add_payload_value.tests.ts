@@ -5,7 +5,7 @@ export function add_payload_value_tests(): void {
     let gem: Gem;
 
     beforeEach(() => {
-        gem = new Gem({fiat_eur: new BN(10), fiat_usd: new BN(5)});
+        gem = new Gem({ fiat_eur: new BN(10), fiat_usd: new BN(5) });
     });
 
     test('add a number value to a scope that does not exist yet', () => {

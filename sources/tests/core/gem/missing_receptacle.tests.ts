@@ -1,7 +1,4 @@
-import {
-    Gem,
-    TransferConnectorStatusNames,
-} from '../../../core';
+import { Gem, TransferConnectorStatusNames } from '../../../core';
 
 export function missing_receptacle_tests(): void {
     let gem: Gem;
@@ -10,7 +7,7 @@ export function missing_receptacle_tests(): void {
         gem = new Gem({});
     });
 
-    test('set error info and gem status to \'MissingReceptacle\'', () => {
+    test("set error info and gem status to 'MissingReceptacle'", () => {
         const expectedDosojinName: string = 'dosojin';
         const expectedConnectorName: string = 'connector';
         const expectedLayer: number = 0;

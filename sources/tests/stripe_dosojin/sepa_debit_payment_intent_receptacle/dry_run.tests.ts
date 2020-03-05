@@ -28,43 +28,48 @@ export function dry_run_tests(): void {
 
     test('throw Error when dosojin state does not exist on gem', async () => {
         const gem: Gem = instance(mockGem);
-        
-        when (mockGem.getState(dosojin)).thenReturn(null);
+
+        when(mockGem.getState(dosojin)).thenReturn(null);
 
         await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toThrow();
         await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toMatchObject({
-            message: `gem state does not contain a dosojinName Dosojin property`
+            message: `gem state does not contain a dosojinName Dosojin property`,
         });
     });
 
     test('throw Error when paymentIntentId does not exist on dosojin state', async () => {
         const gem: Gem = instance(mockGem);
-        
+
         when(mockGem.getState<any>(dosojin)).thenReturn({
-            paymentIntentId: null
+            paymentIntentId: null,
         });
 
         await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toThrow();
         await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toMatchObject({
-            message: `gem dosojinName state does not contain any paymentIntentId property`
+            message: `gem dosojinName state does not contain any paymentIntentId property`,
         });
     });
 
     test('throw Error when paymentIntent retrieve failed', async () => {
         const gem: Gem = instance(mockGem);
         const piId: string = 'pi_mockId';
-        
+
         when(mockDosojin.name).thenReturn('dosojinName');
-        
+
         when(mockGem.getState<any>(dosojin)).thenReturn({
-            paymentIntentId: piId
+            paymentIntentId: piId,
         });
 
         when(mockDosojin.getStripePiResource()).thenReturn(piResource);
 
-        when(mockPiResource.retrieve(piId, deepEqual({
-            expand: [ 'charges.data.balance_transaction' ]
-        }))).thenThrow(new Error('retrieve failed'));
+        when(
+            mockPiResource.retrieve(
+                piId,
+                deepEqual({
+                    expand: ['charges.data.balance_transaction'],
+                }),
+            ),
+        ).thenThrow(new Error('retrieve failed'));
 
         await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toThrow();
         await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toMatchObject(new Error('retrieve failed'));
@@ -73,35 +78,37 @@ export function dry_run_tests(): void {
     test('throw Error when the payment method of paymentIntent is not a sepa debit', async () => {
         const gem: Gem = instance(mockGem);
         const piId: string = 'pi_mockId';
-        const expectedErrorMessage: string = 'SepaDebitPaymentIntentReceptacle can manage only sepa debit Payment Intent (Update to a sepa debit payment method or choose an appropriate receptacle)';
-        
+        const expectedErrorMessage: string =
+            'SepaDebitPaymentIntentReceptacle can manage only sepa debit Payment Intent (Update to a sepa debit payment method or choose an appropriate receptacle)';
+
         when(mockDosojin.name).thenReturn('dosojinName');
-        
+
         when(mockGem.getState<any>(dosojin)).thenReturn({
-            paymentIntentId: piId
+            paymentIntentId: piId,
         });
 
         when(mockDosojin.getStripePiResource()).thenReturn(piResource);
 
-        when(mockPiResource.retrieve(piId, deepEqual({
-            expand: [ 'charges.data.balance_transaction' ]
-        }))).thenResolve(<any>{
-            payment_method_types: [
-                'card'
-            ]
+        when(
+            mockPiResource.retrieve(
+                piId,
+                deepEqual({
+                    expand: ['charges.data.balance_transaction'],
+                }),
+            ),
+        ).thenResolve(<any>{
+            payment_method_types: ['card'],
         });
 
         when(mockGem.errorInfo).thenReturn(<any>{
-            message: expectedErrorMessage
+            message: expectedErrorMessage,
         });
-        
+
         await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toThrow();
 
         verify(mockGem.error(dosojin, expectedErrorMessage)).once();
 
-        await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toMatchObject(
-            new Error(expectedErrorMessage)
-        );
+        await expect(sepaDebitPiReceptacle.dryRun(gem)).rejects.toMatchObject(new Error(expectedErrorMessage));
     });
 
     test('Verify that receptacle status is set to transfer complete', async () => {
@@ -132,53 +139,65 @@ export function dry_run_tests(): void {
             charges: {
                 data: [
                     {
-                        balance_transaction: expectedBalanceTx
-                    }
-                ]
+                        balance_transaction: expectedBalanceTx,
+                    },
+                ],
             },
             currency: 'eur',
             description: 'desc',
-            payment_method_types: [
-                'sepa_debit'
-            ]
-        }
-        
+            payment_method_types: ['sepa_debit'],
+        };
+
         when(mockDosojin.name).thenReturn('dosojinName');
         when(mockGem.getState<any>(dosojin)).thenReturn({
-            paymentIntentId: piId
+            paymentIntentId: piId,
         });
         when(mockDosojin.getStripePiResource()).thenReturn(piResource);
-        when(mockPiResource.retrieve(piId, deepEqual({
-            expand: [ 'charges.data.balance_transaction' ]
-        }))).thenResolve(<any>expectedPi);
+        when(
+            mockPiResource.retrieve(
+                piId,
+                deepEqual({
+                    expand: ['charges.data.balance_transaction'],
+                }),
+            ),
+        ).thenResolve(<any>expectedPi);
 
         await sepaDebitPiReceptacle.dryRun(gem);
 
-        verify(mockGem.addPayloadValue(
-            deepEqual(`fiat_${expectedPi.currency}`),
-            deepEqual(expectedPi.amount_received)
-        )).once();
-        
-        verify(mockGem.addCost(
-            deepEqual(dosojin),
-            deepEqual(new BN(expectedBalanceTx.net)),
-            deepEqual(`fiat_${expectedBalanceTx.currency}`),
-            deepEqual(`|stripe| Checkout with sepa debit (net_amount): ${expectedPi.description}`)
-        )).once();
+        verify(
+            mockGem.addPayloadValue(deepEqual(`fiat_${expectedPi.currency}`), deepEqual(expectedPi.amount_received)),
+        ).once();
 
-        verify(mockGem.addCost(
-            deepEqual(dosojin),
-            deepEqual(new BN(expectedBalanceTx.fee_details[0].amount)),
-            deepEqual(`fiat_${expectedBalanceTx.fee_details[0].currency}`),
-            deepEqual(`|stripe| Checkout with sepa debit (${expectedBalanceTx.fee_details[0].type}): ${expectedBalanceTx.fee_details[0].description}`)
-        )).once();
+        verify(
+            mockGem.addCost(
+                deepEqual(dosojin),
+                deepEqual(new BN(expectedBalanceTx.net)),
+                deepEqual(`fiat_${expectedBalanceTx.currency}`),
+                deepEqual(`|stripe| Checkout with sepa debit (net_amount): ${expectedPi.description}`),
+            ),
+        ).once();
 
-        verify(mockGem.addCost(
-            deepEqual(dosojin),
-            deepEqual(new BN(expectedBalanceTx.fee_details[1].amount)),
-            deepEqual(`fiat_${expectedBalanceTx.fee_details[1].currency}`),
-            deepEqual(`|stripe| Checkout with sepa debit (${expectedBalanceTx.fee_details[1].type}): ${expectedBalanceTx.fee_details[1].description}`)
-        )).once();
+        verify(
+            mockGem.addCost(
+                deepEqual(dosojin),
+                deepEqual(new BN(expectedBalanceTx.fee_details[0].amount)),
+                deepEqual(`fiat_${expectedBalanceTx.fee_details[0].currency}`),
+                deepEqual(
+                    `|stripe| Checkout with sepa debit (${expectedBalanceTx.fee_details[0].type}): ${expectedBalanceTx.fee_details[0].description}`,
+                ),
+            ),
+        ).once();
+
+        verify(
+            mockGem.addCost(
+                deepEqual(dosojin),
+                deepEqual(new BN(expectedBalanceTx.fee_details[1].amount)),
+                deepEqual(`fiat_${expectedBalanceTx.fee_details[1].currency}`),
+                deepEqual(
+                    `|stripe| Checkout with sepa debit (${expectedBalanceTx.fee_details[1].type}): ${expectedBalanceTx.fee_details[1].description}`,
+                ),
+            ),
+        ).once();
 
         verify(mockGem.setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete)).once();
     });

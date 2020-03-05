@@ -1,5 +1,4 @@
 export class ActionError extends Error {
-
     public readonly action: string;
 
     constructor(actionName: string, err: Error | string, errType?: string) {
@@ -8,12 +7,12 @@ export class ActionError extends Error {
                 super(err.message);
                 this.name = errType;
                 this.stack = `${this.stack}\n ==>> ${err.stack}`;
-                break ;
+                break;
             }
             case 'string': {
                 super(err);
                 this.name = 'ActionError';
-                break ;
+                break;
             }
         }
         this.action = actionName;

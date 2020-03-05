@@ -1,9 +1,5 @@
-import {instance, mock, reset, verify, when} from 'ts-mockito';
-import {
-    Circuit, Gem,
-    SingleDosojinLayer,
-    TransferReceptacleStatusNames,
-} from '../../../core';
+import { instance, mock, reset, verify, when } from 'ts-mockito';
+import { Circuit, Gem, SingleDosojinLayer, TransferReceptacleStatusNames } from '../../../core';
 
 export function create_gem_tests(): void {
     let circuit: Circuit;

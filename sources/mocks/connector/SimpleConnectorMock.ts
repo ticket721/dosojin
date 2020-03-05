@@ -1,7 +1,6 @@
-import {Connector, Dosojin, Gem } from '../../core';
+import { Connector, Dosojin, Gem } from '../../core';
 
 export class SimpleConnectorMock extends Connector {
-
     constructor(name: string, dosojin: Dosojin) {
         super(name, dosojin);
     }

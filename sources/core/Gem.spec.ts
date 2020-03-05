@@ -1,27 +1,26 @@
-import { add_cost_tests }                   from '../tests/core/gem/add_cost.tests';
-import { add_payload_value_tests }          from '../tests/core/gem/add_payload_value.tests';
+import { add_cost_tests } from '../tests/core/gem/add_cost.tests';
+import { add_payload_value_tests } from '../tests/core/gem/add_payload_value.tests';
 import { check_scopes_compatibility_tests } from '../tests/core/gem/check_scopes_compatibility.tests';
-import { error_tests }                      from '../tests/core/gem/error.tests';
-import { fatal_tests }                      from '../tests/core/gem/fatal.tests';
-import { missing_receptacle_tests }         from '../tests/core/gem/missing_receptacle.tests';
-import { next_operation_tests }             from '../tests/core/gem/next_operation.tests';
-import { set_action_type_tests }            from '../tests/core/gem/set_action_type.tests';
-import { set_connector_entity_tests }       from '../tests/core/gem/set_connector_entity.tests';
-import { set_connector_layer_tests }        from '../tests/core/gem/set_connector_layer.tests';
-import { set_connector_status_tests }       from '../tests/core/gem/set_connector_status.tests';
-import { set_gem_status_tests }             from '../tests/core/gem/set_gem_status.tests';
-import { set_operation_entities_tests }     from '../tests/core/gem/set_operation_entities.tests';
-import { set_operations_layer_tests }       from '../tests/core/gem/set_operations_layer.tests';
-import { set_operations_status_tests }      from '../tests/core/gem/set_operations_status.tests';
-import { set_receptacle_entity_tests }      from '../tests/core/gem/set_receptacle_entity.tests';
-import { set_receptacle_layer_tests }       from '../tests/core/gem/set_receptacle_layer.tests';
-import { set_receptacle_status_tests }      from '../tests/core/gem/set_receptacle_status.tests';
-import { set_state_tests }                  from '../tests/core/gem/set_state.tests';
-import { update_payload_value_tests }       from '../tests/core/gem/update_payload_value.tests';
-import { raw_tests }                        from '../tests/core/gem/raw.tests';
+import { error_tests } from '../tests/core/gem/error.tests';
+import { fatal_tests } from '../tests/core/gem/fatal.tests';
+import { missing_receptacle_tests } from '../tests/core/gem/missing_receptacle.tests';
+import { next_operation_tests } from '../tests/core/gem/next_operation.tests';
+import { set_action_type_tests } from '../tests/core/gem/set_action_type.tests';
+import { set_connector_entity_tests } from '../tests/core/gem/set_connector_entity.tests';
+import { set_connector_layer_tests } from '../tests/core/gem/set_connector_layer.tests';
+import { set_connector_status_tests } from '../tests/core/gem/set_connector_status.tests';
+import { set_gem_status_tests } from '../tests/core/gem/set_gem_status.tests';
+import { set_operation_entities_tests } from '../tests/core/gem/set_operation_entities.tests';
+import { set_operations_layer_tests } from '../tests/core/gem/set_operations_layer.tests';
+import { set_operations_status_tests } from '../tests/core/gem/set_operations_status.tests';
+import { set_receptacle_entity_tests } from '../tests/core/gem/set_receptacle_entity.tests';
+import { set_receptacle_layer_tests } from '../tests/core/gem/set_receptacle_layer.tests';
+import { set_receptacle_status_tests } from '../tests/core/gem/set_receptacle_status.tests';
+import { set_state_tests } from '../tests/core/gem/set_state.tests';
+import { update_payload_value_tests } from '../tests/core/gem/update_payload_value.tests';
+import { raw_tests } from '../tests/core/gem/raw.tests';
 
 describe('Gem', (): void => {
-
     describe('addCost', add_cost_tests);
     describe('addPayloadValue', add_payload_value_tests);
     describe('checkScopesCompatibility', check_scopes_compatibility_tests);

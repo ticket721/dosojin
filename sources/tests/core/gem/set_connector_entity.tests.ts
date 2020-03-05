@@ -1,10 +1,7 @@
 import BN from 'bn.js';
-import {anything, instance, mock, reset, spy, when} from 'ts-mockito';
-import {
-    Dosojin,
-    Gem,
-} from '../../../core';
-import {SimpleConnectorMock} from '../../../mocks/connector/SimpleConnectorMock';
+import { anything, instance, mock, reset, spy, when } from 'ts-mockito';
+import { Dosojin, Gem } from '../../../core';
+import { SimpleConnectorMock } from '../../../mocks/connector/SimpleConnectorMock';
 
 export function set_connector_entity_tests(): void {
     let gem: Gem;
@@ -22,7 +19,7 @@ export function set_connector_entity_tests(): void {
         connector = new SimpleConnectorMock('connector', dosojin);
     });
 
-    test('throw error when action type is not \'transfer\'', async () => {
+    test("throw error when action type is not 'transfer'", async () => {
         gem.setActionType('operation');
 
         await expect(gem.setConnectorEntity('dosojin', connector)).rejects.toThrow();
@@ -32,7 +29,7 @@ export function set_connector_entity_tests(): void {
     });
 
     test('throw error when connector scope list is not compatible', async () => {
-        gem.setPayloadValues({'scope': new BN(1)});
+        gem.setPayloadValues({ scope: new BN(1) });
 
         const expectedName: string = 'connector';
         const expectedScopes: string[] = ['invalid_scope'];
@@ -45,7 +42,9 @@ export function set_connector_entity_tests(): void {
 
         await expect(gem.setConnectorEntity('dosojin', connector)).rejects.toThrow();
         await expect(gem.setConnectorEntity('dosojin', connector)).rejects.toMatchObject({
-            message: `Incompatible scopes with entity ${expectedName}: got ${expectedScopes} expected to match ${['scope']}`,
+            message: `Incompatible scopes with entity ${expectedName}: got ${expectedScopes} expected to match ${[
+                'scope',
+            ]}`,
         });
     });
 

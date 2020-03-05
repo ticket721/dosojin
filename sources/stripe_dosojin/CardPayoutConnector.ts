@@ -5,7 +5,6 @@ import { SECOND, MINUTE } from '../core/ActionEntity';
 import BN = require('bn.js');
 
 export class CardPayoutConnector extends Connector {
-
     public dosojin: GenericStripeDosojin;
 
     constructor(dosojin: GenericStripeDosojin) {
@@ -17,7 +16,6 @@ export class CardPayoutConnector extends Connector {
         const poResource: Stripe.PayoutsResource = this.dosojin.getStripePoResource();
 
         if (gem.getState(this.dosojin)) {
-
             if (gem.getState(this.dosojin).payoutId) {
                 const poId = gem.getState(this.dosojin).payoutId;
 
@@ -27,21 +25,21 @@ export class CardPayoutConnector extends Connector {
                     });
 
                     if (!(payout.type === 'card')) {
-                        gem.fatal(this.dosojin, 'CardPayoutConnector can manage only bank account Payout');
-
-                        throw new Error(gem.errorInfo.message);
+                        return gem.fatal(this.dosojin, 'CardPayoutConnector can manage only bank account Payout');
                     }
 
                     if (payout.status === 'failed') {
-                        gem.fatal(this.dosojin, `Payout failed for the following reason: ${payout.failure_message} (${payout.failure_code})`);
-
-                        throw new Error(gem.errorInfo.message);
+                        return gem.fatal(
+                            this.dosojin,
+                            `Payout failed for the following reason: ${payout.failure_message} (${payout.failure_code})`,
+                        );
                     }
 
                     if (payout.status === 'canceled') {
-                        gem.fatal(this.dosojin, `Payout was canceled for the following reason: ${payout.failure_message} (${payout.failure_code})`);
-
-                        throw new Error(gem.errorInfo.message);
+                        return gem.fatal(
+                            this.dosojin,
+                            `Payout was canceled for the following reason: ${payout.failure_message} (${payout.failure_code})`,
+                        );
                     }
 
                     if (payout.status === 'in_transit') {
@@ -67,7 +65,6 @@ export class CardPayoutConnector extends Connector {
                     gem.setState(this.dosojin, { refreshTimer: this.refreshTimer });
 
                     return gem;
-
                 } catch (e) {
                     throw e;
                 }
@@ -83,7 +80,6 @@ export class CardPayoutConnector extends Connector {
         const poResource: Stripe.PayoutsResource = this.dosojin.getStripePoResource();
 
         if (gem.getState(this.dosojin)) {
-
             if (gem.getState(this.dosojin).payoutId) {
                 const poId = gem.getState(this.dosojin).payoutId;
 
@@ -93,9 +89,7 @@ export class CardPayoutConnector extends Connector {
                     });
 
                     if (!(payout.type === 'card')) {
-                        gem.fatal(this.dosojin, 'CardPayoutConnector can manage only card Payout');
-
-                        throw new Error(gem.errorInfo.message);
+                        return gem.fatal(this.dosojin, 'CardPayoutConnector can manage only card Payout');
                     }
 
                     const balanceTransaction: Stripe.BalanceTransaction = payout.balance_transaction as Stripe.BalanceTransaction;
@@ -111,7 +105,6 @@ export class CardPayoutConnector extends Connector {
                     }
 
                     return gem.setConnectorStatus(TransferConnectorStatusNames.TransferComplete);
-
                 } catch (e) {
                     throw e;
                 }
@@ -124,16 +117,16 @@ export class CardPayoutConnector extends Connector {
     }
 
     public async scopes(gem: Gem): Promise<string[]> {
-        return ['fiat_*'];
+        return ['fiat_[a-zA-Z]+'];
     }
 
     // TODO: implement getConnectorInfo
     public async getConnectorInfo(gem: Gem): Promise<any> {
-        return ;
+        return;
     }
 
     // TODO: implement setReceptacleInfo
     public async setReceptacleInfo(info: any): Promise<void> {
-        return ;
+        return;
     }
 }

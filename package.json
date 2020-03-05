@@ -13,7 +13,9 @@
         "prebuild": "rimraf dist",
         "build:module": "npm run prebuild && tsc",
         "build:doc": "rm -rf docs && typedoc --out docs sources/index.ts --theme markdown --readme none --name Dōsojin",
-        "prepublish": "npm run build:module"
+        "prepublish": "npm run build:module",
+        "format": "prettier --write \"sources/**/*.ts\"",
+        "format:check": "prettier --check \"sources/**/*.ts\""
     },
     "repository": {
         "type": "git",
@@ -54,9 +56,13 @@
         "@types/bn.js": "4.11.6",
         "@types/deep-equal": "1.0.1",
         "@types/jest": "25.1.2",
+        "@types/lodash.get": "^4.4.6",
+        "@types/stripe": "7.13.21",
         "coveralls": "3.0.9",
         "husky": "4.2.3",
         "jest": "25.1.0",
+        "prettier": "^1.19.1",
+        "stripe": "8.12.0",
         "ts-jest": "25.2.0",
         "ts-mockito": "2.5.0",
         "ts-node": "8.6.2",
@@ -72,10 +78,12 @@
             "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
         }
     },
+    "peerDependencies": {
+        "stripe": "8.12.0"
+    },
     "dependencies": {
-        "@types/stripe": "7.13.21",
         "bn.js": "5.1.1",
         "deep-equal": "2.0.1",
-        "stripe": "8.12.0"
+        "lodash.get": "^4.4.2"
     }
 }

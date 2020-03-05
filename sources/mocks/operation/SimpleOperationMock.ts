@@ -1,7 +1,6 @@
 import { Dosojin, Gem, Operation } from '../../core';
 
 export class SimpleOperationMock extends Operation {
-
     constructor(name: string, dosojin: Dosojin) {
         super(name, dosojin);
     }

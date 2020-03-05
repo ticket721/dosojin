@@ -1,6 +1,4 @@
-import {
-    Gem,
-} from '../../../core';
+import { Gem } from '../../../core';
 
 export function set_connector_layer_tests(): void {
     let gem: Gem;
@@ -9,7 +7,7 @@ export function set_connector_layer_tests(): void {
         gem = new Gem({});
     });
 
-    test('throw error when action type is not \'transfer\'', () => {
+    test("throw error when action type is not 'transfer'", () => {
         gem.setActionType('operation');
 
         try {
@@ -21,7 +19,7 @@ export function set_connector_layer_tests(): void {
         }
     });
 
-    test('set layer when action type is \'transfer\'', () => {
+    test("set layer when action type is 'transfer'", () => {
         const expectedLayer: number = 0;
 
         gem.setConnectorLayer(expectedLayer);

@@ -1,9 +1,6 @@
-import {deepEqual, instance, mock, reset, spy, verify, when} from 'ts-mockito';
-import {
-    Dosojin,
-    Gem,
-} from '../../../core';
-import {SimpleConnectorMock} from '../../../mocks/connector/SimpleConnectorMock';
+import { deepEqual, instance, mock, reset, spy, verify, when } from 'ts-mockito';
+import { Dosojin, Gem } from '../../../core';
+import { SimpleConnectorMock } from '../../../mocks/connector/SimpleConnectorMock';
 
 export function set_receptacle_info_tests(): void {
     let dosojin: Dosojin;

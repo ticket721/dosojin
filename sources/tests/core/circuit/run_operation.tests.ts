@@ -1,4 +1,4 @@
-import { instance, mock, reset, verify, when} from 'ts-mockito';
+import { instance, mock, reset, verify, when } from 'ts-mockito';
 import {
     Circuit,
     Gem,

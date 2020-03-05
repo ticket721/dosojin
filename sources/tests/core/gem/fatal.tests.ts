@@ -58,7 +58,7 @@ export function fatal_tests(): void {
         }
     });
 
-    test('set error info and gem status to \'Fatal\' when connector transfer status is set', () => {
+    test("set error info and gem status to 'Fatal' when connector transfer status is set", () => {
         const expectedDosojinName: string = 'dosojin';
         const expectedConnectorName: string = 'connector';
         const expectedLayer: number = 0;
@@ -88,7 +88,7 @@ export function fatal_tests(): void {
         expect(gem.gemStatus).toEqual('Fatal');
     });
 
-    test('set error info and gem status to \'Fatal\' when receptacle transfer status is set', () => {
+    test("set error info and gem status to 'Fatal' when receptacle transfer status is set", () => {
         const expectedDosojinName: string = 'dosojin';
         const expectedReceptacleName: string = 'receptacle';
         const expectedLayer: number = 0;
@@ -118,7 +118,7 @@ export function fatal_tests(): void {
         expect(gem.gemStatus).toEqual('Fatal');
     });
 
-    test('set error info and gem status to \'Fatal\' when operation status is set', () => {
+    test("set error info and gem status to 'Fatal' when operation status is set", () => {
         const expectedDosojinName: string = 'dosojin';
         const expectedOperationName: string = 'operation';
         const expectedLayer: number = 0;

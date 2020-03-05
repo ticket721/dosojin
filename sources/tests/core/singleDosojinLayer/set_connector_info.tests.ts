@@ -1,8 +1,5 @@
-import {deepEqual, instance, mock, reset, verify, when} from 'ts-mockito';
-import {
-    Dosojin, DosojinError,
-    Gem, SingleDosojinLayer,
-} from '../../../core';
+import { deepEqual, instance, mock, reset, verify, when } from 'ts-mockito';
+import { Dosojin, DosojinError, Gem, SingleDosojinLayer } from '../../../core';
 
 export function set_connector_info_tests(): void {
     let sdl: SingleDosojinLayer;
@@ -18,7 +15,10 @@ export function set_connector_info_tests(): void {
         sdlName = 'sdlName';
         sdl = new SingleDosojinLayer(sdlName);
         sdl.setIndex(0);
-        sdl.setRegistry(() => null, () => null);
+        sdl.setRegistry(
+            () => null,
+            () => null,
+        );
 
         dosojin = instance(mockDosojin);
     });
@@ -50,7 +50,7 @@ export function set_connector_info_tests(): void {
 
     test('throw layer error when set connector info fail', async () => {
         const expectedInfo = {
-            'info': 'value',
+            info: 'value',
         };
 
         sdl.setDosojin(dosojin);
@@ -58,7 +58,9 @@ export function set_connector_info_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        when(mockDosojin.setConnectorInfo(gem, deepEqual(expectedInfo))).thenThrow(new DosojinError('dosojin', 'set connector info failed'));
+        when(mockDosojin.setConnectorInfo(gem, deepEqual(expectedInfo))).thenThrow(
+            new DosojinError('dosojin', 'set connector info failed'),
+        );
 
         await expect(sdl.setConnectorInfo(gem, expectedInfo)).rejects.toThrow();
         await expect(sdl.setConnectorInfo(gem, expectedInfo)).rejects.toMatchObject({
@@ -70,7 +72,7 @@ export function set_connector_info_tests(): void {
 
     test('get connector info from dosojin', async () => {
         const expectedInfo = {
-            'info': 'value',
+            info: 'value',
         };
 
         sdl.setDosojin(dosojin);

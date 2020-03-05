@@ -26,7 +26,9 @@ export interface RawGem {
             [key: string]: string;
         };
         costs: {
-            value: string | {
+            value:
+                | string
+                | {
                 min: string;
                 max: string;
             };
@@ -52,6 +54,6 @@ export interface RawGem {
         entity_type: string;
         count: number;
     }[];
-    gem_data: {[key: string]: any};
+    gem_data: { [key: string]: any };
     refresh_timer: number;
 }

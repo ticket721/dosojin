@@ -3,9 +3,7 @@ export enum OperationStatusNames {
     OperationComplete = 'OperationComplete',
 }
 
-export interface OperationStatus<
-    CustomStatusSet extends OperationStatusNames = OperationStatusNames
-    > {
+export interface OperationStatus<CustomStatusSet extends OperationStatusNames = OperationStatusNames> {
     status: CustomStatusSet;
     layer: number;
     dosojin: string;
