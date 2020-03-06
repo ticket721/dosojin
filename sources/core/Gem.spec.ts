@@ -19,6 +19,7 @@ import { set_receptacle_status_tests } from '../tests/core/gem/set_receptacle_st
 import { set_state_tests } from '../tests/core/gem/set_state.tests';
 import { update_payload_value_tests } from '../tests/core/gem/update_payload_value.tests';
 import { raw_tests } from '../tests/core/gem/raw.tests';
+import { exchange_tests } from '../tests/core/gem/exchange.test';
 
 describe('Gem', (): void => {
     describe('addCost', add_cost_tests);
@@ -42,4 +43,5 @@ describe('Gem', (): void => {
     describe('setState', set_state_tests);
     describe('updatePayloadValue', update_payload_value_tests);
     describe('raw', raw_tests);
+    describe('exchange', exchange_tests);
 });

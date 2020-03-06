@@ -1,4 +1,5 @@
 import BN from 'bn.js';
+import Decimal from 'decimal.js';
 import { Connector } from './Connector';
 import { Dosojin } from './Dosojin';
 import { GemPayload } from './GemPayload';
@@ -49,6 +50,32 @@ export class Gem<
             costs: [],
             values: initialValues,
         };
+    }
+
+    public exchange(scope: string, newScope: string, amount: BN, rate: number): Gem {
+        if (this.gemPayload.values[scope] === undefined) {
+            throw new Error(`No such scope ${scope} on gem for exchange`);
+        }
+
+        if (this.gemPayload.values[scope].lt(amount)) {
+            throw new Error(`Invalid amount too low on scope ${scope}`);
+        }
+
+        const newAmount = new Decimal(amount.toString()).mul(new Decimal(rate)).round();
+
+        if (this.gemPayload.values[newScope]) {
+            this.gemPayload.values[newScope] = this.gemPayload.values[newScope].add(new BN(newAmount.toString()));
+        } else {
+            this.gemPayload.values[newScope] = new BN(newAmount.toString());
+        }
+
+        if (this.gemPayload.values[scope].eq(amount)) {
+            delete this.gemPayload.values[scope];
+        } else {
+            this.gemPayload.values[scope] = this.gemPayload.values[scope].sub(amount);
+        }
+
+        return this;
     }
 
     public get raw(): RawGem {

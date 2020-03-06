@@ -83,6 +83,7 @@
     },
     "dependencies": {
         "bn.js": "5.1.1",
+        "decimal.js": "^10.2.0",
         "deep-equal": "2.0.1",
         "lodash.get": "^4.4.2"
     }
