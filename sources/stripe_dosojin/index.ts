@@ -4,8 +4,8 @@ export const stripe = new Stripe('process.env.STRIPE_SECRET_KEY_TEST', {
     apiVersion: '2019-12-03',
 });
 
-export { GenericStripeDosojin } from './GenericStripeDosojin';
-export { CardPaymentIntentReceptacle } from './CardPaymentIntentReceptacle';
-export { SepaDebitPaymentIntentReceptacle } from './SepaDebitPaymentIntentReceptacle';
-export { CardPayoutConnector } from './CardPayoutConnector';
-export { BankAccountPayoutConnector } from './BankAccountPayoutConnector';
+export { GenericStripeDosojin }                                                              from './GenericStripeDosojin';
+export { CardPaymentIntentReceptacle, PaymentMethodRestrictions, PaymentRegionRestrictions } from './CardPaymentIntentReceptacle';
+export { SepaDebitPaymentIntentReceptacle }                                                  from './SepaDebitPaymentIntentReceptacle';
+export { CardPayoutConnector }                                                               from './CardPayoutConnector';
+export { BankAccountPayoutConnector }                                                        from './BankAccountPayoutConnector';
