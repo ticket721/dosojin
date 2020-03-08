@@ -75,12 +75,10 @@ export class CardPaymentIntentReceptacle extends Receptacle {
         const { variable_fee, fix_fee } = regionRestrictions[country];
 
         const amount = paymentIntent.amount_capturable;
-        console.log('amount', amount);
         const amountFee = Math.round(amount * (variable_fee / 100)) + fix_fee;
-        console.log('amount fee', amountFee);
 
         if (amount - amountFee < net) {
-            return net - (amount - amountFee);
+            return (amount - amountFee) - net;
         }
 
         if (amount - amountFee === net) {
@@ -214,6 +212,9 @@ export class CardPaymentIntentReceptacle extends Receptacle {
                         );
 
                         if (amountToCapture < 0) {
+
+                            await piResource.cancel(paymentIntent.id)
+
                             return gem.fatal(this.dosojin, `Payment Intent's capturable amount is too low.`);
                         }
 
