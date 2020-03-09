@@ -22,7 +22,7 @@ export class CardPaymentIntentReceptacle extends Receptacle {
 
     constructor(dosojin: GenericStripeDosojin) {
         super('CardPaymentIntentReceptacle', dosojin);
-        this.refreshTimer = 5 * SECOND;
+        this.refreshTimer = SECOND;
     }
 
     private validateCurrency(paymentIntent: Stripe.PaymentIntent, currency: string): boolean {
@@ -143,6 +143,8 @@ export class CardPaymentIntentReceptacle extends Receptacle {
     public async run(gem: Gem): Promise<Gem> {
         const piResource: Stripe.PaymentIntentsResource = this.dosojin.getStripePiResource();
         const reResource: Stripe.RefundsResource = this.dosojin.getStripeReResource();
+
+        gem.setRefreshTimer(this.refreshTimer);
 
         if (gem.getState(this.dosojin)) {
             if (this.verifyArguments(gem.getState(this.dosojin))) {
@@ -269,10 +271,10 @@ export class CardPaymentIntentReceptacle extends Receptacle {
                             return gem.fatal(this.dosojin, `Invalid Succeeded Payment Intent. Got Refunded.`);
                         }
 
-                        return gem.setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete);
+                        return gem
+                            .addPayloadValue(`fiat_${currency}`, amount)
+                            .setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete);
                     }
-
-                    gem.setState(this.dosojin, { refreshTimer: this.refreshTimer });
 
                     return gem;
                 } catch (e) {
@@ -288,6 +290,8 @@ export class CardPaymentIntentReceptacle extends Receptacle {
 
     public async dryRun(gem: Gem): Promise<Gem> {
         const piResource: Stripe.PaymentIntentsResource = this.dosojin.getStripePiResource();
+
+        gem.setRefreshTimer(this.refreshTimer);
 
         if (gem.getState(this.dosojin)) {
             if (this.verifyArguments(gem.getState(this.dosojin))) {
@@ -396,10 +400,10 @@ export class CardPaymentIntentReceptacle extends Receptacle {
                             return gem.fatal(this.dosojin, `Invalid Succeeded Payment Intent. Got Refunded.`);
                         }
 
-                        return gem.setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete);
+                        return gem
+                            .addPayloadValue(`fiat_${currency}`, amount)
+                            .setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete);
                     }
-
-                    gem.setState(this.dosojin, { refreshTimer: this.refreshTimer });
 
                     return gem;
                 } catch (e) {
