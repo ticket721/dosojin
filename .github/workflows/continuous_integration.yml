@@ -13,16 +13,18 @@ jobs:
               uses: actions/setup-node@v1
               with:
                   node-version: 12.x
+            - name: Install Yarn Globally
+              run: npm install -g yarn@1.22.4
             - name: Install dependencies
-              run: npm install
+              run: yarn install
             - name: Build module
-              run: npm run build:module
+              run: yarn build:module
             - name: Run TSLint
-              run: npm run test:lint
+              run: yarn test:lint
             - name: Run Editorconfig
-              run: npm run test:editorconfig
+              run: yarn test:editorconfig
             - name: Run Jest test suites
-              run: npm run test:coverage
+              run: yarn test:coverage
             - name: Coveralls Parallel
               uses: coverallsapp/github-action@master
               with:
