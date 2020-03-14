@@ -8,14 +8,16 @@
     "scripts": {
         "test:lint": "tslint --project .",
         "test:jest": "jest --expand --verbose",
-        "test:coverage": "npm run test:jest -- --coverage",
+        "test:coverage": "yarn test:jest -- --coverage",
         "test:editorconfig": "editorconfig-cli",
         "prebuild": "rimraf dist",
-        "build:module": "npm run prebuild && tsc",
+        "build:module": "yarn prebuild && tsc",
         "build:doc": "rm -rf docs && typedoc --out docs sources/index.ts --theme markdown --readme none --name Dōsojin",
-        "prepublish": "npm run build:module",
+        "prepublish": "yarn build:module",
         "format": "prettier --write \"sources/**/*.ts\"",
-        "format:check": "prettier --check \"sources/**/*.ts\""
+        "format:check": "prettier --check \"sources/**/*.ts\"",
+        "@lerna/postinstall": "yarn build:module",
+        "@lerna/postclean": "rm -rf dist"
     },
     "repository": {
         "type": "git",
