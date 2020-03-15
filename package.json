@@ -17,7 +17,7 @@
         "format": "prettier --write \"sources/**/*.ts\"",
         "format:check": "prettier --check \"sources/**/*.ts\"",
         "@lerna/postinstall": "yarn build:module",
-        "@lerna/postclean": "rm -rf dist"
+        "@lerna/postclean": "rm -rf dist && rm -rf node_modules"
     },
     "repository": {
         "type": "git",
