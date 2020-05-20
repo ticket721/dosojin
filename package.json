@@ -72,7 +72,7 @@
     },
     "dependencies": {
         "@types/stripe": "7.13.21",
-        "bn.js": "5.1.1",
+        "bn.js": "5.1.2",
         "deep-equal": "2.0.1",
         "stripe": "8.12.0"
     }
