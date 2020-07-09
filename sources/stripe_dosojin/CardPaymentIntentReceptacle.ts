@@ -125,9 +125,16 @@ export class CardPaymentIntentReceptacle extends Receptacle {
 
         const { variable_fee, fix_fee } = regionRestrictions[country];
 
-        return (
-            paymentIntent.amount_received - Math.round(paymentIntent.amount_received * (variable_fee / 100) + fix_fee)
-        );
+        const totalAmount = paymentIntent.amount;
+        const totalRefundedAmount = paymentIntent.charges.data[0].amount_refunded;
+
+        return totalAmount -
+            totalRefundedAmount -
+            (Math.round(
+                    totalAmount * (variable_fee / 100) + fix_fee) -
+                Math.round(totalRefundedAmount * (variable_fee / 100))
+            );
+
     }
 
     private verifyArguments(state: any): boolean {
@@ -215,7 +222,7 @@ export class CardPaymentIntentReceptacle extends Receptacle {
 
                         if (amountToCapture < 0) {
 
-                            await piResource.cancel(paymentIntent.id)
+                            await piResource.cancel(paymentIntent.id);
 
                             return gem.fatal(this.dosojin, `Payment Intent's capturable amount is too low.`);
                         }
