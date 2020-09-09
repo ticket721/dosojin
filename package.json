@@ -61,7 +61,7 @@
         "@types/lodash.get": "^4.4.6",
         "@types/stripe": "7.13.21",
         "coveralls": "3.0.9",
-        "husky": "4.2.3",
+        "husky": "4.3.0",
         "jest": "25.1.0",
         "prettier": "^1.19.1",
         "stripe": "8.12.0",
