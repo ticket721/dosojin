@@ -42,3 +42,4 @@ dist/**/*
 # Ignore floobits configs
 .floo
 .flooignore
+package-lock.json

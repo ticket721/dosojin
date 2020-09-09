@@ -1,8 +1,5 @@
 import { instance, mock, reset, spy, verify, when } from 'ts-mockito';
-import {
-    Dosojin,
-    Gem,
-} from '../../../core';
+import { Dosojin, Gem } from '../../../core';
 import { SimpleReceptacleMock } from '../../../mocks/receptacle/SimpleReceptacleMock';
 
 export function get_receptacle_info_tests(): void {

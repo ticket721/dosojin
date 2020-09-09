@@ -3,7 +3,6 @@ import { dry_run_tests } from '../tests/stripe_dosojin/card_payment_intent_recep
 import { scopes_tests } from '../tests/stripe_dosojin/card_payment_intent_receptacle/scopes.tests';
 
 describe('CardPaymentIntentReceptacle', (): void => {
-
     describe('run', run_tests);
     describe('dryRun', dry_run_tests);
     describe('scopes', scopes_tests);

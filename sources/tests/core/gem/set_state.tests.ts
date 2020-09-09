@@ -1,8 +1,5 @@
 import { instance, mock, reset, when } from 'ts-mockito';
-import {
-    Dosojin,
-    Gem,
-} from '../../../core';
+import { Dosojin, Gem } from '../../../core';
 
 export function set_state_tests(): void {
     let gem: Gem;
@@ -29,7 +26,7 @@ export function set_state_tests(): void {
         when(mockDosojin.name).thenReturn(null);
 
         try {
-            expect(gem.setState(dosojin, {'datum': 'value'})).toThrow();
+            expect(gem.setState(dosojin, { datum: 'value' })).toThrow();
         } catch (e) {
             expect(e).toMatchObject({
                 message: 'invalid state key type: expect string | Dosojin, got object',
@@ -38,7 +35,7 @@ export function set_state_tests(): void {
     });
 
     test('set state when dosojin is correctly set (as a Dosojin)', () => {
-        const expectedDatum = {'datum': 'value'};
+        const expectedDatum = { datum: 'value' };
         when(mockDosojin.name).thenReturn('dosojin');
 
         gem.setState(dosojin, expectedDatum);
@@ -47,7 +44,7 @@ export function set_state_tests(): void {
     });
 
     test('set state when dosojin is correctly set (as a string)', () => {
-        const expectedDatum = {'datum': 'value'};
+        const expectedDatum = { datum: 'value' };
         when(mockDosojin.name).thenReturn('dosojin');
 
         gem.setState('dosojin', expectedDatum);

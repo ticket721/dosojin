@@ -16,7 +16,7 @@ export function add_cost_tests(): void {
     beforeEach(() => {
         reset(mockDosojin);
 
-        gem = new Gem({fiat_eur: new BN(10), fiat_usd: new BN(5)});
+        gem = new Gem({ fiat_eur: new BN(10), fiat_usd: new BN(5) });
 
         dosojin = instance(mockDosojin);
     });
@@ -31,7 +31,6 @@ export function add_cost_tests(): void {
                 message: 'Cannot add cost on gem with no actionType',
             });
         }
-
     });
 
     test('throw error when specified dosojin does not match gem connector or receptacle dosojin', () => {
@@ -82,15 +81,17 @@ export function add_cost_tests(): void {
 
         gem.addCost(dosojin, expectedValue, expectedScope, expectedReason);
 
-        expect(gem.gemPayload.costs).toEqual([{
-            dosojin: expectedDosojinName,
-            entityName: expectedConnectorName,
-            entityType: 'connector',
-            layer: expectedLayer,
-            reason: expectedReason,
-            scope: expectedScope,
-            value: expectedValue,
-        }]);
+        expect(gem.gemPayload.costs).toEqual([
+            {
+                dosojin: expectedDosojinName,
+                entityName: expectedConnectorName,
+                entityType: 'connector',
+                layer: expectedLayer,
+                reason: expectedReason,
+                scope: expectedScope,
+                value: expectedValue,
+            },
+        ]);
     });
 
     test('push new cost when specified dosojin match gem receptacle dosojin', () => {
@@ -114,18 +115,20 @@ export function add_cost_tests(): void {
 
         gem.addCost(dosojin, expectedValue, expectedScope, expectedReason);
 
-        expect(gem.gemPayload.costs).toEqual([{
-            dosojin: expectedDosojinName,
-            entityName: expectedReceptacleName,
-            entityType: 'receptacle',
-            layer: expectedLayer,
-            reason: expectedReason,
-            scope: expectedScope,
-            value: expectedValue,
-        }]);
+        expect(gem.gemPayload.costs).toEqual([
+            {
+                dosojin: expectedDosojinName,
+                entityName: expectedReceptacleName,
+                entityType: 'receptacle',
+                layer: expectedLayer,
+                reason: expectedReason,
+                scope: expectedScope,
+                value: expectedValue,
+            },
+        ]);
     });
 
-    test('push new cost when action type is \'operation\'', () => {
+    test("push new cost when action type is 'operation'", () => {
         gem.setActionType('operation');
 
         const expectedDosojinName: string = 'dosojin';
@@ -138,10 +141,7 @@ export function add_cost_tests(): void {
         gem.operationStatus = {
             dosojin: 'dosojin',
             layer: 0,
-            operation_list: [
-                expectedOperationName,
-                'op_2',
-            ],
+            operation_list: [expectedOperationName, 'op_2'],
             status: OperationStatusNames.ReadyForOperation,
         };
 
@@ -149,14 +149,16 @@ export function add_cost_tests(): void {
 
         gem.addCost(dosojin, expectedValue, expectedScope, expectedReason);
 
-        expect(gem.gemPayload.costs).toEqual([{
-            dosojin: expectedDosojinName,
-            entityName: expectedOperationName,
-            entityType: 'operation',
-            layer: expectedLayer,
-            reason: expectedReason,
-            scope: expectedScope,
-            value: expectedValue,
-        }]);
+        expect(gem.gemPayload.costs).toEqual([
+            {
+                dosojin: expectedDosojinName,
+                entityName: expectedOperationName,
+                entityType: 'operation',
+                layer: expectedLayer,
+                reason: expectedReason,
+                scope: expectedScope,
+                value: expectedValue,
+            },
+        ]);
     });
 }

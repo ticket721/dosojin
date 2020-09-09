@@ -24,6 +24,6 @@ export function scopes_tests(): void {
     test('Return all fiat on scopes call', async () => {
         const gem: Gem = instance(mockGem);
 
-        await expect(cardPoConnector.scopes(gem)).resolves.toMatchObject(['fiat_*']);
+        await expect(cardPoConnector.scopes(gem)).resolves.toMatchObject(['fiat_[a-zA-Z]+']);
     });
 }

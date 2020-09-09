@@ -1,8 +1,5 @@
-import {deepEqual, instance, mock, reset, spy, verify, when} from 'ts-mockito';
-import {
-    Dosojin,
-    Gem,
-} from '../../../core';
+import { deepEqual, instance, mock, reset, spy, verify, when } from 'ts-mockito';
+import { Dosojin, Gem } from '../../../core';
 import { SimpleConnectorMock } from '../../../mocks/connector/SimpleConnectorMock';
 import { SimpleReceptacleMock } from '../../../mocks/receptacle/SimpleReceptacleMock';
 
@@ -25,7 +22,7 @@ export function run_transfer_tests(): void {
         await expect(dosojin.runTransfer(gem, false)).rejects.toThrow();
         await expect(dosojin.runTransfer(gem, false)).rejects.toMatchObject({
             dosojin: dosojinName,
-            message: 'received Gem with null transferStatus while on \'transfer\' actionType',
+            message: "received Gem with null transferStatus while on 'transfer' actionType",
             name: 'DosojinError',
         });
     });
@@ -94,13 +91,17 @@ export function run_transfer_tests(): void {
 
         verify(spiedConnector.run(gem)).once();
 
-        verify(mockGem.pushHistoryEntity(deepEqual({
-            count: 1,
-            dosojin: dosojinName,
-            entityName: expectedConnectorName,
-            entityType: 'connector',
-            layer: expectedLayer,
-        }))).once();
+        verify(
+            mockGem.pushHistoryEntity(
+                deepEqual({
+                    count: 1,
+                    dosojin: dosojinName,
+                    entityName: expectedConnectorName,
+                    entityType: 'connector',
+                    layer: expectedLayer,
+                }),
+            ),
+        ).once();
     });
 
     test('dry run gem on connector and add connector history when dosojin contains corresponding connector', async () => {
@@ -130,13 +131,17 @@ export function run_transfer_tests(): void {
 
         verify(spiedConnector.dryRun(gem)).once();
 
-        verify(mockGem.pushHistoryEntity(deepEqual({
-            count: 1,
-            dosojin: dosojinName,
-            entityName: expectedConnectorName,
-            entityType: 'connector',
-            layer: expectedLayer,
-        }))).once();
+        verify(
+            mockGem.pushHistoryEntity(
+                deepEqual({
+                    count: 1,
+                    dosojin: dosojinName,
+                    entityName: expectedConnectorName,
+                    entityType: 'connector',
+                    layer: expectedLayer,
+                }),
+            ),
+        ).once();
     });
 
     test('throw dosojin error when dosojin does not contain the corresponding receptacle', async () => {
@@ -187,13 +192,17 @@ export function run_transfer_tests(): void {
 
         verify(spiedReceptacle.run(gem)).once();
 
-        verify(mockGem.pushHistoryEntity(deepEqual({
-            count: 1,
-            dosojin: dosojinName,
-            entityName: expectedReceptacleName,
-            entityType: 'receptacle',
-            layer: expectedLayer,
-        }))).once();
+        verify(
+            mockGem.pushHistoryEntity(
+                deepEqual({
+                    count: 1,
+                    dosojin: dosojinName,
+                    entityName: expectedReceptacleName,
+                    entityType: 'receptacle',
+                    layer: expectedLayer,
+                }),
+            ),
+        ).once();
     });
 
     test('dry run gem on receptacle and add receptacle history when dosojin contains corresponding receptacle', async () => {
@@ -223,12 +232,16 @@ export function run_transfer_tests(): void {
 
         verify(spiedReceptacle.dryRun(gem)).once();
 
-        verify(mockGem.pushHistoryEntity(deepEqual({
-            count: 1,
-            dosojin: dosojinName,
-            entityName: expectedReceptacleName,
-            entityType: 'receptacle',
-            layer: expectedLayer,
-        }))).once();
+        verify(
+            mockGem.pushHistoryEntity(
+                deepEqual({
+                    count: 1,
+                    dosojin: dosojinName,
+                    entityName: expectedReceptacleName,
+                    entityType: 'receptacle',
+                    layer: expectedLayer,
+                }),
+            ),
+        ).once();
     });
 }

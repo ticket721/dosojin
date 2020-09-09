@@ -2,16 +2,22 @@
     "name": "dosojin",
     "version": "1.0.0",
     "description": "dosojin is a flexible funds movement engine",
-    "main": "index.js",
+    "main": "dist/index.js",
+    "module": "dist/index.js",
+    "types": "dist/index.d.ts",
     "scripts": {
         "test:lint": "tslint --project .",
         "test:jest": "jest --expand --verbose",
-        "test:coverage": "npm run test:jest -- --coverage",
+        "test:coverage": "yarn test:jest -- --coverage",
         "test:editorconfig": "editorconfig-cli",
         "prebuild": "rimraf dist",
-        "build:module": "npm run prebuild && tsc",
+        "build:module": "yarn prebuild && tsc",
         "build:doc": "rm -rf docs && typedoc --out docs sources/index.ts --theme markdown --readme none --name Dōsojin",
-        "prepublish": "npm run build:module"
+        "publish": "yarn build:module && yarn publish",
+        "format": "prettier --write \"sources/**/*.ts\"",
+        "format:check": "prettier --check \"sources/**/*.ts\"",
+        "@lerna/postinstall": "yarn build:module",
+        "@lerna/postclean": "rm -rf dist && rm -rf node_modules"
     },
     "repository": {
         "type": "git",
@@ -52,9 +58,13 @@
         "@types/bn.js": "4.11.6",
         "@types/deep-equal": "1.0.1",
         "@types/jest": "25.1.2",
+        "@types/lodash.get": "^4.4.6",
+        "@types/stripe": "7.13.21",
         "coveralls": "3.0.9",
-        "husky": "4.2.3",
+        "husky": "4.3.0",
         "jest": "25.1.0",
+        "prettier": "^1.19.1",
+        "stripe": "8.12.0",
         "ts-jest": "25.2.0",
         "ts-mockito": "2.5.0",
         "ts-node": "8.6.2",
@@ -70,10 +80,13 @@
             "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
         }
     },
-    "dependencies": {
-        "@types/stripe": "7.13.21",
-        "bn.js": "5.1.1",
-        "deep-equal": "2.0.1",
+    "peerDependencies": {
         "stripe": "8.12.0"
+    },
+    "dependencies": {
+        "bn.js": "5.1.1",
+        "decimal.js": "^10.2.0",
+        "deep-equal": "2.0.1",
+        "lodash.get": "^4.4.2"
     }
 }

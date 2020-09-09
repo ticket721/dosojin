@@ -1,7 +1,4 @@
-import {
-    Circuit,
-    Dosojin,
-} from '../../../core';
+import { Circuit, Dosojin } from '../../../core';
 import { RegistryLayerMock } from '../../../mocks/layer/RegistryLayerMock';
 
 export function clear_dosojin_tests(): void {
@@ -30,13 +27,13 @@ export function clear_dosojin_tests(): void {
         await sdl.addDosojin(dosojin);
 
         expect(circuit.getRegistry()).toMatchObject({
-            'dosojin': true,
+            dosojin: true,
         });
 
         await sdl.removeDosojin(dosojin);
 
         expect(circuit.getRegistry()).toMatchObject({
-            'dosojin': false,
+            dosojin: false,
         });
     });
 }

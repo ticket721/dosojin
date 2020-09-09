@@ -1,4 +1,4 @@
-import { Gem }     from './Gem';
+import { Gem } from './Gem';
 
 export abstract class Layer {
     public name: string;
@@ -20,5 +20,8 @@ export abstract class Layer {
     public abstract async getConnectorInfo(gem: Gem): Promise<Gem>;
     public abstract async getReceptacleInfo(gem: Gem): Promise<Gem>;
     public abstract async setConnectorInfo<ConnectorInfo = any>(gem: Gem, connectorInfo: ConnectorInfo): Promise<void>;
-    public abstract async setReceptacleInfo<ReceptacleInfo = any>(gem: Gem, receptacleInfo: ReceptacleInfo): Promise<void>;
+    public abstract async setReceptacleInfo<ReceptacleInfo = any>(
+        gem: Gem,
+        receptacleInfo: ReceptacleInfo,
+    ): Promise<void>;
 }

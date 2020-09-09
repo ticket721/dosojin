@@ -1,9 +1,5 @@
 import { instance, mock, reset, verify } from 'ts-mockito';
-import {
-    Connector,
-    Dosojin,
-    Gem,
-} from '../../../core';
+import { Connector, Dosojin, Gem } from '../../../core';
 
 export function select_connector_tests(): void {
     let dosojin: Dosojin;

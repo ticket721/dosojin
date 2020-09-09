@@ -1,7 +1,6 @@
 import { Dosojin, Gem, Receptacle } from '../../core';
 
 export class SimpleReceptacleMock extends Receptacle {
-
     constructor(name: string, dosojin: Dosojin) {
         super(name, dosojin);
     }

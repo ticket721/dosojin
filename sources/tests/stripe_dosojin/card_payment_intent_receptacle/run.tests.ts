@@ -28,43 +28,48 @@ export function run_tests(): void {
 
     test('throw Error when dosojin state does not exist on gem', async () => {
         const gem: Gem = instance(mockGem);
-        
-        when (mockGem.getState(dosojin)).thenReturn(null);
+
+        when(mockGem.getState(dosojin)).thenReturn(null);
 
         await expect(cardPiReceptacle.run(gem)).rejects.toThrow();
         await expect(cardPiReceptacle.run(gem)).rejects.toMatchObject({
-            message: `gem state does not contain a dosojinName Dosojin property`
+            message: `gem state does not contain a dosojinName Dosojin property`,
         });
     });
 
     test('throw Error when paymentIntentId does not exist on dosojin state', async () => {
         const gem: Gem = instance(mockGem);
-        
+
         when(mockGem.getState<any>(dosojin)).thenReturn({
-            paymentIntentId: null
+            paymentIntentId: null,
         });
 
         await expect(cardPiReceptacle.run(gem)).rejects.toThrow();
         await expect(cardPiReceptacle.run(gem)).rejects.toMatchObject({
-            message: `gem dosojinName state does not contain any paymentIntentId property`
+            message: `gem ${this.dosojin.name} state does not contain all required properties`,
         });
     });
 
     test('throw Error when paymentIntent retrieve failed', async () => {
         const gem: Gem = instance(mockGem);
         const piId: string = 'pi_mockId';
-        
+
         when(mockDosojin.name).thenReturn('dosojinName');
-        
+
         when(mockGem.getState<any>(dosojin)).thenReturn({
-            paymentIntentId: piId
+            paymentIntentId: piId,
         });
 
         when(mockDosojin.getStripePiResource()).thenReturn(piResource);
 
-        when(mockPiResource.retrieve(piId, deepEqual({
-            expand: [ 'charges.data.balance_transaction' ]
-        }))).thenThrow(new Error('retrieve failed'));
+        when(
+            mockPiResource.retrieve(
+                piId,
+                deepEqual({
+                    expand: ['charges.data.balance_transaction'],
+                }),
+            ),
+        ).thenThrow(new Error('retrieve failed'));
 
         await expect(cardPiReceptacle.run(gem)).rejects.toThrow();
         await expect(cardPiReceptacle.run(gem)).rejects.toMatchObject(new Error('retrieve failed'));
@@ -73,38 +78,40 @@ export function run_tests(): void {
     test('throw Error when the payment method of paymentIntent is not a card', async () => {
         const gem: Gem = instance(mockGem);
         const piId: string = 'pi_mockId';
-        const expectedErrorMessage: string = 'CardPaymentIntentReceptacle can manage only card Payment Intent (Update to a card payment method or choose an appropriate receptacle)';
-        
+        const expectedErrorMessage: string =
+            'CardPaymentIntentReceptacle can manage only card Payment Intent (Update to a card payment method or choose an appropriate receptacle)';
+
         when(mockDosojin.name).thenReturn('dosojinName');
-        
+
         when(mockGem.getState<any>(dosojin)).thenReturn({
-            paymentIntentId: piId
+            paymentIntentId: piId,
         });
 
         when(mockDosojin.getStripePiResource()).thenReturn(piResource);
 
-        when(mockPiResource.retrieve(piId, deepEqual({
-            expand: [ 'charges.data.balance_transaction' ]
-        }))).thenResolve(<any>{
-            payment_method_types: [
-                'sepa_debit'
-            ]
+        when(
+            mockPiResource.retrieve(
+                piId,
+                deepEqual({
+                    expand: ['charges.data.balance_transaction'],
+                }),
+            ),
+        ).thenResolve(<any>{
+            payment_method_types: ['sepa_debit'],
         });
 
         when(mockGem.errorInfo).thenReturn(<any>{
-            message: expectedErrorMessage
+            message: expectedErrorMessage,
         });
 
         await expect(cardPiReceptacle.run(gem)).rejects.toThrow();
 
         verify(mockGem.error(dosojin, expectedErrorMessage)).once();
 
-        await expect(cardPiReceptacle.run(gem)).rejects.toMatchObject(
-            new Error(expectedErrorMessage)
-        );
+        await expect(cardPiReceptacle.run(gem)).rejects.toMatchObject(new Error(expectedErrorMessage));
     });
 
-    test('throw Error when paymentIntent status is \'canceled\'', async () => {
+    test("throw Error when paymentIntent status is 'canceled'", async () => {
         const gem: Gem = instance(mockGem);
         const piId: string = 'pi_mockId';
         const expectedPi = {
@@ -113,26 +120,29 @@ export function run_tests(): void {
                 message: 'mock failure message',
             },
             status: 'canceled',
-            payment_method_types: [
-                'card'
-            ]
+            payment_method_types: ['card'],
         };
         const expectedErrorMessage: string = `Payment intent was canceled for the following reason: ${expectedPi.last_payment_error.message} (${expectedPi.last_payment_error.code})`;
-        
+
         when(mockDosojin.name).thenReturn('dosojinName');
-        
+
         when(mockGem.getState<any>(dosojin)).thenReturn({
-            paymentIntentId: piId
+            paymentIntentId: piId,
         });
 
         when(mockDosojin.getStripePiResource()).thenReturn(piResource);
 
-        when(mockPiResource.retrieve(piId, deepEqual({
-            expand: [ 'charges.data.balance_transaction' ]
-        }))).thenResolve(<any>expectedPi);
+        when(
+            mockPiResource.retrieve(
+                piId,
+                deepEqual({
+                    expand: ['charges.data.balance_transaction'],
+                }),
+            ),
+        ).thenResolve(<any>expectedPi);
 
         when(mockGem.errorInfo).thenReturn(<any>{
-            message: expectedErrorMessage
+            message: expectedErrorMessage,
         });
 
         await expect(cardPiReceptacle.run(gem)).rejects.toThrow();
@@ -145,19 +155,22 @@ export function run_tests(): void {
     test('Set refreshTimer when payment intent process has not finished yet', async () => {
         const gem: Gem = instance(mockGem);
         const piId: string = 'pi_mockId';
-        
+
         when(mockDosojin.name).thenReturn('dosojinName');
         when(mockGem.getState<any>(dosojin)).thenReturn({
-            paymentIntentId: piId
+            paymentIntentId: piId,
         });
         when(mockDosojin.getStripePiResource()).thenReturn(piResource);
-        when(mockPiResource.retrieve(piId, deepEqual({
-            expand: [ 'charges.data.balance_transaction' ]
-        }))).thenResolve(<any>{
+        when(
+            mockPiResource.retrieve(
+                piId,
+                deepEqual({
+                    expand: ['charges.data.balance_transaction'],
+                }),
+            ),
+        ).thenResolve(<any>{
             status: 'processing',
-            payment_method_types: [
-                'card'
-            ]
+            payment_method_types: ['card'],
         });
 
         await cardPiReceptacle.run(gem);
@@ -193,54 +206,66 @@ export function run_tests(): void {
             charges: {
                 data: [
                     {
-                        balance_transaction: expectedBalanceTx
-                    }
-                ]
+                        balance_transaction: expectedBalanceTx,
+                    },
+                ],
             },
             currency: 'eur',
             description: 'desc',
             status: 'succeeded',
-            payment_method_types: [
-                'card'
-            ]
-        }
-        
+            payment_method_types: ['card'],
+        };
+
         when(mockDosojin.name).thenReturn('dosojinName');
         when(mockGem.getState<any>(dosojin)).thenReturn({
-            paymentIntentId: piId
+            paymentIntentId: piId,
         });
         when(mockDosojin.getStripePiResource()).thenReturn(piResource);
-        when(mockPiResource.retrieve(piId, deepEqual({
-            expand: [ 'charges.data.balance_transaction' ]
-        }))).thenResolve(<any>expectedPi);
+        when(
+            mockPiResource.retrieve(
+                piId,
+                deepEqual({
+                    expand: ['charges.data.balance_transaction'],
+                }),
+            ),
+        ).thenResolve(<any>expectedPi);
 
         await cardPiReceptacle.run(gem);
 
-        verify(mockGem.addPayloadValue(
-            deepEqual(`fiat_${expectedPi.currency}`),
-            deepEqual(expectedPi.amount_received)
-        )).once();
+        verify(
+            mockGem.addPayloadValue(deepEqual(`fiat_${expectedPi.currency}`), deepEqual(expectedPi.amount_received)),
+        ).once();
 
-        verify(mockGem.addCost(
-            deepEqual(dosojin),
-            deepEqual(new BN(expectedBalanceTx.net)),
-            deepEqual(`fiat_${expectedBalanceTx.currency}`),
-            deepEqual(`|stripe| Checkout with card (net_amount): ${expectedPi.description}`)
-        )).once();
+        verify(
+            mockGem.addCost(
+                deepEqual(dosojin),
+                deepEqual(new BN(expectedBalanceTx.net)),
+                deepEqual(`fiat_${expectedBalanceTx.currency}`),
+                deepEqual(`|stripe| Checkout with card (net_amount): ${expectedPi.description}`),
+            ),
+        ).once();
 
-        verify(mockGem.addCost(
-            deepEqual(dosojin),
-            deepEqual(new BN(expectedBalanceTx.fee_details[0].amount)),
-            deepEqual(`fiat_${expectedBalanceTx.fee_details[0].currency}`),
-            deepEqual(`|stripe| Checkout with card (${expectedBalanceTx.fee_details[0].type}): ${expectedBalanceTx.fee_details[0].description}`)
-        )).once();
+        verify(
+            mockGem.addCost(
+                deepEqual(dosojin),
+                deepEqual(new BN(expectedBalanceTx.fee_details[0].amount)),
+                deepEqual(`fiat_${expectedBalanceTx.fee_details[0].currency}`),
+                deepEqual(
+                    `|stripe| Checkout with card (${expectedBalanceTx.fee_details[0].type}): ${expectedBalanceTx.fee_details[0].description}`,
+                ),
+            ),
+        ).once();
 
-        verify(mockGem.addCost(
-            deepEqual(dosojin),
-            deepEqual(new BN(expectedBalanceTx.fee_details[1].amount)),
-            deepEqual(`fiat_${expectedBalanceTx.fee_details[1].currency}`),
-            deepEqual(`|stripe| Checkout with card (${expectedBalanceTx.fee_details[1].type}): ${expectedBalanceTx.fee_details[1].description}`)
-        )).once();
+        verify(
+            mockGem.addCost(
+                deepEqual(dosojin),
+                deepEqual(new BN(expectedBalanceTx.fee_details[1].amount)),
+                deepEqual(`fiat_${expectedBalanceTx.fee_details[1].currency}`),
+                deepEqual(
+                    `|stripe| Checkout with card (${expectedBalanceTx.fee_details[1].type}): ${expectedBalanceTx.fee_details[1].description}`,
+                ),
+            ),
+        ).once();
 
         verify(mockGem.setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete)).once();
     });

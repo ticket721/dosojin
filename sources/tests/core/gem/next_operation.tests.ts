@@ -1,7 +1,4 @@
-import {
-    Gem,
-    OperationStatusNames,
-} from '../../../core';
+import { Gem, OperationStatusNames } from '../../../core';
 
 export function next_operation_tests(): void {
     let gem: Gem;
@@ -38,19 +35,14 @@ export function next_operation_tests(): void {
         gem.operationStatus = {
             dosojin: 'dosojin',
             layer: 0,
-            operation_list: [
-                'op_1',
-                'op_2',
-            ],
+            operation_list: ['op_1', 'op_2'],
             status: OperationStatusNames.OperationComplete,
         };
 
         gem.nextOperation();
 
         expect(gem.operationStatus).toMatchObject({
-            operation_list: [
-                'op_2',
-            ],
+            operation_list: ['op_2'],
             status: OperationStatusNames.ReadyForOperation,
         });
     });
@@ -61,9 +53,7 @@ export function next_operation_tests(): void {
         gem.operationStatus = {
             dosojin: 'dosojin',
             layer: 0,
-            operation_list: [
-                'op_1',
-            ],
+            operation_list: ['op_1'],
             status: OperationStatusNames.OperationComplete,
         };
 

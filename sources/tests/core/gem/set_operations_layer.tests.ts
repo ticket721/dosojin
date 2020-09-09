@@ -1,6 +1,4 @@
-import {
-    Gem,
-} from '../../../core';
+import { Gem } from '../../../core';
 
 export function set_operations_layer_tests(): void {
     let gem: Gem;
@@ -9,7 +7,7 @@ export function set_operations_layer_tests(): void {
         gem = new Gem({});
     });
 
-    test('throw error when action type is not \'operation\'', () => {
+    test("throw error when action type is not 'operation'", () => {
         try {
             expect(gem.setOperationsLayer(0)).toThrow();
         } catch (e) {
@@ -19,7 +17,7 @@ export function set_operations_layer_tests(): void {
         }
     });
 
-    test('set layer when action type is \'operation\'', () => {
+    test("set layer when action type is 'operation'", () => {
         gem.setActionType('operation');
 
         const expectedLayer: number = 0;

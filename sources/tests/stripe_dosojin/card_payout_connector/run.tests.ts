@@ -29,43 +29,48 @@ export function run_tests(): void {
 
     test('throw Error when dosojin state does not exist on gem', async () => {
         const gem: Gem = instance(mockGem);
-        
-        when (mockGem.getState(dosojin)).thenReturn(null);
+
+        when(mockGem.getState(dosojin)).thenReturn(null);
 
         await expect(cardPoConnector.run(gem)).rejects.toThrow();
         await expect(cardPoConnector.run(gem)).rejects.toMatchObject({
-            message: `gem state does not contain a dosojinName Dosojin property`
+            message: `gem state does not contain a dosojinName Dosojin property`,
         });
     });
 
     test('throw Error when payoutId does not exist on dosojin state', async () => {
         const gem: Gem = instance(mockGem);
-        
+
         when(mockGem.getState<any>(dosojin)).thenReturn({
-            payoutId: null
+            payoutId: null,
         });
 
         await expect(cardPoConnector.run(gem)).rejects.toThrow();
         await expect(cardPoConnector.run(gem)).rejects.toMatchObject({
-            message: `gem dosojinName state does not contain any payoutId property`
+            message: `gem dosojinName state does not contain any payoutId property`,
         });
     });
 
     test('throw Error when payout retrieve failed', async () => {
         const gem: Gem = instance(mockGem);
         const poId: string = 'po_mockId';
-        
+
         when(mockDosojin.name).thenReturn('dosojinName');
-        
+
         when(mockGem.getState<any>(dosojin)).thenReturn({
-            payoutId: poId
+            payoutId: poId,
         });
 
         when(mockDosojin.getStripePoResource()).thenReturn(poResource);
 
-        when(mockPoResource.retrieve(poId, deepEqual({
-            expand: ['balance_transaction']
-        }))).thenThrow(new Error('retrieve failed'));
+        when(
+            mockPoResource.retrieve(
+                poId,
+                deepEqual({
+                    expand: ['balance_transaction'],
+                }),
+            ),
+        ).thenThrow(new Error('retrieve failed'));
 
         await expect(cardPoConnector.run(gem)).rejects.toThrow();
         await expect(cardPoConnector.run(gem)).rejects.toMatchObject(new Error('retrieve failed'));
@@ -75,120 +80,134 @@ export function run_tests(): void {
         const gem: Gem = instance(mockGem);
         const poId: string = 'po_mockId';
         const expectedErrorMessage: string = 'CardPayoutConnector can manage only bank account Payout';
-        
+
         when(mockDosojin.name).thenReturn('dosojinName');
-        
+
         when(mockGem.getState<any>(dosojin)).thenReturn({
-            payoutId: poId
+            payoutId: poId,
         });
 
         when(mockDosojin.getStripePoResource()).thenReturn(poResource);
 
-        when(mockPoResource.retrieve(poId, deepEqual({
-            expand: ['balance_transaction']
-        }))).thenResolve(<any>{
-            type: 'bank_account'
+        when(
+            mockPoResource.retrieve(
+                poId,
+                deepEqual({
+                    expand: ['balance_transaction'],
+                }),
+            ),
+        ).thenResolve(<any>{
+            type: 'bank_account',
         });
 
         when(mockGem.errorInfo).thenReturn(<any>{
-            message: expectedErrorMessage
+            message: expectedErrorMessage,
         });
 
         await expect(cardPoConnector.run(gem)).rejects.toThrow();
 
         verify(mockGem.fatal(dosojin, expectedErrorMessage)).once();
 
-        await expect(cardPoConnector.run(gem)).rejects.toMatchObject(
-            new Error(expectedErrorMessage)
-        );
+        await expect(cardPoConnector.run(gem)).rejects.toMatchObject(new Error(expectedErrorMessage));
     });
 
-    test('throw Error when payout status is \'failed\'', async () => {
+    test("throw Error when payout status is 'failed'", async () => {
         const gem: Gem = instance(mockGem);
         const poId: string = 'po_mockId';
         const expectedPo = {
             failure_code: 'mockFailureCode',
             failure_message: 'mock failure message',
             status: 'failed',
-            type: 'card'
-        }
+            type: 'card',
+        };
         const expectedErrorMessage: string = `Payout failed for the following reason: ${expectedPo.failure_message} (${expectedPo.failure_code})`;
-        
+
         when(mockDosojin.name).thenReturn('dosojinName');
-        
+
         when(mockGem.getState<any>(dosojin)).thenReturn({
-            payoutId: poId
+            payoutId: poId,
         });
 
         when(mockDosojin.getStripePoResource()).thenReturn(poResource);
 
-        when(mockPoResource.retrieve(poId, deepEqual({
-            expand: ['balance_transaction']
-        }))).thenResolve(<any>expectedPo);
+        when(
+            mockPoResource.retrieve(
+                poId,
+                deepEqual({
+                    expand: ['balance_transaction'],
+                }),
+            ),
+        ).thenResolve(<any>expectedPo);
 
         when(mockGem.errorInfo).thenReturn(<any>{
-            message: expectedErrorMessage
+            message: expectedErrorMessage,
         });
 
         await expect(cardPoConnector.run(gem)).rejects.toThrow();
 
         verify(mockGem.fatal(dosojin, expectedErrorMessage)).once();
 
-        await expect(cardPoConnector.run(gem)).rejects.toMatchObject(
-            new Error(expectedErrorMessage)
-        );
+        await expect(cardPoConnector.run(gem)).rejects.toMatchObject(new Error(expectedErrorMessage));
     });
 
-    test('throw Error when payout status is \'canceled\'', async () => {
+    test("throw Error when payout status is 'canceled'", async () => {
         const gem: Gem = instance(mockGem);
         const poId: string = 'po_mockId';
         const expectedPo = {
             failure_code: 'mockFailureCode',
             failure_message: 'mock failure message',
             status: 'canceled',
-            type: 'card'
-        }
+            type: 'card',
+        };
         const expectedErrorMessage: string = `Payout was canceled for the following reason: ${expectedPo.failure_message} (${expectedPo.failure_code})`;
-        
+
         when(mockDosojin.name).thenReturn('dosojinName');
-        
+
         when(mockGem.getState<any>(dosojin)).thenReturn({
-            payoutId: poId
+            payoutId: poId,
         });
 
         when(mockDosojin.getStripePoResource()).thenReturn(poResource);
 
-        when(mockPoResource.retrieve(poId, deepEqual({
-            expand: ['balance_transaction']
-        }))).thenResolve(<any>expectedPo);
+        when(
+            mockPoResource.retrieve(
+                poId,
+                deepEqual({
+                    expand: ['balance_transaction'],
+                }),
+            ),
+        ).thenResolve(<any>expectedPo);
 
         when(mockGem.errorInfo).thenReturn(<any>{
-            message: expectedErrorMessage
+            message: expectedErrorMessage,
         });
-        
+
         await expect(cardPoConnector.run(gem)).rejects.toThrow();
 
         verify(mockGem.fatal(dosojin, expectedErrorMessage)).once();
 
-        await expect(cardPoConnector.run(gem)).rejects.toMatchObject(
-            new Error(expectedErrorMessage)
-        );
+        await expect(cardPoConnector.run(gem)).rejects.toMatchObject(new Error(expectedErrorMessage));
     });
 
     test('Increase refreshTimer when payout is in transit', async () => {
         const gem: Gem = instance(mockGem);
         const poId: string = 'po_mockId';
-        
+
         when(mockDosojin.name).thenReturn('dosojinName');
         when(mockGem.getState<any>(dosojin)).thenReturn({
-            payoutId: poId
+            payoutId: poId,
         });
         when(mockDosojin.getStripePoResource()).thenReturn(poResource);
-        when(mockPoResource.retrieve(poId, deepEqual({
-            expand: ['balance_transaction']
-        }))).thenResolve(<any>{
+        when(
+            mockPoResource.retrieve(
+                poId,
+                deepEqual({
+                    expand: ['balance_transaction'],
+                }),
+            ),
+        ).thenResolve(<any>{
             status: 'in_transit',
-            type: 'card'
+            type: 'card',
         });
 
         await cardPoConnector.run(gem);
@@ -208,49 +227,60 @@ export function run_tests(): void {
                         amount: 100,
                         currency: 'eur',
                         description: 'Stripe processing fees',
-                        type: 'stripe_fee'
+                        type: 'stripe_fee',
                     },
                     {
                         amount: 200,
                         currency: 'eur',
                         description: 'Application processing fees',
-                        type: 'application_fee'
+                        type: 'application_fee',
                     },
                 ],
             },
             status: 'paid',
-            type: 'card'
+            type: 'card',
         };
-        
+
         when(mockDosojin.name).thenReturn('dosojinName');
         when(mockGem.getState<any>(dosojin)).thenReturn({
-            payoutId: poId
+            payoutId: poId,
         });
         when(mockDosojin.getStripePoResource()).thenReturn(poResource);
-        when(mockPoResource.retrieve(poId, deepEqual({
-            expand: ['balance_transaction']
-        }))).thenResolve(<any>expectedPo);
+        when(
+            mockPoResource.retrieve(
+                poId,
+                deepEqual({
+                    expand: ['balance_transaction'],
+                }),
+            ),
+        ).thenResolve(<any>expectedPo);
 
         await cardPoConnector.run(gem);
 
-        verify(mockGem.addPayloadValue(
-            `fiat_${expectedPo.balance_transaction.currency}`,
-            expectedPo.balance_transaction.fee
-        )).once();
+        verify(
+            mockGem.addPayloadValue(
+                `fiat_${expectedPo.balance_transaction.currency}`,
+                expectedPo.balance_transaction.fee,
+            ),
+        ).once();
 
-        verify(mockGem.addCost(
-            dosojin,
-            deepEqual(new BN(expectedPo.balance_transaction.fee_details[0].amount)),
-            `fiat_${expectedPo.balance_transaction.fee_details[0].currency}`,
-            `|stripe| Payout with card (${expectedPo.balance_transaction.fee_details[0].type}): ${expectedPo.balance_transaction.fee_details[0].description}`
-        )).once();
+        verify(
+            mockGem.addCost(
+                dosojin,
+                deepEqual(new BN(expectedPo.balance_transaction.fee_details[0].amount)),
+                `fiat_${expectedPo.balance_transaction.fee_details[0].currency}`,
+                `|stripe| Payout with card (${expectedPo.balance_transaction.fee_details[0].type}): ${expectedPo.balance_transaction.fee_details[0].description}`,
+            ),
+        ).once();
 
-        verify(mockGem.addCost(
-            dosojin,
-            deepEqual(new BN(expectedPo.balance_transaction.fee_details[1].amount)),
-            `fiat_${expectedPo.balance_transaction.fee_details[1].currency}`,
-            `|stripe| Payout with card (${expectedPo.balance_transaction.fee_details[1].type}): ${expectedPo.balance_transaction.fee_details[1].description}`
-        )).once();
+        verify(
+            mockGem.addCost(
+                dosojin,
+                deepEqual(new BN(expectedPo.balance_transaction.fee_details[1].amount)),
+                `fiat_${expectedPo.balance_transaction.fee_details[1].currency}`,
+                `|stripe| Payout with card (${expectedPo.balance_transaction.fee_details[1].type}): ${expectedPo.balance_transaction.fee_details[1].description}`,
+            ),
+        ).once();
 
         verify(mockGem.setConnectorStatus(TransferConnectorStatusNames.TransferComplete)).once();
     });

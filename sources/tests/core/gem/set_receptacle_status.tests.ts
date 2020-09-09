@@ -1,4 +1,4 @@
-import {Gem, TransferReceptacleStatusNames} from '../../../core';
+import { Gem, TransferReceptacleStatusNames } from '../../../core';
 
 export function set_receptacle_status_tests(): void {
     let gem: Gem;
@@ -7,7 +7,7 @@ export function set_receptacle_status_tests(): void {
         gem = new Gem({});
     });
 
-    test('throw error when action type is not \'transfer\'', () => {
+    test("throw error when action type is not 'transfer'", () => {
         gem.setActionType('operation');
 
         try {
@@ -19,7 +19,7 @@ export function set_receptacle_status_tests(): void {
         }
     });
 
-    test('set status when action type is \'transfer\'', () => {
+    test("set status when action type is 'transfer'", () => {
         const expectedStatus: TransferReceptacleStatusNames = TransferReceptacleStatusNames.ReadyForTransfer;
 
         gem.setReceptacleStatus(expectedStatus);

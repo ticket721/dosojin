@@ -1,4 +1,4 @@
-import {Gem, OperationStatusNames} from '../../../core';
+import { Gem, OperationStatusNames } from '../../../core';
 
 export function set_operations_status_tests(): void {
     let gem: Gem;
@@ -7,7 +7,7 @@ export function set_operations_status_tests(): void {
         gem = new Gem({});
     });
 
-    test('throw error when action type is not \'operation\'', () => {
+    test("throw error when action type is not 'operation'", () => {
         try {
             expect(gem.setOperationStatus(OperationStatusNames.ReadyForOperation)).toThrow();
         } catch (e) {
@@ -17,7 +17,7 @@ export function set_operations_status_tests(): void {
         }
     });
 
-    test('set layer when action type is \'operation\'', () => {
+    test("set layer when action type is 'operation'", () => {
         gem.setActionType('operation');
 
         const expectedStatus: OperationStatusNames = OperationStatusNames.ReadyForOperation;

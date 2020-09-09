@@ -11,4 +11,10 @@ export { OperationStatus, OperationStatusNames } from './OperationStatus';
 export { Receptacle } from './Receptacle';
 export { MinMax, Scope, ScopedCost, ScopedValues } from './Scope';
 export { SingleDosojinLayer } from './SingleDosojinLayer';
-export { TransferConnectorStatusNames, TransferEntityInfo, TransferReceptacleStatusNames, TransferStatus } from './TransferStatus';
+export {
+    TransferConnectorStatusNames,
+    TransferEntityInfo,
+    TransferReceptacleStatusNames,
+    TransferStatus,
+} from './TransferStatus';
+export { RawGem } from './RawGem';

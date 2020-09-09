@@ -1,8 +1,5 @@
-import {deepEqual, instance, mock, reset, spy, verify, when} from 'ts-mockito';
-import {
-    Dosojin,
-    Gem,
-} from '../../../core';
+import { deepEqual, instance, mock, reset, spy, verify, when } from 'ts-mockito';
+import { Dosojin, Gem } from '../../../core';
 import { SimpleOperationMock } from '../../../mocks/operation/SimpleOperationMock';
 
 export function run_operation_tests(): void {
@@ -24,7 +21,7 @@ export function run_operation_tests(): void {
         await expect(dosojin.runOperation(gem, false)).rejects.toThrow();
         await expect(dosojin.runOperation(gem, false)).rejects.toMatchObject({
             dosojin: dosojinName,
-            message: 'received Gem with null operationStatus while on \'operation\' actionType',
+            message: "received Gem with null operationStatus while on 'operation' actionType",
             name: 'DosojinError',
         });
     });
@@ -68,10 +65,7 @@ export function run_operation_tests(): void {
 
         when(mockGem.operationStatus).thenReturn({
             dosojin: dosojinName,
-            operation_list: [
-                mockOperation1.name,
-                mockOperation2.name,
-            ],
+            operation_list: [mockOperation1.name, mockOperation2.name],
         });
 
         const gem: Gem = instance(mockGem);
@@ -95,9 +89,7 @@ export function run_operation_tests(): void {
         when(mockGem.operationStatus).thenReturn({
             layer: expectedLayer,
             dosojin: dosojinName,
-            operation_list: [
-                mockOperation1.name,
-            ],
+            operation_list: [mockOperation1.name],
         });
 
         when(mockGem.routeHistory).thenReturn([]);
@@ -108,13 +100,17 @@ export function run_operation_tests(): void {
 
         verify(spiedOperation.run(gem)).once();
 
-        verify(mockGem.pushHistoryEntity(deepEqual({
-            count: 1,
-            dosojin: dosojinName,
-            entityName: mockOperation1.name,
-            entityType: 'operation',
-            layer: expectedLayer,
-        }))).once();
+        verify(
+            mockGem.pushHistoryEntity(
+                deepEqual({
+                    count: 1,
+                    dosojin: dosojinName,
+                    entityName: mockOperation1.name,
+                    entityType: 'operation',
+                    layer: expectedLayer,
+                }),
+            ),
+        ).once();
     });
 
     test('dry run gem on operation and add operation history when dosojin contains corresponding operation', async () => {
@@ -128,9 +124,7 @@ export function run_operation_tests(): void {
         when(mockGem.operationStatus).thenReturn({
             layer: expectedLayer,
             dosojin: dosojinName,
-            operation_list: [
-                mockOperation1.name,
-            ],
+            operation_list: [mockOperation1.name],
         });
 
         when(mockGem.routeHistory).thenReturn([]);
@@ -141,13 +135,17 @@ export function run_operation_tests(): void {
 
         verify(spiedOperation.dryRun(gem)).once();
 
-        verify(mockGem.pushHistoryEntity(deepEqual({
-            count: 1,
-            dosojin: dosojinName,
-            entityName: mockOperation1.name,
-            entityType: 'operation',
-            layer: expectedLayer,
-        }))).once();
+        verify(
+            mockGem.pushHistoryEntity(
+                deepEqual({
+                    count: 1,
+                    dosojin: dosojinName,
+                    entityName: mockOperation1.name,
+                    entityType: 'operation',
+                    layer: expectedLayer,
+                }),
+            ),
+        ).once();
     });
 
     test('increment operation history', async () => {
@@ -159,18 +157,18 @@ export function run_operation_tests(): void {
         when(mockGem.operationStatus).thenReturn({
             layer: expectedLayer,
             dosojin: dosojinName,
-            operation_list: [
-                mockOperation1.name,
-            ],
+            operation_list: [mockOperation1.name],
         });
 
-        when(mockGem.routeHistory).thenReturn([{
-            count: 1,
-            dosojin: dosojinName,
-            entityName: mockOperation1.name,
-            entityType: 'operation',
-            layer: expectedLayer,
-        }]);
+        when(mockGem.routeHistory).thenReturn([
+            {
+                count: 1,
+                dosojin: dosojinName,
+                entityName: mockOperation1.name,
+                entityType: 'operation',
+                layer: expectedLayer,
+            },
+        ]);
 
         const gem: Gem = instance(mockGem);
 

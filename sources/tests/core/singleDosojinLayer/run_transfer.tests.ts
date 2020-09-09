@@ -1,9 +1,5 @@
 import { instance, mock, reset, verify, when } from 'ts-mockito';
-import {
-    Dosojin,
-    Gem,
-    SingleDosojinLayer,
-} from '../../../core';
+import { Dosojin, Gem, SingleDosojinLayer } from '../../../core';
 
 export function run_transfer_tests(): void {
     let sdl: SingleDosojinLayer;
@@ -19,7 +15,10 @@ export function run_transfer_tests(): void {
         sdlName = 'sdlName';
         sdl = new SingleDosojinLayer(sdlName);
         sdl.setIndex(0);
-        sdl.setRegistry(() => null, () => null);
+        sdl.setRegistry(
+            () => null,
+            () => null,
+        );
 
         dosojin = instance(mockDosojin);
 

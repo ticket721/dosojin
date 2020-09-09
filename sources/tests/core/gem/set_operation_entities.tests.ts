@@ -1,10 +1,7 @@
 import BN from 'bn.js';
 import { anything, instance, mock, reset, spy, when } from 'ts-mockito';
-import {
-    Dosojin,
-    Gem,
-} from '../../../core';
-import {SimpleOperationMock} from '../../../mocks/operation/SimpleOperationMock';
+import { Dosojin, Gem } from '../../../core';
+import { SimpleOperationMock } from '../../../mocks/operation/SimpleOperationMock';
 
 export function set_operation_entities_tests(): void {
     let gem: Gem;
@@ -22,7 +19,7 @@ export function set_operation_entities_tests(): void {
         operation = new SimpleOperationMock('operation', dosojin);
     });
 
-    test('throw error when action type is not \'operation\'', async () => {
+    test("throw error when action type is not 'operation'", async () => {
         await expect(gem.setOperationEntities('dosojin', [operation])).rejects.toThrow();
         await expect(gem.setOperationEntities('dosojin', [operation])).rejects.toMatchObject({
             message: 'Invalid actionType for setOperationEntities call (transfer instead of operation)',
@@ -31,7 +28,7 @@ export function set_operation_entities_tests(): void {
 
     test('throw error when connector scope list is not compatible', async () => {
         gem.setActionType('operation');
-        gem.setPayloadValues({'scope': new BN(1)});
+        gem.setPayloadValues({ scope: new BN(1) });
 
         const expectedName: string = 'operation';
         const expectedScopes: string[] = ['invalid_scope'];
@@ -44,7 +41,9 @@ export function set_operation_entities_tests(): void {
 
         await expect(gem.setOperationEntities('dosojin', [operation])).rejects.toThrow();
         await expect(gem.setOperationEntities('dosojin', [operation])).rejects.toMatchObject({
-            message: `Incompatible scopes with operation ${expectedName}: got ${expectedScopes} expected to match ${['scope']}`,
+            message: `Incompatible scopes with operation ${expectedName}: got ${expectedScopes} expected to match ${[
+                'scope',
+            ]}`,
         });
     });
 

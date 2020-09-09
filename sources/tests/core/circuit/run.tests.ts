@@ -1,9 +1,5 @@
-import {instance, mock, reset, spy, verify, when} from 'ts-mockito';
-import {
-    Circuit,
-    CircuitError,
-    Gem,
-} from '../../../core';
+import { instance, mock, reset, spy, verify, when } from 'ts-mockito';
+import { Circuit, CircuitError, Gem } from '../../../core';
 
 export function run_tests(): void {
     let circuit: Circuit;
@@ -18,7 +14,7 @@ export function run_tests(): void {
 
     test('throw Circuit error when gem actionType is null', async () => {
         const gem: Gem = instance(mockGem);
-        when (mockGem.actionType).thenReturn(null);
+        when(mockGem.actionType).thenReturn(null);
 
         await expect(circuit.run(gem)).rejects.toThrow();
         await expect(circuit.run(gem)).rejects.toMatchObject({
@@ -30,7 +26,7 @@ export function run_tests(): void {
 
     test('throw Circuit error when run Operation failed', async () => {
         const gem: Gem = instance(mockGem);
-        when (mockGem.actionType).thenReturn('operation');
+        when(mockGem.actionType).thenReturn('operation');
 
         const spiedCircuit: Circuit = spy(circuit);
 
@@ -46,7 +42,7 @@ export function run_tests(): void {
 
     test('throw Circuit error when run Transfer failed', async () => {
         const gem: Gem = instance(mockGem);
-        when (mockGem.actionType).thenReturn('transfer');
+        when(mockGem.actionType).thenReturn('transfer');
 
         const spiedCircuit: Circuit = spy(circuit);
         when(spiedCircuit.runTransfer(gem, false)).thenThrow(new CircuitError(circuitName, `transfer failed`));
@@ -64,7 +60,7 @@ export function run_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        when (mockGem.actionType).thenReturn('operation');
+        when(mockGem.actionType).thenReturn('operation');
 
         when(spiedCircuit.runOperation(gem, false)).thenResolve(instance(mockGem));
 
@@ -78,7 +74,7 @@ export function run_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        when (mockGem.actionType).thenReturn('transfer');
+        when(mockGem.actionType).thenReturn('transfer');
 
         when(spiedCircuit.runTransfer(gem, false)).thenResolve(instance(mockGem));
 

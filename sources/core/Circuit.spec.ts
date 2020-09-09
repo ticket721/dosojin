@@ -7,7 +7,6 @@ import { run_operation_tests } from '../tests/core/circuit/run_operation.tests';
 import { run_transfer_tests } from '../tests/core/circuit/run_transfer.tests';
 
 describe('Circuit', (): void => {
-
     describe('createGem', create_gem_tests);
     describe('run', run_tests);
     describe('runOperation', run_operation_tests);

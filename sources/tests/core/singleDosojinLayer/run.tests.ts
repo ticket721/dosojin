@@ -1,10 +1,5 @@
 import { instance, mock, reset, spy, verify, when } from 'ts-mockito';
-import {
-    Dosojin,
-    Gem,
-    LayerError,
-    SingleDosojinLayer,
-} from '../../../core';
+import { Dosojin, Gem, LayerError, SingleDosojinLayer } from '../../../core';
 
 export function run_tests(): void {
     let sdl: SingleDosojinLayer;
@@ -20,7 +15,10 @@ export function run_tests(): void {
         sdlName = 'sdlName';
         sdl = new SingleDosojinLayer(sdlName);
         sdl.setIndex(0);
-        sdl.setRegistry(() => null, () => null);
+        sdl.setRegistry(
+            () => null,
+            () => null,
+        );
 
         dosojin = instance(mockDosojin);
     });
@@ -40,7 +38,7 @@ export function run_tests(): void {
         sdl.setDosojin(dosojin);
 
         const gem: Gem = instance(mockGem);
-        when (mockGem.actionType).thenReturn(null);
+        when(mockGem.actionType).thenReturn(null);
 
         await expect(sdl.run(gem, false)).rejects.toThrow();
         await expect(sdl.run(gem, false)).rejects.toMatchObject({
@@ -54,7 +52,7 @@ export function run_tests(): void {
         sdl.setDosojin(dosojin);
 
         const gem: Gem = instance(mockGem);
-        when (mockGem.actionType).thenReturn('operation');
+        when(mockGem.actionType).thenReturn('operation');
 
         const spiedSdl: SingleDosojinLayer = spy(sdl);
 
@@ -72,7 +70,7 @@ export function run_tests(): void {
         sdl.setDosojin(dosojin);
 
         const gem: Gem = instance(mockGem);
-        when (mockGem.actionType).thenReturn('transfer');
+        when(mockGem.actionType).thenReturn('transfer');
 
         const spiedSdl: SingleDosojinLayer = spy(sdl);
 
@@ -93,7 +91,7 @@ export function run_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        when (mockGem.actionType).thenReturn('operation');
+        when(mockGem.actionType).thenReturn('operation');
 
         when(spiedSdl.runOperation(gem, false)).thenResolve(instance(mockGem));
 
@@ -109,7 +107,7 @@ export function run_tests(): void {
 
         const gem: Gem = instance(mockGem);
 
-        when (mockGem.actionType).thenReturn('transfer');
+        when(mockGem.actionType).thenReturn('transfer');
 
         when(spiedSdl.runTransfer(gem, false)).thenResolve(instance(mockGem));
 

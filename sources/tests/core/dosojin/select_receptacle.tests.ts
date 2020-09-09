@@ -1,9 +1,5 @@
 import { instance, mock, reset, verify } from 'ts-mockito';
-import {
-    Dosojin,
-    Gem,
-    Receptacle,
-} from '../../../core';
+import { Dosojin, Gem, Receptacle } from '../../../core';
 
 export function select_receptacle_tests(): void {
     let dosojin: Dosojin;

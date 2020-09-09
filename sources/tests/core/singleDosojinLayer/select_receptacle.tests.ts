@@ -1,8 +1,5 @@
-import {instance, mock, reset, verify, when} from 'ts-mockito';
-import {
-    Dosojin,
-    Gem, SingleDosojinLayer,
-} from '../../../core';
+import { instance, mock, reset, verify, when } from 'ts-mockito';
+import { Dosojin, Gem, SingleDosojinLayer } from '../../../core';
 
 export function select_receptacle_tests(): void {
     let sdl: SingleDosojinLayer;
@@ -18,7 +15,10 @@ export function select_receptacle_tests(): void {
         sdlName = 'sdlName';
         sdl = new SingleDosojinLayer(sdlName);
         sdl.setIndex(0);
-        sdl.setRegistry(() => null, () => null);
+        sdl.setRegistry(
+            () => null,
+            () => null,
+        );
 
         dosojin = instance(mockDosojin);
     });

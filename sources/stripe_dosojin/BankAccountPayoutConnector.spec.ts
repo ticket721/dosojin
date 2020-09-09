@@ -3,7 +3,6 @@ import { dry_run_tests } from '../tests/stripe_dosojin/bank_account_payout_conne
 import { scopes_tests } from '../tests/stripe_dosojin/bank_account_payout_connector/scopes.tests';
 
 describe('BankAccountPayoutConnector', (): void => {
-
     describe('run', run_tests);
     describe('dryRun', dry_run_tests);
     describe('scopes', scopes_tests);

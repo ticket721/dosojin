@@ -25,4 +25,8 @@ export class GenericStripeDosojin extends Dosojin {
     public getStripePoResource(): Stripe.PayoutsResource {
         return this.stripe.payouts;
     }
+
+    public getStripeReResource(): Stripe.RefundsResource {
+        return this.stripe.refunds;
+    }
 }

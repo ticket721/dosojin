@@ -5,7 +5,6 @@ import { GenericStripeDosojin } from '.';
 import { MINUTE } from '../core/ActionEntity';
 
 export class SepaDebitPaymentIntentReceptacle extends Receptacle {
-
     public dosojin: GenericStripeDosojin;
 
     constructor(dosojin: GenericStripeDosojin) {
@@ -17,30 +16,31 @@ export class SepaDebitPaymentIntentReceptacle extends Receptacle {
         const piResource: Stripe.PaymentIntentsResource = this.dosojin.getStripePiResource();
 
         if (gem.getState(this.dosojin)) {
-
             if (gem.getState(this.dosojin).paymentIntentId) {
                 const piId = gem.getState(this.dosojin).paymentIntentId;
 
                 try {
                     const paymentIntent: Stripe.PaymentIntent = await piResource.retrieve(piId, {
-                        expand: [ 'charges.data.balance_transaction' ],
+                        expand: ['charges.data.balance_transaction'],
                     });
 
                     if (!paymentIntent.payment_method_types.includes('sepa_debit')) {
-                        gem.error(this.dosojin, 'SepaDebitPaymentIntentReceptacle can manage only sepa debit Payment Intent (Update to a sepa debit payment method or choose an appropriate receptacle)');
-
-                        throw new Error(gem.errorInfo.message);
+                        return gem.error(
+                            this.dosojin,
+                            'SepaDebitPaymentIntentReceptacle can manage only sepa debit Payment Intent (Update to a sepa debit payment method or choose an appropriate receptacle)',
+                        );
                     }
 
                     if (paymentIntent.status === 'canceled') {
-                        gem.fatal(this.dosojin, `Payment intent was canceled for the following reason: ${paymentIntent.last_payment_error.message} (${paymentIntent.last_payment_error.code})`);
-
-                        throw new Error(gem.errorInfo.message);
+                        return gem.fatal(
+                            this.dosojin,
+                            `Payment intent was canceled for the following reason: ${paymentIntent.last_payment_error.message} (${paymentIntent.last_payment_error.code})`,
+                        );
                     }
 
                     if (paymentIntent.status === 'succeeded') {
-                        const balanceTransaction: Stripe.BalanceTransaction =
-                            paymentIntent.charges.data[0].balance_transaction as Stripe.BalanceTransaction;
+                        const balanceTransaction: Stripe.BalanceTransaction = paymentIntent.charges.data[0]
+                            .balance_transaction as Stripe.BalanceTransaction;
 
                         gem.addPayloadValue(`fiat_${paymentIntent.currency}`, paymentIntent.amount_received);
 
@@ -66,7 +66,6 @@ export class SepaDebitPaymentIntentReceptacle extends Receptacle {
                     gem.setState(this.dosojin, { refreshTimer: this.refreshTimer });
 
                     return gem;
-
                 } catch (e) {
                     throw e;
                 }
@@ -82,23 +81,23 @@ export class SepaDebitPaymentIntentReceptacle extends Receptacle {
         const piResource: Stripe.PaymentIntentsResource = this.dosojin.getStripePiResource();
 
         if (gem.getState(this.dosojin)) {
-
             if (gem.getState(this.dosojin).paymentIntentId) {
                 const piId = gem.getState(this.dosojin).paymentIntentId;
 
                 try {
                     const paymentIntent: Stripe.PaymentIntent = await piResource.retrieve(piId, {
-                        expand: [ 'charges.data.balance_transaction' ],
+                        expand: ['charges.data.balance_transaction'],
                     });
 
                     if (!paymentIntent.payment_method_types.includes('sepa_debit')) {
-                        gem.error(this.dosojin, 'SepaDebitPaymentIntentReceptacle can manage only sepa debit Payment Intent (Update to a sepa debit payment method or choose an appropriate receptacle)');
-
-                        throw new Error(gem.errorInfo.message);
+                        return gem.error(
+                            this.dosojin,
+                            'SepaDebitPaymentIntentReceptacle can manage only sepa debit Payment Intent (Update to a sepa debit payment method or choose an appropriate receptacle)',
+                        );
                     }
 
-                    const balanceTransaction: Stripe.BalanceTransaction =
-                        paymentIntent.charges.data[0].balance_transaction as Stripe.BalanceTransaction;
+                    const balanceTransaction: Stripe.BalanceTransaction = paymentIntent.charges.data[0]
+                        .balance_transaction as Stripe.BalanceTransaction;
 
                     gem.addPayloadValue(`fiat_${paymentIntent.currency}`, paymentIntent.amount_received);
 
@@ -119,7 +118,6 @@ export class SepaDebitPaymentIntentReceptacle extends Receptacle {
                     }
 
                     return gem.setReceptacleStatus(TransferReceptacleStatusNames.TransferComplete);
-
                 } catch (e) {
                     throw e;
                 }
@@ -132,18 +130,18 @@ export class SepaDebitPaymentIntentReceptacle extends Receptacle {
     }
 
     public async scopes(gem: Gem): Promise<string[]> {
-        return ['fiat_*'];
+        return ['fiat_[a-zA-Z]+'];
     }
 
     // SepaDebitPaymentIntentReceptacle can only be present at the very beginning of Circuit
     // Therefore no Connector will ever ask for any informations about SepaDebitPaymentIntentReceptacle
     public async getReceptacleInfo(gem: Gem): Promise<any> {
-        return ;
+        return;
     }
 
     // SepaDebitPaymentIntentReceptacle can only be present at the very beginning of Circuit
     // Therefore no Connector informations will ever been set by SepaDebitPaymentIntentReceptacle
     public async setConnectorInfo(info: any): Promise<void> {
-        return ;
+        return;
     }
 }
